@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Run the appropriate install script for your OS and build the project.
+set -e
+
+ROOT_DIRECTORY=${BASH_SOURCE%/*}
+INSTALL_DEPS_DIRECTORY=${ROOT_DIRECTORY}/install_deps
+
+
+if [ "$(uname)" == "Darwin" ]; then
+  ${INSTALL_DEPS_DIRECTORY}/install_deps_osx.sh
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+  ${INSTALL_DEPS_DIRECTORY}/install_deps_linux.sh
+elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
+  echo "Windows is not a supported platform" 1>&2 ;
+  exit 1;
+fi
+
+BUILD_DIRECTORY=${ROOT_DIRECTORY}/build
+
+# Create the build directory if it doesn't exist.
+mkdir -p ${BUILD_DIRECTORY}
+cd ${BUILD_DIRECTORY}
+
+# Build
+cmake ..
+make
+
+# Return to project root directory
+cd ${ROOT_DIRECTORY}
