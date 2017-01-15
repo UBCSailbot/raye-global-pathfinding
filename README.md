@@ -1,6 +1,6 @@
-# Sample project base
+# Global Pathfinding
 
-Fork this repo for all new projects.
+A pathfinding solution that will find the fastest and safest way for a sailboat to get between two locations on earth.
 
 ## Setup
 
