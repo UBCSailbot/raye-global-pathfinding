@@ -10,7 +10,7 @@ set(LIB_SRCS
 set(LIB_HDRS
         example/Example.h
         # Add new header files here
-        )
+        datatypes/Node.cpp datatypes/Node.h)
 
 # Define the src_core library target
 add_library(src_core STATIC ${LIB_SRCS} ${LIB_HDRS})
