@@ -31,6 +31,7 @@ brew update
 brew upgrade
 brew install cppcheck
 brew install cmake
+brew install boost
 
 INSTALL_DEPS_DIRECTORY=${BASH_SOURCE%/*}
 LIB_DIRECTORY=${INSTALL_DEPS_DIRECTORY}/../lib
