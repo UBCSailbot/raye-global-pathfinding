@@ -1,3 +1,4 @@
+#define GLFW_INCLUDE_GLCOREARB
 #ifndef __APPLE__
 #include <GL/glew.h> // glew before gl
 #endif
