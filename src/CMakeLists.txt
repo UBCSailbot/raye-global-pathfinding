@@ -3,7 +3,7 @@
 ###########
 
 set(LIB_SRCS
-        core/hexplanet.cpp
+        core/HexPlanet.cpp
         example/Example.cpp
         datatypes/Node.cpp
         datatypes/HexTri.h
@@ -11,7 +11,7 @@ set(LIB_SRCS
         datatypes/HexTri.cpp)
 
 set(LIB_HDRS
-        core/hexplanet.h
+        core/HexPlanet.h
         example/Example.h
         datatypes/Node.h
         datatypes/MapData.h

@@ -11,7 +11,7 @@
 #include "Shader.h"
 #include "Program.h"
 
-#include <core/hexplanet.h>
+#include <core/HexPlanet.h>
 #include <datatypes/MapData.h>
 
 #include <glm/gtc/matrix_transform.hpp>
