@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 #else
 #include <GL/glew.h> // glew before gl
-#include <GL/glfw.h>
+#include <GLFW/glfw3.h>
 #endif
 
 #include "Controls.h"
