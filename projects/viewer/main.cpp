@@ -1,10 +1,7 @@
-#ifdef __APPLE__
-#define GLFW_INCLUDE_GLCOREARB
-#include <GLFW/glfw3.h>
-#else
+#ifndef __APPLE__
 #include <GL/glew.h> // glew before gl
-#include <GLFW/glfw3.h>
 #endif
+#include <GLFW/glfw3.h>
 
 #include "Controls.h"
 #include "Camera.h"

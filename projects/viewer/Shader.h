@@ -1,12 +1,10 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#ifdef __APPLE__
-#include <OpenGL/gl3.h>
-#else
+#ifndef __APPLE__
 #include <GL/glew.h> // glew before gl
-#include <GL/gl3.h>
 #endif
+#include <GLFW/glfw3.h>
 #include <string>
 
 GLuint makeShaderProgram(const std::string &vertFilename, const std::string &fragFilename);
