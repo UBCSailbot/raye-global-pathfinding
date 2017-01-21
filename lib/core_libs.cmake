@@ -2,7 +2,7 @@
 # CORE LIBRARIES #
 #################
 
-set( CORE_LIBS )
+set(CORE_LIBS)
 
 list(APPEND CORE_LIBS ${CMAKE_THREAD_LIBS_INIT})
 
@@ -11,7 +11,10 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/lib/protofiles)
 include_directories(${ProtobufIncludePath})
 list(APPEND CORE_LIBS protofiles)
 
-FIND_PACKAGE( Boost 1.58 COMPONENTS program_options REQUIRED )
-INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
+find_package(Boost 1.58 REQUIRED)
+include_directories(${Boost_INCLUDE_DIR})
+
+find_package(Eigen3 REQUIRED)
+include_directories(${EIGEN3_INCLUDE_DIR})
 
 list(APPEND CORE_LIBS ${Boost_LIBRARIES})

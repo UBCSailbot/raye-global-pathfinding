@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
-project(base  C CXX)  # TODO: Change name
+project(global_pathfinding CXX)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -g -O3 -Wall -Wextra -Wshadow -pedantic")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O3 -Wall -Wextra")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O2 -Wall -Wextra -Wshadow -pedantic ")
 
 ############
 # INCLUDES #

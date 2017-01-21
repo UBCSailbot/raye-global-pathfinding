@@ -1,2 +1,2 @@
-add_subdirectory(example)
+add_subdirectory(viewer)
 add_subdirectory(utilities)
