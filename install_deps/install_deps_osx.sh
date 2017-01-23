@@ -32,6 +32,11 @@ brew upgrade
 brew install cppcheck
 brew install cmake
 brew install boost
+# Install GLFW from HEAD to get the v3.3.0 pre-release which includes an important fix for macOS Sierra.
+brew install --HEAD glfw
+brew install glew
+brew install glm
+brew install eigen
 
 INSTALL_DEPS_DIRECTORY=${BASH_SOURCE%/*}
 LIB_DIRECTORY=${INSTALL_DEPS_DIRECTORY}/../lib
