@@ -16,11 +16,11 @@ constexpr float kAngleMultiplier = 5;  // Multiplier for when a key is pressed;
 }
 
 //----------------------------------------------------------------------------
-Controls::Controls() : lastTime_(glfwGetTime()) {}
+Controls::Controls() : last_time_(glfwGetTime()) {}
 
-void Controls::beginFrame(glm::mat4 *model, GLFWwindow *window) {
+void Controls::begin_frame(glm::mat4 *model, GLFWwindow *window) {
   const double cur_time = glfwGetTime();
-  const double delta_t = cur_time - lastTime_;
+  const double delta_t = cur_time - last_time_;
   float angle = static_cast<float> (delta_t * kSpeed);
 
   // update camera position
@@ -39,6 +39,6 @@ void Controls::beginFrame(glm::mat4 *model, GLFWwindow *window) {
   // TODO(): Make this conditional on some user setting.
   *model = glm::rotate(*model, angle, glm::vec3(0.f, 1.f, 0.f));
 
-  lastTime_ = cur_time;
+  last_time_ = cur_time;
 }
 

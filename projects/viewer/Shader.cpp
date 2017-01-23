@@ -50,12 +50,12 @@ Shader::Shader(const std::string &shaderCode, GLenum shaderType) :
 Shader::Shader(const Shader &other) :
     object_(other.object_),
     ref_count_(other.ref_count_) {
-  _retain();
+  retain();
 }
 
 Shader::~Shader() {
   // ref_count_ will be NULL if constructor failed and threw an exception
-  if (ref_count_) _release();
+  if (ref_count_) release();
 }
 
 GLuint Shader::object() const {
@@ -63,10 +63,10 @@ GLuint Shader::object() const {
 }
 
 Shader &Shader::operator=(const Shader &other) {
-  _release();
+  release();
   object_ = other.object_;
   ref_count_ = other.ref_count_;
-  _retain();
+  retain();
   return *this;
 }
 
@@ -87,12 +87,12 @@ Shader Shader::ShaderFromFile(const std::string &filePath, GLenum shaderType) {
   return shader;
 }
 
-void Shader::_retain() {
+void Shader::retain() {
   assert(ref_count_);
   *ref_count_ += 1;
 }
 
-void Shader::_release() {
+void Shader::release() {
   assert(ref_count_ && *ref_count_ > 0);
   *ref_count_ -= 1;
 

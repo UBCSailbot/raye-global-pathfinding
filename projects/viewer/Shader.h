@@ -1,3 +1,5 @@
+// Copyright 2017 UBC Sailbot
+
 #ifndef SHADER_H
 #define SHADER_H
 #define GLFW_INCLUDE_GLCOREARB
@@ -7,8 +9,6 @@
 #endif
 #include <GLFW/glfw3.h>
 #include <string>
-
-GLuint makeShaderProgram(const std::string &vertFilename, const std::string &fragFilename);
 
 /**
  * Represents a compiled OpenGL shader.
@@ -53,8 +53,8 @@ class Shader {
   GLuint object_;
   unsigned *ref_count_;
 
-  void _retain();
-  void _release();
+  void retain();
+  void release();
 };
 
 #endif  // SHADER_H

@@ -11,6 +11,12 @@ include_directories(${GLFW_INCLUDE_DIRS})
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})
 
+if (NOT APPLE)
+    find_package(GLEW REQUIRED)
+    include_directories(${GLEW_INCLUDE_DIRS})
+    link_libraries(${GLEW_LIBRARIES})
+endif()
+
 # Define the source code
 set(${PROJECT_NAME}_SRCS
         main.cpp

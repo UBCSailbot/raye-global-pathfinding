@@ -1,17 +1,20 @@
+// Copyright 2017 UBC Sailbot
+
 #ifndef CONTROLS_H
 #define CONTROLS_H
 
 #include <glm/detail/type_mat4x4.hpp>
+
 class Camera;
 
 class Controls {
  public:
   Controls();
 
-  void beginFrame(glm::mat4 *model, GLFWwindow *window);
+  void begin_frame(glm::mat4 *model, GLFWwindow *window);
 
  private:
-  double lastTime_;
+  double last_time_;
 };
 
 #endif  // CONTROLS_H

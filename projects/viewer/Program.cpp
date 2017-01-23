@@ -135,10 +135,10 @@ GLint Program::uniform(const GLchar *uniformName) const {
     void Program::setUniform4v(const GLchar* name, const OGL_TYPE* v, GLsizei count) \
         { assert(is_in_use()); glUniform4 ## TYPE_SUFFIX ## v (uniform(name), count, v); }
 
-ATTRIB_N_UNIFORM_SETTERS(GLfloat, , f);
-ATTRIB_N_UNIFORM_SETTERS(GLdouble, , d);
-ATTRIB_N_UNIFORM_SETTERS(GLint, I, i);
-ATTRIB_N_UNIFORM_SETTERS(GLuint, I, ui);
+ATTRIB_N_UNIFORM_SETTERS(GLfloat, , f)
+ATTRIB_N_UNIFORM_SETTERS(GLdouble, , d)
+ATTRIB_N_UNIFORM_SETTERS(GLint, I, i)
+ATTRIB_N_UNIFORM_SETTERS(GLuint, I, ui)
 
 void Program::setUniformMatrix2(const GLchar *name, const GLfloat *v, GLsizei count, GLboolean transpose) {
   assert(is_in_use());

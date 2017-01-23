@@ -1,8 +1,8 @@
 R"(
 #version 330
 
-flat in uvec3 fragTerrainData;
-in vec2 texCoord;
+//flat in uvec3 frag_terrain_data;
+//in vec2 texCoord;
 
 out vec4 fragColor;
 
@@ -43,6 +43,6 @@ void main() {
 //	            (d1 < d2) ? 1 : 2
 //	        );
 //
-//    fragColor.rgb = colorForTerrain(fragTerrainData[terrainIndex]);
+//    fragColor.rgb = colorForTerrain(frag_terrain_data[terrainIndex]);
 }
 )"
