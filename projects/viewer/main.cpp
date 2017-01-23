@@ -19,6 +19,8 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
+#include <thread>
+#include <chrono>
 
 // Include the shader source so that it is shipped with the binary.
 const std::string vert_source =
@@ -33,6 +35,7 @@ constexpr int kPlanetSubdivisions = 5;
 constexpr int kScreenWidth = 800;
 constexpr int kScreenHeight = 450;
 constexpr float kScreenFieldOfView = kScreenWidth / static_cast<float> (kScreenHeight);
+constexpr float kMaxFPS = 60.f;
 constexpr float kMouseSensitivity = 0.1f;
 constexpr float kZoomSensitivity = -0.2f;
 constexpr float kMoveSpeed = 2.0;
@@ -330,12 +333,23 @@ void AppMain() {
   double last_frame_count_time = last_time;
   uint16_t frame_count = 0;
   while (!glfwWindowShouldClose(gWindow)) {
-    // Process pending events
-    glfwPollEvents();
 
     // Update the scene based on the time elapsed since last update
     double current_time = glfwGetTime();
+
+    // Calculate the time required to process a frame
+    double delta = current_time - last_time + 0.01;
+
+    // Limit frame rate
+    while (current_time < last_time - delta + 1.f / kMaxFPS) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));
+      current_time = glfwGetTime();
+    }
+
+    // Process pending events
+    glfwPollEvents();
     Update((float) (current_time - last_time));
+
     last_time = current_time;
 
     // Draw one frame
