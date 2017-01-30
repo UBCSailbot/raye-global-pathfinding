@@ -28,6 +28,8 @@ struct HexVertex {
   std::array<HexVertexId, kMaxHexVertexNeighbourCount> neighbours =
       {{kInvalidHexVertexId, kInvalidHexVertexId, kInvalidHexVertexId, kInvalidHexVertexId, kInvalidHexVertexId,
         kInvalidHexVertexId}};
+
+  HexVertexId neighbour_count = 0;
 };
 
 #endif  // DATATYPES_HEXVERTEX_H

@@ -274,13 +274,16 @@ void HexPlanet::UpdateVertexNeighbours() {
       throw std::runtime_error("There must not be more than 6 neighbours for any vertex.");
     }
 
-    size_t j = 0;
+    HexVertexId j = 0;
 
     // Populate the neighbours array with the candidates.
     for (HexVertexId c : neighbour_map[i]) {
       vertices_[i].neighbours[j] = c;
       j++;
     }
+
+    // Note the number of neighbours for later convenience.
+    vertices_[i].neighbour_count = j;
 
     // Set the rest of the neighbour array to the default (kInvalidHexVertexId).
     for (; j < HexVertex::kMaxHexVertexNeighbourCount; j++) {
