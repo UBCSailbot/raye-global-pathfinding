@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 #include <vector>
+#include <array>
 
 #include <Eigen/Dense>
 
@@ -39,6 +40,11 @@ class HexPlanet {
    * @return Reference to triangle
    */
   const HexTriangle &triangle(size_t triangle_index) const { return triangles_[triangle_index]; }
+
+  /**
+   * Efficiently update all vertex neighbours.
+   */
+  void UpdateVertexNeighbours();
 
   /**
    * Returns the indices of the neighbours of this vertex.

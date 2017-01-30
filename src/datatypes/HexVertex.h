@@ -1,7 +1,7 @@
 // Copyright 2017 UBC Sailbot
 
-#ifndef DATATYPES_HEXTILE_H
-#define DATATYPES_HEXTILE_H
+#ifndef DATATYPES_HEXVERTEX_H
+#define DATATYPES_HEXVERTEX_H
 
 #include "HexDefs.h"
 
@@ -30,4 +30,4 @@ struct HexVertex {
         kInvalidHexVertexId}};
 };
 
-#endif  // DATATYPES_HEXTILE_H
+#endif  // DATATYPES_HEXVERTEX_H

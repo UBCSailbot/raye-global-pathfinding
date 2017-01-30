@@ -7,6 +7,8 @@
 #include <cmath>
 #include <iostream>
 #include <sstream>
+#include <unordered_map>
+#include <unordered_set>
 
 HexPlanet::HexPlanet(int subdivision_level) {
   // Build initial (level 0) mesh
@@ -24,10 +26,8 @@ HexPlanet::HexPlanet(int subdivision_level) {
 
   RepairNormals();
 
-  // Initialize the neighbours field of each vertex
-  for (int i = 0; i < vertices_.size(); i++) {
-    GetNeighbours(i, &vertices_.at(i).neighbours);
-  }
+  // Initialize the neighbours of each vertex
+  UpdateVertexNeighbours();
 }
 
 float round_epsilon(float a) {
@@ -248,6 +248,47 @@ size_t HexPlanet::HexIndexFromPoint(Eigen::Vector3f surface_position) {
   return best_hex;
 }
 
+void HexPlanet::UpdateVertexNeighbours() {
+  std::vector<std::unordered_set<HexVertexId>> neighbour_map;
+  neighbour_map.reserve(vertices_.size());
+
+  for (size_t i = 0; i < vertices_.size(); i++) {
+    neighbour_map[i] = std::unordered_set<HexVertexId>(HexVertex::kMaxHexVertexNeighbourCount);
+  }
+
+  for (const auto& triangle : triangles_) {
+    // Neighbours of a
+    neighbour_map[triangle.vertex_a].insert(triangle.vertex_b);
+    neighbour_map[triangle.vertex_a].insert(triangle.vertex_c);
+    // Neighbours of b
+    neighbour_map[triangle.vertex_b].insert(triangle.vertex_a);
+    neighbour_map[triangle.vertex_b].insert(triangle.vertex_c);
+    // Neighbours of c
+    neighbour_map[triangle.vertex_c].insert(triangle.vertex_a);
+    neighbour_map[triangle.vertex_c].insert(triangle.vertex_b);
+  }
+
+  for (HexVertexId i = 0; i < neighbour_map.size(); i++) {
+    // There mustn't be more than 6 neighbours for any vertex.
+    if (neighbour_map[i].size() > HexVertex::kMaxHexVertexNeighbourCount) {
+      throw std::runtime_error("There must not be more than 6 neighbours for any vertex.");
+    }
+
+    size_t j = 0;
+
+    // Populate the neighbours array with the candidates.
+    for (HexVertexId c : neighbour_map[i]) {
+      vertices_[i].neighbours[j] = c;
+      j++;
+    }
+
+    // Set the rest of the neighbour array to the default (kInvalidHexVertexId).
+    for (; j < HexVertex::kMaxHexVertexNeighbourCount; j++) {
+      vertices_[i].neighbours[j] = kInvalidHexVertexId;
+    }
+  }
+}
+
 void HexPlanet::GetNeighbours(HexVertexId vertex_index, std::array<HexVertexId, 6> *neighbours) const {
   std::set<HexVertexId> candidates;
 
@@ -267,7 +308,7 @@ void HexPlanet::GetNeighbours(HexVertexId vertex_index, std::array<HexVertexId, 
 
   // There mustn't be more than 6 neighbours for any vertex.
   if (candidates.size() > HexVertex::kMaxHexVertexNeighbourCount) {
-    throw new std::runtime_error("There must not be more than 6 neighbours for any vertex.");
+    throw std::runtime_error("There must not be more than 6 neighbours for any vertex.");
   }
 
   size_t i = 0;

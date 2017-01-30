@@ -31,7 +31,7 @@ const std::string frag_source =
 ;
 
 // Constants
-constexpr int kPlanetSubdivisions = 5;
+constexpr int kPlanetSubdivisions = 8;
 constexpr int kScreenWidth = 800;
 constexpr int kScreenHeight = 450;
 constexpr float kScreenFieldOfView = kScreenWidth / static_cast<float> (kScreenHeight);
