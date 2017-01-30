@@ -2,12 +2,11 @@
 #define EXAMPLETEST_H
 
 #include <gtest/gtest.h>
-#include <example/Example.h>
+#include <datatypes/HexVertex.h>
 
-class ExampleTest : public ::testing::Test  {
+class HexVertexTest : public ::testing::Test  {
  protected:
-  ExampleTest();
-  Example example;
+  HexVertexTest();
 };
 
 #endif  // EXAMPLETEST_H

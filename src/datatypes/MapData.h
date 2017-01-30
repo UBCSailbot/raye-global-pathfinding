@@ -3,9 +3,9 @@
 #ifndef DATATYPES_MAP_DATA_H
 #define DATATYPES_MAP_DATA_H
 
-#include <vector>
-#include <stdint.h>
 #include <cstdio>
+#include <stdint.h>
+#include <vector>
 
 template<typename T>
 class MapData {

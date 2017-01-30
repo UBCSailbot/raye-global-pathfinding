@@ -12,7 +12,7 @@
 #include <Eigen/Dense>
 
 /**
- * A planet mesh in which verticies have 6 neighbors (sometimes 5), making it look like it's composed of hex tiles.
+ * A planet mesh in which verticies have 6 neighbours (sometimes 5), making it look like it's composed of hex tiles.
  */
 class HexPlanet {
  public:
@@ -32,7 +32,7 @@ class HexPlanet {
    * @param vertex_index Desired vertex index
    * @return Reference to vertex
    */
-  const HexVertex &vertex(size_t vertex_index) const { return vertices_[vertex_index]; }
+  const HexVertex &vertex(HexVertexId vertex_index) const { return vertices_[vertex_index]; }
 
   /**
    * @param triangle_index Desired triangle index
@@ -41,20 +41,12 @@ class HexPlanet {
   const HexTriangle &triangle(size_t triangle_index) const { return triangles_[triangle_index]; }
 
   /**
-   * Returns the polygon representation of a given tile.
-   * Note: Usually 6-sided but could be a pentagon. No particular order.
-   * @param tile_index Target hex index
-   * @param polygon Destination vector
+   * Returns the indices of the neighbours of this vertex.
+   * Note: Usually 6 but can be 5. No particular order.
+   * @param vertex_index Target vertex index
+   * @param neighbours Destination array
    */
-  void GetPolygon(uint32_t tile_index, std::vector<Eigen::Vector3f> *polygon);
-
-  /**
-   * Returns the indices of the neighbors of this tile.
-   * Note: Usually 6-sided but could be a pentagon. No particular order.
-   * @param tile_index Target hex index
-   * @param neighbors Destination vector
-   */
-  void GetNeighbors(uint32_t tile_index, std::vector<uint32_t> *neighbors) const;
+  void GetNeighbours(HexVertexId vertex_index, std::array<HexVertexId, 6> *neighbours) const;
 
   /**
    * Returns a point on the planet's surface given a ray

@@ -13,10 +13,10 @@
  * A HexTriangle is an (triangle) element of the dual of the HexPlanet.
  */
 struct HexTriangle {
-  HexTriangle(uint32_t a, uint32_t b, uint32_t c);
+  HexTriangle(HexVertexId a, HexVertexId b, HexVertexId c);
 
   /// Indices into the vertex list
-  uint32_t vertex_a, vertex_b, vertex_c;
+  HexVertexId vertex_a, vertex_b, vertex_c;
 
   /**
    * Returns the center of the triangle.

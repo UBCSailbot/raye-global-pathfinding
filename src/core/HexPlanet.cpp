@@ -186,9 +186,9 @@ void HexPlanet::Subdivide() {
 
   // For each edge, create two triangles
   for (auto ei : adjacency_info) {
-    // Given edge A,B - with neighbor across edge
-    // First triangle is: A, center, neighbor's center
-    // Second triangle is: center, neighbor's center, B
+    // Given edge A,B - with neighbour across edge
+    // First triangle is: A, center, neighbour's center
+    // Second triangle is: center, neighbour's center, B
     if (ei.second.first == uint32_t(-1) ||
         ei.second.second == uint32_t(-1)) {
       std::cerr << "Error in adjacency info" << std::endl;
@@ -243,63 +243,40 @@ size_t HexPlanet::HexIndexFromPoint(Eigen::Vector3f surface_position) {
   return best_hex;
 }
 
-void HexPlanet::GetPolygon(uint32_t tile_index, std::vector<Eigen::Vector3f> *polygon) {
-  // Clear list
-  polygon->erase(polygon->begin(), polygon->end());
+void HexPlanet::GetNeighbours(HexVertexId vertex_index, std::array<HexVertexId, 6> *neighbours) const {
+  std::set<HexVertexId> candidates;
 
-  // Get neighboring hexes
-  std::vector<uint32_t> neighbors;
-  GetNeighbors(tile_index, &neighbors);
-
-  // Sort edges to make a good polygon (first assign angles around center)
-  std::vector<HexTriangle *> triangles;
-  const Eigen::Vector3f firstPos = triangles_[neighbors[0]].GetCenter(vertices_);
-
-  for (std::vector<uint32_t>::const_iterator i = neighbors.begin(); i != neighbors.end(); ++i) {
-    triangles.push_back(&triangles_[*i]);
-    Eigen::Vector3f v1 = firstPos - vertices_[tile_index].vertex_position;
-    Eigen::Vector3f normal = triangles_[*i].GetCenter(vertices_);
-    Eigen::Vector3f v2 = normal - vertices_[tile_index].vertex_position;
-    normal.normalize();
-    v1.normalize();
-    v2.normalize();
-
-    float ang = acosf(v1.dot(v2));
-    Eigen::Vector3f t1 = v1.cross(v2);
-    const float dir = normal.dot(t1);
-    if (dir < 0.0f) ang = static_cast<float> (M_PI + (M_PI - ang));
-
-    triangles_[*i].tmp_.angle_ = ang;
-  }
-
-  std::sort(triangles.begin(),
-            triangles.end(),
-            [](HexTriangle *a, HexTriangle *b) { return a->tmp_.angle_ < b->tmp_.angle_; });
-
-  // Construct polygons
-  for (std::vector<HexTriangle *>::iterator ti = triangles.begin(); ti != triangles.end(); ++ti) {
-    Eigen::Vector3f p = (**ti).GetCenter(vertices_);
-    p.normalize();
-    polygon->push_back(p);
-  }
-}
-
-void HexPlanet::GetNeighbors(uint32_t tile_index, std::vector<uint32_t> *neighbors) const {
-  // Clear list
-  neighbors->erase(neighbors->begin(), neighbors->end());
-
-  std::set<uint32_t> candidates;
-
-  // Find neighbors
-  for (size_t ti = 0; ti < triangles_.size(); ti++) {
-    if (triangles_[ti].vertex_a == tile_index ||
-        triangles_[ti].vertex_b == tile_index ||
-        triangles_[ti].vertex_c == tile_index) {
-      candidates.insert(ti);
+  // Find neighbours
+  for (HexVertexId ti = 0; ti < triangles_.size(); ti++) {
+    if (triangles_[ti].vertex_a == vertex_index) {
+      candidates.insert(triangles_[ti].vertex_b);
+      candidates.insert(triangles_[ti].vertex_c);
+    } else if (triangles_[ti].vertex_b == vertex_index) {
+      candidates.insert(triangles_[ti].vertex_a);
+      candidates.insert(triangles_[ti].vertex_c);
+    } else if (triangles_[ti].vertex_c == vertex_index) {
+      candidates.insert(triangles_[ti].vertex_a);
+      candidates.insert(triangles_[ti].vertex_b);
     }
   }
 
-  neighbors->insert(neighbors->end(), candidates.begin(), candidates.end());
+  // There mustn't be more than 6 neighbours for any vertex.
+  if (candidates.size() >= HexVertex::kMaxHexVertexNeighbourCount) {
+    throw new std::runtime_error("There must not be more than 6 neighbours for any vertex.");
+  }
+
+  size_t i = 0;
+
+  // Populate the neighbours array with the candidates.
+  for (HexVertexId c : candidates) {
+    (*neighbours)[i] = c;
+    i++;
+  }
+
+  // Set the rest of the neighbour array to the default (kInvalidHexVertexId).
+  for (; i < HexVertex::kMaxHexVertexNeighbourCount; i++) {
+    (*neighbours)[i] = kInvalidHexVertexId;
+  }
 }
 
 bool HexPlanet::RayHitPlanet(const Eigen::Vector3f &p, const Eigen::Vector3f &dir, Eigen::Vector3f *result) {

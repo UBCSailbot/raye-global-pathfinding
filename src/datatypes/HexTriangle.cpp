@@ -2,10 +2,9 @@
 
 #include "HexTriangle.h"
 
-HexTriangle::HexTriangle(uint32_t a, uint32_t b, uint32_t c) :
-    vertex_a(a), vertex_b(b), vertex_c(c) {
-  // Mark newvert as uninitialized
-  tmp_.new_vertex_ = -1;
+HexTriangle::HexTriangle(HexVertexId a, HexVertexId b, HexVertexId c) : vertex_a(a), vertex_b(b), vertex_c(c) {
+  // Mark new_vertex_ as uninitialized
+  tmp_.new_vertex_ = kInvalidHexVertexId;
 }
 
 Eigen::Vector3f HexTriangle::GetCenter(const std::vector<HexVertex> &vertices) {
