@@ -23,6 +23,11 @@ HexPlanet::HexPlanet(int subdivision_level) {
   }
 
   RepairNormals();
+
+  // Initialize the neighbours field of each vertex
+  for (int i = 0; i < vertices_.size(); i++) {
+    GetNeighbours(i, &vertices_.at(i).neighbours);
+  }
 }
 
 float round_epsilon(float a) {
@@ -261,7 +266,7 @@ void HexPlanet::GetNeighbours(HexVertexId vertex_index, std::array<HexVertexId, 
   }
 
   // There mustn't be more than 6 neighbours for any vertex.
-  if (candidates.size() >= HexVertex::kMaxHexVertexNeighbourCount) {
+  if (candidates.size() > HexVertex::kMaxHexVertexNeighbourCount) {
     throw new std::runtime_error("There must not be more than 6 neighbours for any vertex.");
   }
 
