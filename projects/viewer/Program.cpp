@@ -28,7 +28,7 @@ Program::Program(const std::vector<Shader> &shaders) : object_(0) {
     glDetachShader(object_, shaders[i].object());
   }
 
-  //throw exception if linking failed
+  // Throw an exception if linking failed
   GLint status;
   glGetProgramiv(object_, GL_LINK_STATUS, &status);
   if (status == GL_FALSE) {
@@ -100,40 +100,40 @@ GLint Program::uniform(const GLchar *uniformName) const {
 #define ATTRIB_N_UNIFORM_SETTERS(OGL_TYPE, TYPE_PREFIX, TYPE_SUFFIX) \
 \
     void Program::setAttrib(const GLchar* name, OGL_TYPE v0) \
-        { assert(is_in_use()); glVertexAttrib ## TYPE_PREFIX ## 1 ## TYPE_SUFFIX (attrib(name), v0); } \
+        { assert(is_in_use()); glVertexAttrib ## TYPE_PREFIX ## 1 ## TYPE_SUFFIX(attrib(name), v0); } \
     void Program::setAttrib(const GLchar* name, OGL_TYPE v0, OGL_TYPE v1) \
-        { assert(is_in_use()); glVertexAttrib ## TYPE_PREFIX ## 2 ## TYPE_SUFFIX (attrib(name), v0, v1); } \
+        { assert(is_in_use()); glVertexAttrib ## TYPE_PREFIX ## 2 ## TYPE_SUFFIX(attrib(name), v0, v1); } \
     void Program::setAttrib(const GLchar* name, OGL_TYPE v0, OGL_TYPE v1, OGL_TYPE v2) \
-        { assert(is_in_use()); glVertexAttrib ## TYPE_PREFIX ## 3 ## TYPE_SUFFIX (attrib(name), v0, v1, v2); } \
+        { assert(is_in_use()); glVertexAttrib ## TYPE_PREFIX ## 3 ## TYPE_SUFFIX(attrib(name), v0, v1, v2); } \
     void Program::setAttrib(const GLchar* name, OGL_TYPE v0, OGL_TYPE v1, OGL_TYPE v2, OGL_TYPE v3) \
-        { assert(is_in_use()); glVertexAttrib ## TYPE_PREFIX ## 4 ## TYPE_SUFFIX (attrib(name), v0, v1, v2, v3); } \
+        { assert(is_in_use()); glVertexAttrib ## TYPE_PREFIX ## 4 ## TYPE_SUFFIX(attrib(name), v0, v1, v2, v3); } \
 \
     void Program::setAttrib1v(const GLchar* name, const OGL_TYPE* v) \
-        { assert(is_in_use()); glVertexAttrib ## TYPE_PREFIX ## 1 ## TYPE_SUFFIX ## v (attrib(name), v); } \
+        { assert(is_in_use()); glVertexAttrib ## TYPE_PREFIX ## 1 ## TYPE_SUFFIX ## v(attrib(name), v); } \
     void Program::setAttrib2v(const GLchar* name, const OGL_TYPE* v) \
-        { assert(is_in_use()); glVertexAttrib ## TYPE_PREFIX ## 2 ## TYPE_SUFFIX ## v (attrib(name), v); } \
+        { assert(is_in_use()); glVertexAttrib ## TYPE_PREFIX ## 2 ## TYPE_SUFFIX ## v(attrib(name), v); } \
     void Program::setAttrib3v(const GLchar* name, const OGL_TYPE* v) \
-        { assert(is_in_use()); glVertexAttrib ## TYPE_PREFIX ## 3 ## TYPE_SUFFIX ## v (attrib(name), v); } \
+        { assert(is_in_use()); glVertexAttrib ## TYPE_PREFIX ## 3 ## TYPE_SUFFIX ## v(attrib(name), v); } \
     void Program::setAttrib4v(const GLchar* name, const OGL_TYPE* v) \
-        { assert(is_in_use()); glVertexAttrib ## TYPE_PREFIX ## 4 ## TYPE_SUFFIX ## v (attrib(name), v); } \
+        { assert(is_in_use()); glVertexAttrib ## TYPE_PREFIX ## 4 ## TYPE_SUFFIX ## v(attrib(name), v); } \
 \
     void Program::setUniform(const GLchar* name, OGL_TYPE v0) \
-        { assert(is_in_use()); glUniform1 ## TYPE_SUFFIX (uniform(name), v0); } \
+        { assert(is_in_use()); glUniform1 ## TYPE_SUFFIX(uniform(name), v0); } \
     void Program::setUniform(const GLchar* name, OGL_TYPE v0, OGL_TYPE v1) \
-        { assert(is_in_use()); glUniform2 ## TYPE_SUFFIX (uniform(name), v0, v1); } \
+        { assert(is_in_use()); glUniform2 ## TYPE_SUFFIX(uniform(name), v0, v1); } \
     void Program::setUniform(const GLchar* name, OGL_TYPE v0, OGL_TYPE v1, OGL_TYPE v2) \
-        { assert(is_in_use()); glUniform3 ## TYPE_SUFFIX (uniform(name), v0, v1, v2); } \
+        { assert(is_in_use()); glUniform3 ## TYPE_SUFFIX(uniform(name), v0, v1, v2); } \
     void Program::setUniform(const GLchar* name, OGL_TYPE v0, OGL_TYPE v1, OGL_TYPE v2, OGL_TYPE v3) \
-        { assert(is_in_use()); glUniform4 ## TYPE_SUFFIX (uniform(name), v0, v1, v2, v3); } \
+        { assert(is_in_use()); glUniform4 ## TYPE_SUFFIX(uniform(name), v0, v1, v2, v3); } \
 \
     void Program::setUniform1v(const GLchar* name, const OGL_TYPE* v, GLsizei count) \
-        { assert(is_in_use()); glUniform1 ## TYPE_SUFFIX ## v (uniform(name), count, v); } \
+        { assert(is_in_use()); glUniform1 ## TYPE_SUFFIX ## v(uniform(name), count, v); } \
     void Program::setUniform2v(const GLchar* name, const OGL_TYPE* v, GLsizei count) \
-        { assert(is_in_use()); glUniform2 ## TYPE_SUFFIX ## v (uniform(name), count, v); } \
+        { assert(is_in_use()); glUniform2 ## TYPE_SUFFIX ## v(uniform(name), count, v); } \
     void Program::setUniform3v(const GLchar* name, const OGL_TYPE* v, GLsizei count) \
-        { assert(is_in_use()); glUniform3 ## TYPE_SUFFIX ## v (uniform(name), count, v); } \
+        { assert(is_in_use()); glUniform3 ## TYPE_SUFFIX ## v(uniform(name), count, v); } \
     void Program::setUniform4v(const GLchar* name, const OGL_TYPE* v, GLsizei count) \
-        { assert(is_in_use()); glUniform4 ## TYPE_SUFFIX ## v (uniform(name), count, v); }
+        { assert(is_in_use()); glUniform4 ## TYPE_SUFFIX ## v(uniform(name), count, v); }
 
 ATTRIB_N_UNIFORM_SETTERS(GLfloat, , f)
 ATTRIB_N_UNIFORM_SETTERS(GLdouble, , d)

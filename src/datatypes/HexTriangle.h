@@ -1,7 +1,7 @@
 // Copyright 2017 UBC Sailbot
 
-#ifndef DATATYPES_HEXTRI_H
-#define DATATYPES_HEXTRI_H
+#ifndef DATATYPES_HEXTRIANGLE_H_
+#define DATATYPES_HEXTRIANGLE_H_
 
 #include <Eigen/Dense>
 #include "HexVertex.h"
@@ -12,7 +12,8 @@
 /**
  * A HexTriangle is an (triangle) element of the dual of the HexPlanet.
  */
-struct HexTriangle {
+class HexTriangle {
+ public:
   HexTriangle(HexVertexId a, HexVertexId b, HexVertexId c);
 
   /// Indices into the vertex list
@@ -35,4 +36,4 @@ struct HexTriangle {
   } tmp_;
 };
 
-#endif  // DATATYPES_HEXTRI_H
+#endif  // DATATYPES_HEXTRIANGLE_H_

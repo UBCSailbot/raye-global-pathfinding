@@ -3,6 +3,7 @@
 #include "Camera.h"
 
 #include <cmath>
+
 #include <glm/gtc/matrix_transform.hpp>
 
 // Must be less than 90 to avoid gimbal lock

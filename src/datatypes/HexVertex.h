@@ -1,7 +1,7 @@
 // Copyright 2017 UBC Sailbot
 
-#ifndef DATATYPES_HEXVERTEX_H
-#define DATATYPES_HEXVERTEX_H
+#ifndef DATATYPES_HEXVERTEX_H_
+#define DATATYPES_HEXVERTEX_H_
 
 #include "HexDefs.h"
 
@@ -11,9 +11,12 @@
 /**
  * A HexVertex is a single vertex in a HexPlanet. It is a single vertex of the dual mesh.
  */
-struct HexVertex {
+class HexVertex {
+ public:
+  /// The maximum number of neighbours that any vertex can have in a valid HexPlanet.
   static constexpr HexVertexId kMaxHexVertexNeighbourCount = 6;
-  HexVertex(Eigen::Vector3f p);
+
+  explicit HexVertex(Eigen::Vector3f p);
 
   Eigen::Vector3f normal() const;
 
@@ -32,4 +35,4 @@ struct HexVertex {
   HexVertexId neighbour_count = 0;
 };
 
-#endif  // DATATYPES_HEXVERTEX_H
+#endif  // DATATYPES_HEXVERTEX_H_

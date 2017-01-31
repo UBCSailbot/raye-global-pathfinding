@@ -1,11 +1,11 @@
 // Copyright 2017 UBC Sailbot
 
-#ifndef SHADER_H
-#define SHADER_H
+#ifndef SHADER_H_
+#define SHADER_H_
 #define GLFW_INCLUDE_GLCOREARB
 
 #ifndef __APPLE__
-#include <GL/glew.h> // glew before gl
+#include <GL/glew.h>  // GLEW before OpenGL
 #endif
 #include <GLFW/glfw3.h>
 #include <string>
@@ -15,7 +15,6 @@
  */
 class Shader {
  public:
-
   /**
    * Creates a shader from a text file.
    *
@@ -57,5 +56,4 @@ class Shader {
   void release();
 };
 
-#endif  // SHADER_H
-
+#endif  // SHADER_H_

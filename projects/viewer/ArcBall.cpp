@@ -2,7 +2,6 @@
 
 #include "ArcBall.h"
 
-//------------------------------------------------------------------------------
 ArcBall::ArcBall(const glm::vec3 &center, glm::float_t radius, const glm::mat4 &screenToTCS) :
     mCenter(center),
     mRadius(radius),
@@ -18,9 +17,7 @@ ArcBall::ArcBall(const glm::vec3 &center, glm::float_t radius, const glm::mat4 &
   mQNow = qOne;
 }
 
-
-ArcBall::~ArcBall() {
-}
+ArcBall::~ArcBall() {}
 
 glm::vec3 ArcBall::mouseOnSphere(const glm::vec3 &tscMouse) {
   glm::vec3 ballMouse;
@@ -44,7 +41,6 @@ glm::vec3 ArcBall::mouseOnSphere(const glm::vec3 &tscMouse) {
 
   return ballMouse;
 }
-
 
 void ArcBall::beginDrag(const glm::vec2 &msc) {
   // The next two lines are usually a part of end drag. But end drag introduces
@@ -82,7 +78,6 @@ void ArcBall::setLocationOnSphere(glm::vec3 location, glm::vec3 up) {
   q.z = -q.z;
   q.w = q.w;
   mQNow = q;
-
 }
 
 glm::quat ArcBall::quatFromUnitSphere(const glm::vec3 &from, const glm::vec3 &to) {
@@ -97,4 +92,3 @@ glm::quat ArcBall::quatFromUnitSphere(const glm::vec3 &from, const glm::vec3 &to
 glm::mat4 ArcBall::getTransformation() const {
   return mMatNow;
 }
-

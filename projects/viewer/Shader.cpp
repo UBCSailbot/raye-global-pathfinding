@@ -1,17 +1,15 @@
+// Copyright 2017 UBC Sailbot
 #include "Shader.h"
 
-#include <fstream>
-#include <iostream>
+#include <cassert>
 
 #include <stdexcept>
-#include <fstream>
 #include <string>
-#include <cassert>
+#include <fstream>
+#include <iostream>
 #include <sstream>
 
-Shader::Shader(const std::string &shaderCode, GLenum shaderType) :
-    object_(0),
-    ref_count_(NULL) {
+Shader::Shader(const std::string &shaderCode, GLenum shaderType) : object_(0), ref_count_(NULL) {
   // Create the shader object
   object_ = glCreateShader(shaderType);
   if (object_ == 0) {

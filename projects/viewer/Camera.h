@@ -1,6 +1,7 @@
 // Copyright 2017 UBC Sailbot
 
-#pragma once
+#ifndef CAMERA_H_
+#define CAMERA_H_
 
 #include <glm/glm.hpp>
 
@@ -126,18 +127,19 @@ class Camera {
   glm::mat4 view() const;
 
  private:
-  glm::vec3 _position; ///< position in world space
+  glm::vec3 _position;  ///< position in world space
 //  glm::vec3 tPos_; ///< position of what we're looking at (world space)
 //  glm::vec3 headVec_; ///< head vector (up)
 
   float _horizontalAngle = 0.0f;
   float _verticalAngle = 0.0f;
-  float _fieldOfView = 50.0f; ///< field of view
-  float _nearPlane = 0.01f; ///< near clip plane
-  float _farPlane = 100.0f; ///< far clip plane
-  float _viewportAspectRatio = 16.f / 9.f; ///< window width / height
+  float _fieldOfView = 50.0f;  ///< field of view
+  float _nearPlane = 0.01f;  ///< near clip plane
+  float _farPlane = 100.0f;  ///< far clip plane
+  float _viewportAspectRatio = 16.f / 9.f;  ///< window width / height
 
 
   void normalizeAngles();
 };
 
+#endif  // CAMERA_H_

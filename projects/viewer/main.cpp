@@ -1,34 +1,34 @@
 // Copyright 2017 UBC Sailbot
 
-#define GLFW_INCLUDE_GLCOREARB
-#ifndef __APPLE__
-#include <GL/glew.h> // glew before gl
-#endif
-#include <GLFW/glfw3.h>
-
-#include "Controls.h"
-#include "Camera.h"
-#include "Shader.h"
-#include "Program.h"
-
-#include <core/HexPlanet.h>
-
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
 #include <fstream>
 #include <iostream>
 #include <memory>
 #include <thread>
 #include <chrono>
 
+#define GLFW_INCLUDE_GLCOREARB
+#ifndef __APPLE__
+#include <GL/glew.h>  // GLEW before OpenGL
+#endif
+#include <GLFW/glfw3.h>
+
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#include <core/HexPlanet.h>
+
+#include "Controls.h"
+#include "Camera.h"
+#include "Shader.h"
+#include "Program.h"
+
 // Include the shader source so that it is shipped with the binary.
-const std::string vert_source =
+const char vert_source[] = {
 #include "vert.glsl"
-;
-const std::string frag_source =
+};
+const char frag_source[] = {
 #include "frag.glsl"
-;
+};
 
 // Constants
 constexpr int kPlanetSubdivisions = 8;
@@ -64,7 +64,7 @@ static void LoadShaders() {
 /**
  * Loads the planet into the VAO and VBO globals: gVAO and gVBO
  */
-static void LoadPlanet(std::unique_ptr<HexPlanet> &planet) {
+static void LoadPlanet(const std::unique_ptr<HexPlanet> &planet) {
   // Make and bind the VAO
   glGenVertexArrays(1, &gVAO);
   glBindVertexArray(gVAO);
@@ -153,7 +153,7 @@ static void LoadPlanet(std::unique_ptr<HexPlanet> &planet) {
 /**
  * Draws a single frame.
  */
-static void Render(std::unique_ptr<HexPlanet> &planet) {
+static void Render(const std::unique_ptr<HexPlanet> &planet) {
   // Clear everything
   glClearColor(0, 0, 0, 1);  // black
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -196,7 +196,7 @@ void Update(float seconds_elapsed) {
   gDegreesRotated += seconds_elapsed * kDegreesPerSecond;
   while (gDegreesRotated > 360.0f) {
     gDegreesRotated -= 360.0f;
-  };
+  }
 
   // Move position of camera based on WASD keys, and XZ keys for up and down
   if (glfwGetKey(gWindow, 'S')) {
@@ -218,11 +218,14 @@ void Update(float seconds_elapsed) {
   // Rotate camera based on mouse movement
   double mouse_x, mouse_y;
   glfwGetCursorPos(gWindow, &mouse_x, &mouse_y);
-  gCamera.offsetOrientation(kMouseSensitivity * (float) mouse_y, kMouseSensitivity * (float) mouse_x);
-  glfwSetCursorPos(gWindow, 0, 0); // Reset the mouse, so it doesn't go out of the window
+  gCamera.offsetOrientation(kMouseSensitivity * static_cast<float>(mouse_y),
+                            kMouseSensitivity * static_cast<float>(mouse_x));
+
+  // Reset the mouse, so it doesn't go out of the window
+  glfwSetCursorPos(gWindow, 0, 0);
 
   // Increase or decrease field of view based on mouse wheel
-  float field_of_view = gCamera.fieldOfView() + kZoomSensitivity * (float) gScrollY;
+  float field_of_view = gCamera.fieldOfView() + kZoomSensitivity * static_cast<float>(gScrollY);
   if (field_of_view < 5.0f) field_of_view = 5.0f;
   if (field_of_view > 130.0f) field_of_view = 130.0f;
   gCamera.setFieldOfView(field_of_view);
@@ -278,7 +281,7 @@ void AppMain() {
 
 #ifndef __APPLE__
   // Initialise GLEW
-  glewExperimental = GL_TRUE; //stops glew crashing on OSX :-/
+  glewExperimental = GL_TRUE;
   if (glewInit() != GLEW_OK) {
     throw std::runtime_error("glewInit failed");
   }
@@ -287,7 +290,7 @@ void AppMain() {
   // GLEW throws some errors, so discard all the errors so far
   while (glGetError() != GL_NO_ERROR) {}
 
-  // print out some info about the graphics drivers
+  // Print out some info about the graphics drivers
   std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
   std::cout << "GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
   std::cout << "Vendor: " << glGetString(GL_VENDOR) << std::endl;
@@ -332,8 +335,8 @@ void AppMain() {
   double last_time = glfwGetTime();
   double last_frame_count_time = last_time;
   uint16_t frame_count = 0;
-  while (!glfwWindowShouldClose(gWindow)) {
 
+  while (!glfwWindowShouldClose(gWindow)) {
     // Update the scene based on the time elapsed since last update
     double current_time = glfwGetTime();
 
@@ -348,7 +351,7 @@ void AppMain() {
 
     // Process pending events
     glfwPollEvents();
-    Update((float) (current_time - last_time));
+    Update(static_cast<float>(current_time - last_time));
 
     last_time = current_time;
 

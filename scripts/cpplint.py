@@ -4398,7 +4398,7 @@ def _ClassifyInclude(fileinfo, include, is_system):
   """
   # This is a list of all standard c++ header files, except
   # those already checked for above.
-  is_cpp_h = include in _CPP_HEADERS
+  is_cpp_h = (include in _CPP_HEADERS) or not (include.endswith('.h') and include.endswith('.hpp'))
 
   if is_system:
     if is_cpp_h:
@@ -4503,6 +4503,8 @@ def CheckIncludeLine(filename, clean_lines, linenum, include_state, error):
         error(filename, linenum, 'build/include_alpha', 4,
               'Include "%s" not in alphabetical order' % include)
       include_state.SetLastHeader(canonical_include)
+    elif len(include_state.include_list[-1]) == 0:
+      include_state.include_list[-1].append((include, linenum))
 
 
 
@@ -5742,14 +5744,14 @@ def FlagCxx11Features(filename, clean_lines, linenum, error):
 
   # Flag unapproved C++11 headers.
   if include and include.group(1) in ('cfenv',
-                                      'condition_variable',
+                                      # 'condition_variable',
                                       'fenv.h',
-                                      'future',
-                                      'mutex',
-                                      'thread',
-                                      'chrono',
+                                      # 'future',
+                                      # 'mutex',
+                                      # 'thread',
+                                      # 'chrono',
                                       'ratio',
-                                      'regex',
+                                      # 'regex',
                                       'system_error',
                                      ):
     error(filename, linenum, 'build/c++11', 5,
@@ -6008,7 +6010,7 @@ def ProcessFile(filename, vlevel, extra_check_functions=[]):
         Error(filename, linenum, 'whitespace/newline', 1,
               'Unexpected \\r (^M) found; better to use only \\n')
 
-  sys.stderr.write('Done processing %s\n' % filename)
+  # sys.stderr.write('Done processing %s\n' % filename)
   _RestoreFilters()
 
 

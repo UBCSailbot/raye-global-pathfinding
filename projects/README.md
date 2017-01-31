@@ -4,8 +4,8 @@
 ## Production targets
 These targets are for production code.
 
-### Example
-> Example description.
+### Viewer
+> An OpenGL based desktop application for viewing the pathfinder.
 > Read more [here](example/README.md).
 
 ## Utilities

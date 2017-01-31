@@ -1,6 +1,6 @@
 // Copyright 2017 UBC Sailbot
 
-#include "HexPlanet.h"
+#include "core/HexPlanet.h"
 
 #include <map>
 #include <set>
@@ -57,8 +57,8 @@ void HexPlanet::Write(std::ostream &o) {
 
 void HexPlanet::Read(std::istream &is) {
   std::string line;
-  for (std::getline(is, line); !is.eof(); std::getline(is, line)) {
 
+  for (std::getline(is, line); !is.eof(); std::getline(is, line)) {
     std::istringstream iss(line);
     char firstChar;
     iss >> firstChar;
@@ -143,14 +143,14 @@ void HexPlanet::build_level_0() {
 }
 
 typedef std::map<std::pair<uint32_t, uint32_t>, std::pair<uint32_t, uint32_t> > AdjacencyMap;
-void UpdateAdjacencyInfo(const std::pair<uint32_t, uint32_t> &edge, uint32_t triangle_index, AdjacencyMap &am) {
-  AdjacencyMap::iterator i = am.find(edge);
-  if (i == am.end()) {
-    am[edge] = std::make_pair(triangle_index, -1);
+void UpdateAdjacencyInfo(const std::pair<uint32_t, uint32_t> &edge, uint32_t triangle_index, AdjacencyMap *am) {
+  AdjacencyMap::iterator i = am->find(edge);
+  if (i == am->end()) {
+    (*am)[edge] = std::make_pair(triangle_index, -1);
   } else {
     // i->second is the value in the map (a pair of triangle indexes)
     // the first index was set in create (above)
-    if (i->second.second != uint32_t(-1)) {
+    if (i->second.second != kInvalidHexVertexId) {
       std::cerr << "Error in UpdateAdjacencyInfo!" << std::endl;
     }
     i->second.second = triangle_index;
@@ -163,13 +163,13 @@ void HexPlanet::Subdivide() {
   for (uint32_t ti = 0; ti != triangles_.size(); ++ti) {
     const HexTriangle &t = triangles_[ti];
     std::pair<uint32_t, uint32_t> edge_a_b(std::min(t.vertex_a, t.vertex_b), std::max(t.vertex_a, t.vertex_b));
-    UpdateAdjacencyInfo(edge_a_b, ti, adjacency_info);
+    UpdateAdjacencyInfo(edge_a_b, ti, &adjacency_info);
 
     std::pair<uint32_t, uint32_t> edge_b_c(std::min(t.vertex_b, t.vertex_c), std::max(t.vertex_b, t.vertex_c));
-    UpdateAdjacencyInfo(edge_b_c, ti, adjacency_info);
+    UpdateAdjacencyInfo(edge_b_c, ti, &adjacency_info);
 
     std::pair<uint32_t, uint32_t> edge_c_a(std::min(t.vertex_c, t.vertex_a), std::max(t.vertex_c, t.vertex_a));
-    UpdateAdjacencyInfo(edge_c_a, ti, adjacency_info);
+    UpdateAdjacencyInfo(edge_c_a, ti, &adjacency_info);
   }
 
   // For each triangle in the old mesh, create a new vertex at the center
@@ -191,11 +191,10 @@ void HexPlanet::Subdivide() {
 
   // For each edge, create two triangles
   for (auto ei : adjacency_info) {
-    // Given edge A,B - with neighbour across edge
+    // Given edge A, B - with neighbour across edge
     // First triangle is: A, center, neighbour's center
     // Second triangle is: center, neighbour's center, B
-    if (ei.second.first == uint32_t(-1) ||
-        ei.second.second == uint32_t(-1)) {
+    if (ei.second.first == kInvalidHexVertexId || ei.second.second == kInvalidHexVertexId) {
       std::cerr << "Error in adjacency info" << std::endl;
       continue;
     }
@@ -221,7 +220,7 @@ void HexPlanet::Subdivide() {
 }
 
 void HexPlanet::ProjectToSphere() {
-  for (std::vector<HexVertex>::iterator ti = vertices_.begin(); ti != vertices_.end(); ti++) {
+  for (std::vector<HexVertex>::iterator ti = vertices_.begin(); ti != vertices_.end(); ++ti) {
     Eigen::Vector3f p = (*ti).vertex_position;
     p.normalize();
     (*ti).vertex_position = p;

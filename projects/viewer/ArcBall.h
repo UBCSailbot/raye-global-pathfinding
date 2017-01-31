@@ -1,7 +1,9 @@
-#ifndef ARC_BALL_H
-#define ARC_BALL_H
+// Copyright 2017 UBC Sailbot
 
-#include <stdint.h>
+#ifndef ARCBALL_H_
+#define ARCBALL_H_
+
+#include <cstdint>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -54,7 +56,6 @@ class ArcBall {
   glm::mat4 getTransformation() const;
 
  private:
-
   /// Calculates our position on the ArcBall from 2D mouse position.
   /// \param tscMouse   TSC coordinates of mouse click.
   glm::vec3 mouseOnSphere(const glm::vec3 &tscMouse);
@@ -83,4 +84,4 @@ class ArcBall {
   glm::mat4 mScreenToTCS;
 };
 
-#endif  // ARC_BALL_H
+#endif  // ARCBALL_H_

@@ -1,6 +1,6 @@
 // Copyright 2017 UBC Sailbot
 
-int main(int argc, char const *argv[]) {
+int main(int, char const *[]) {
   /* code */
   return 0;
 }

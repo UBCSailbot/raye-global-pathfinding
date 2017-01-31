@@ -1,10 +1,11 @@
 // Copyright 2017 UBC Sailbot
 
-#ifndef DATATYPES_MAP_DATA_H
-#define DATATYPES_MAP_DATA_H
+#ifndef DATATYPES_MAPDATA_H_
+#define DATATYPES_MAPDATA_H_
 
 #include <cstdio>
-#include <stdint.h>
+#include <cstdint>
+
 #include <vector>
 
 template<typename T>
@@ -77,5 +78,5 @@ T &MapData<T>::operator[](size_t i) {
   return data_[i];
 }
 
-#endif  // DATATYPES_MAP_DATA_H
+#endif  // DATATYPES_MAPDATA_H_
 

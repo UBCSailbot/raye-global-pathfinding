@@ -1,7 +1,7 @@
 // Copyright 2017 UBC Sailbot
 
-#ifndef DATATYPES_HEXDEFS_H
-#define DATATYPES_HEXDEFS_H
+#ifndef DATATYPES_HEXDEFS_H_
+#define DATATYPES_HEXDEFS_H_
 
 #include <cstdint>
 #include <cstddef>
@@ -30,4 +30,4 @@ struct DynamicPathfinderVertexData {
   HexVertexId predecessor = kInvalidHexVertexId;  ///< The id of the predecessor to this node,
 };
 
-#endif  // DATATYPES_HEXDEFS_H
+#endif  // DATATYPES_HEXDEFS_H_

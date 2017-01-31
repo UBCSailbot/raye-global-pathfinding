@@ -1,6 +1,7 @@
 // Copyright 2017 UBC Sailbot
 
-#pragma once
+#ifndef PROGRAM_H_
+#define PROGRAM_H_
 
 #include "Shader.h"
 #include <vector>
@@ -20,7 +21,7 @@ class Program {
    *
    * @see viewer::Shader
    */
-  Program(const std::vector<Shader> &shaders);
+  explicit Program(const std::vector<Shader> &shaders);
   ~Program();
 
   /**
@@ -65,10 +66,10 @@ class Program {
         void setUniform(const GLchar* uniformName, OGL_TYPE v0, OGL_TYPE v1, OGL_TYPE v2); \
         void setUniform(const GLchar* uniformName, OGL_TYPE v0, OGL_TYPE v1, OGL_TYPE v2, OGL_TYPE v3); \
 \
-        void setUniform1v(const GLchar* uniformName, const OGL_TYPE* v, GLsizei count=1); \
-        void setUniform2v(const GLchar* uniformName, const OGL_TYPE* v, GLsizei count=1); \
-        void setUniform3v(const GLchar* uniformName, const OGL_TYPE* v, GLsizei count=1); \
-        void setUniform4v(const GLchar* uniformName, const OGL_TYPE* v, GLsizei count=1); \
+        void setUniform1v(const GLchar* uniformName, const OGL_TYPE* v, GLsizei count = 1); \
+        void setUniform2v(const GLchar* uniformName, const OGL_TYPE* v, GLsizei count = 1); \
+        void setUniform3v(const GLchar* uniformName, const OGL_TYPE* v, GLsizei count = 1); \
+        void setUniform4v(const GLchar* uniformName, const OGL_TYPE* v, GLsizei count = 1); \
 
   _viewer_PROGRAM_ATTRIB_N_UNIFORM_SETTERS(GLfloat)
   _viewer_PROGRAM_ATTRIB_N_UNIFORM_SETTERS(GLdouble)
@@ -100,3 +101,5 @@ class Program {
   Program(const Program &);
   const Program &operator=(const Program &);
 };
+
+#endif  // PROGRAM_H_

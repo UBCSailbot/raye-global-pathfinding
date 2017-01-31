@@ -1,21 +1,19 @@
-#ifndef __APPLE__
-#include <GL/glew.h> // glew before gl
-#endif
-#include <GLFW/glfw3.h>
+// Copyright 2017 UBC Sailbot
 
 #include "Controls.h"
-#include "Camera.h"
+
+#include <iostream>
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <iostream>
+
+#include "Camera.h"
 
 namespace {
-const float kSpeed = .05; // units per second
-constexpr float kAngleMultiplier = 5;  // Multiplier for when a key is pressed;
+const float kSpeed = .05;  // Units per second
+constexpr float kAngleMultiplier = 5;  // Multiplier for when a key is pressed
 }
 
-//----------------------------------------------------------------------------
 Controls::Controls() : last_time_(glfwGetTime()) {}
 
 void Controls::begin_frame(glm::mat4 *model, GLFWwindow *window) {
@@ -36,7 +34,7 @@ void Controls::begin_frame(glm::mat4 *model, GLFWwindow *window) {
   }
 
   // Slow rotation without user interaction
-  // TODO(): Make this conditional on some user setting.
+  // TODO(asredzki): Make this conditional on some user setting.
   *model = glm::rotate(*model, angle, glm::vec3(0.f, 1.f, 0.f));
 
   last_time_ = cur_time;

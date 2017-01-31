@@ -1,16 +1,17 @@
 // Copyright 2017 UBC Sailbot
 
-#ifndef HEXPLANET_H
-#define HEXPLANET_H
+#ifndef CORE_HEXPLANET_H_
+#define CORE_HEXPLANET_H_
 
-#include <datatypes/HexTriangle.h>
-#include <datatypes/HexVertex.h>
+#include <cstdint>
 
-#include <stdint.h>
 #include <vector>
 #include <array>
 
 #include <Eigen/Dense>
+
+#include "datatypes/HexTriangle.h"
+#include "datatypes/HexVertex.h"
 
 /**
  * A planet mesh in which verticies have 6 neighbours (sometimes 5), making it look like it's composed of hex tiles.
@@ -117,4 +118,4 @@ class HexPlanet {
   void ProjectToSphere();
 };
 
-#endif
+#endif  // CORE_HEXPLANET_H_
