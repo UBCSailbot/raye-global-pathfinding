@@ -88,7 +88,7 @@ static void LoadPlanet(std::unique_ptr<HexPlanet> &planet) {
 
   for (size_t i = 0; i < planet->triangle_count(); ++i) {
     const HexTriangle &t = planet->triangle(i);
-    assert(0 <= t.vertex_a && t.vertex_a < planet->vertex_count());
+    assert(t.vertex_a < planet->vertex_count());
 
     // Copy in position data (we're doing the indirection here)
     *position_buffer = planet->vertex(t.vertex_a).vertex_position.x();
@@ -235,7 +235,7 @@ void Update(float seconds_elapsed) {
  * @param delta_x Change in x scroll
  * @param delta_y Change in y scroll
  */
-void OnScroll(GLFWwindow *window, double delta_x, double delta_y) {
+void OnScroll(GLFWwindow *, double, double delta_y) {
   gScrollY += delta_y;
 }
 
@@ -244,7 +244,7 @@ void OnScroll(GLFWwindow *window, double delta_x, double delta_y) {
  * @param error_code GLFW error code
  * @param msg Error message
  */
-void OnError(int error_code, const char *msg) {
+void OnError(int, const char *msg) {
   throw std::runtime_error(msg);
 }
 
@@ -386,7 +386,7 @@ void AppMain() {
   glfwTerminate();
 }
 
-int main(int argc, char *argv[]) {
+int main(int, char *[]) {
   try {
     AppMain();
   } catch (const std::exception &e) {
