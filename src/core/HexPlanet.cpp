@@ -252,10 +252,10 @@ void HexPlanet::UpdateVertexNeighbours() {
   neighbour_map.reserve(vertices_.size());
 
   for (size_t i = 0; i < vertices_.size(); i++) {
-    neighbour_map[i] = std::unordered_set<HexVertexId>(HexVertex::kMaxHexVertexNeighbourCount);
+    neighbour_map.push_back(std::unordered_set<HexVertexId>(HexVertex::kMaxHexVertexNeighbourCount));
   }
 
-  for (const auto& triangle : triangles_) {
+  for (const auto &triangle : triangles_) {
     // Neighbours of a
     neighbour_map[triangle.vertex_a].insert(triangle.vertex_b);
     neighbour_map[triangle.vertex_a].insert(triangle.vertex_c);
