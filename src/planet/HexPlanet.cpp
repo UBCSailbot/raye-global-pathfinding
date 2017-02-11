@@ -1,6 +1,6 @@
 // Copyright 2017 UBC Sailbot
 
-#include "core/HexPlanet.h"
+#include "planet/HexPlanet.h"
 
 #include <map>
 #include <set>

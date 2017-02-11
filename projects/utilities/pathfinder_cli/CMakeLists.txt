@@ -1,5 +1,5 @@
 # Set a variable for commands below
-set(PROJECT_NAME example_utility)
+set(PROJECT_NAME pathfinder_cli)
 
 # Define your project and language
 project(${PROJECT_NAME} CXX)

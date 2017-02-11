@@ -1,5 +1,7 @@
-#ifndef HEXVERTEXTEST_H
-#define HEXVERTEXTEST_H
+// Copyright 2017 UBC Sailbot
+
+#ifndef DATATYPES_HEXVERTEXTEST_H_
+#define DATATYPES_HEXVERTEXTEST_H_
 
 #include <gtest/gtest.h>
 #include <datatypes/HexVertex.h>
@@ -9,4 +11,4 @@ class HexVertexTest : public ::testing::Test  {
   HexVertexTest();
 };
 
-#endif  // HEXVERTEXTEST_H
+#endif  // DATATYPES_HEXVERTEXTEST_H_

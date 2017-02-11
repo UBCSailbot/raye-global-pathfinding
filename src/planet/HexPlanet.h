@@ -1,7 +1,7 @@
 // Copyright 2017 UBC Sailbot
 
-#ifndef CORE_HEXPLANET_H_
-#define CORE_HEXPLANET_H_
+#ifndef PLANET_HEXPLANET_H_
+#define PLANET_HEXPLANET_H_
 
 #include <cstdint>
 
@@ -118,4 +118,4 @@ class HexPlanet {
   void ProjectToSphere();
 };
 
-#endif  // CORE_HEXPLANET_H_
+#endif  // PLANET_HEXPLANET_H_

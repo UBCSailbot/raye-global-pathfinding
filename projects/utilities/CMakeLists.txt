@@ -1,1 +1,1 @@
-add_subdirectory(example_utility)
+add_subdirectory(pathfinder_cli)

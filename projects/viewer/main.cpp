@@ -15,7 +15,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <core/HexPlanet.h>
+#include <planet/HexPlanet.h>
 
 #include "Controls.h"
 #include "Camera.h"
@@ -340,7 +340,7 @@ void AppMain() {
     // Update the scene based on the time elapsed since last update
     double current_time = glfwGetTime();
 
-    // Calculate the time required to process a frame
+    // calculate the time required to process a frame
     double delta = current_time - last_time + 0.01;
 
     // Limit frame rate

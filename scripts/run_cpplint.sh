@@ -33,6 +33,17 @@ ${CPP_LINT} \
 $( find ${VIEWER_DIRECTORY} -name \*.h -or -name \*.cpp ) \
 &>> ${CPPLINT_FILE}
 
+# Common test dir
+TEST_DIRECTORY=${WORKSPACE_DIRECTORY}/test
+
+# Run cpplint on basic_tests
+BASIC_TESTS_DIRECTORY=${TEST_DIRECTORY}/basic_tests
+${CPP_LINT} \
+--linelength=120 --counting=detailed \
+--root="test/basic_tests" \
+$( find ${BASIC_TESTS_DIRECTORY} -name \*.h -or -name \*.cpp ) \
+&>> ${CPPLINT_FILE}
+
 filtered_output 1>&2
 
 # in cppcheck 1.59 missingInclude suppression appears to be broken -- this is a workaround:

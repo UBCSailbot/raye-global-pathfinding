@@ -1,7 +1,6 @@
 # Utilities
 Utility targets used for debugging and testing.
 
-## example_utility
-> Allows something.
+## pathfinder_cli
+> Allows for single pathfinder runs from the command line.
 
-Longer description.

@@ -6,7 +6,7 @@ These targets are for production code.
 
 ### Viewer
 > An OpenGL based desktop application for viewing the pathfinder.
-> Read more [here](example/README.md).
+> Read more [here](viewer/README.md).
 
 ## Utilities
 Utility targets used for debugging and testing.
