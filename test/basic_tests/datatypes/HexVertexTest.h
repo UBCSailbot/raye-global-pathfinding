@@ -1,5 +1,5 @@
-#ifndef EXAMPLETEST_H
-#define EXAMPLETEST_H
+#ifndef HEXVERTEXTEST_H
+#define HEXVERTEXTEST_H
 
 #include <gtest/gtest.h>
 #include <datatypes/HexVertex.h>
@@ -9,4 +9,4 @@ class HexVertexTest : public ::testing::Test  {
   HexVertexTest();
 };
 
-#endif  // EXAMPLETEST_H
+#endif  // HEXVERTEXTEST_H
