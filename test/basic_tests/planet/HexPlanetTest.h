@@ -1,7 +1,7 @@
 // Copyright 2017 UBC Sailbot
 
-#ifndef PATHFINDING_HEXPLANETTEST_H_
-#define PATHFINDING_HEXPLANETTEST_H_
+#ifndef PLANET_HEXPLANETTEST_H_
+#define PLANET_HEXPLANETTEST_H_
 
 #include <gtest/gtest.h>
 
@@ -10,4 +10,4 @@ class HexPlanetTest : public ::testing::Test  {
   HexPlanetTest();
 };
 
-#endif  // PATHFINDING_HEXPLANETTEST_H_
+#endif  // PLANET_HEXPLANETTEST_H_
