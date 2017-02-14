@@ -1,6 +1,8 @@
 // Copyright 2017 UBC Sailbot
 
-#include "HexVertexTest.h"
+#include "datatypes/HexVertexTest.h"
+
+#include <planet/HexPlanet.h>
 
 HexVertexTest::HexVertexTest() {}
 

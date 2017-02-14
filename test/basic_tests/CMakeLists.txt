@@ -4,6 +4,7 @@ set(TEST_FILES
         datatypes/HexVertexTest.cpp
         planet/HexPlanetTest.cpp)
 
+include_directories(.)
 add_executable(run_basic_tests ${TEST_FILES})
 
 target_link_libraries(run_basic_tests gtest gtest_main)
