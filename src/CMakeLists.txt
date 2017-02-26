@@ -10,6 +10,8 @@ set(LIB_SRCS
         logic/StandardCalc.cpp
         pathfinding/AStarPathfinder.cpp
         pathfinding/AStarVertex.cpp
+        pathfinding/BasicCostCalculator.cpp
+        pathfinding/BasicHexMap.cpp
         pathfinding/HaversineHeuristic.cpp
         pathfinding/NaiveCostCalculator.cpp
         pathfinding/NaiveHeuristic.cpp
@@ -27,6 +29,8 @@ set(LIB_HDRS
         logic/StandardCalc.h
         pathfinding/AStarPathfinder.h
         pathfinding/AStarVertex.h
+        pathfinding/BasicCostCalculator.h
+        pathfinding/BasicHexMap.h
         pathfinding/CostCalculator.h
         pathfinding/HaversineHeuristic.h
         pathfinding/Heuristic.h

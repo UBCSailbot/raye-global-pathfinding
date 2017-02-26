@@ -4,9 +4,11 @@ set(TEST_FILES
         datatypes/GPSCoordinateTest.cpp
         datatypes/HexVertexTest.cpp
         logic/StandardCalcTest.cpp
-        planet/HexPlanetTest.cpp
         pathfinding/AStarPathfinderTest.cpp
-        pathfinding/MockCostCalculator.cpp)
+        pathfinding/BasicCostCalculatorTest.cpp
+        pathfinding/BasicHexMapTest.cpp
+        pathfinding/MockCostCalculator.cpp
+        planet/HexPlanetTest.cpp)
 
 include_directories(.)
 add_executable(run_basic_tests ${TEST_FILES})
