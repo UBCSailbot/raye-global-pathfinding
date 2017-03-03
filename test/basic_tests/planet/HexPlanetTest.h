@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 
-class HexPlanetTest : public ::testing::Test  {
+class HexPlanetTest : public ::testing::Test {
  protected:
   HexPlanetTest();
 };
