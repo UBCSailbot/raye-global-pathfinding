@@ -2,6 +2,7 @@ include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 set(TEST_FILES
         datatypes/HexVertexTest.cpp
+        logic/StandardCalcTest.cpp
         planet/HexPlanetTest.cpp
         pathfinding/AStarPathfinderTest.cpp)
 

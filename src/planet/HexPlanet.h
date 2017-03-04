@@ -67,19 +67,19 @@ class HexPlanet {
   bool RayHitPlanet(const Eigen::Vector3f &p, const Eigen::Vector3f &dir, Eigen::Vector3f *result);
 
   /**
-   * Get a hex index from a 3D point.
+   * Get a hex vertex index from a 3D point.
    * Projects the point down to the planet surface and returns the index of the hex containing it.
    * @param surface_position Position on the surface of the planet.
    * @return The index of the nearest hex.
    */
-  size_t HexIndexFromPoint(Eigen::Vector3f surface_position);
+  HexVertexId HexVertexFromPoint(Eigen::Vector3f surface_position);
 
   /**
    * Get a get a GPS Coordinate from a vertex id
    * @param HexVertexId Hex Vertex Id on planet
    * @return GPSCoordinate of that index
    */
-  GPSCoordinateFast GPSCoordinateFromHexIndex(HexVertexId id) const;
+  GPSCoordinateFast GPSCoordinateFromHexVertex(HexVertexId id) const;
 
   /**
    * Write the planet mesh to an output stream.

@@ -10,6 +10,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "logic/StandardCalc.h"
+
 HexPlanet::HexPlanet(int subdivision_level) {
   // Build initial (level 0) mesh
   build_level_0();
@@ -143,6 +145,7 @@ void HexPlanet::build_level_0() {
 }
 
 typedef std::map<std::pair<uint32_t, uint32_t>, std::pair<uint32_t, uint32_t> > AdjacencyMap;
+
 void UpdateAdjacencyInfo(const std::pair<uint32_t, uint32_t> &edge, uint32_t triangle_index, AdjacencyMap *am) {
   AdjacencyMap::iterator i = am->find(edge);
   if (i == am->end()) {
@@ -227,8 +230,8 @@ void HexPlanet::ProjectToSphere() {
   }
 }
 
-size_t HexPlanet::HexIndexFromPoint(Eigen::Vector3f surface_position) {
-  size_t best_hex = 0;
+HexVertexId HexPlanet::HexVertexFromPoint(Eigen::Vector3f surface_position) {
+  HexVertexId best_hex = 0;
   float best_dot;
 
   // Normalize
@@ -236,7 +239,7 @@ size_t HexPlanet::HexIndexFromPoint(Eigen::Vector3f surface_position) {
   best_dot = acosf(vertices_[0].vertex_position.dot(surface_position));
 
   // Clever cheat -- just use the dot product to find the smallest angle -- and thus the containing hex
-  for (size_t i = 1; i < vertices_.size(); i++) {
+  for (HexVertexId i = 1; i < vertices_.size(); i++) {
     float d = acosf(vertices_[i].vertex_position.dot(surface_position));
     if (d < best_dot) {
       best_hex = i;
@@ -342,6 +345,9 @@ bool HexPlanet::RayHitPlanet(const Eigen::Vector3f &p, const Eigen::Vector3f &di
   }
 }
 
-GPSCoordinateFast HexPlanet::GPSCoordinateFromHexIndex(HexVertexId id)const {
-  return GPSCoordinateFast();
+GPSCoordinateFast HexPlanet::GPSCoordinateFromHexVertex(HexVertexId id)const {
+  Eigen::Vector3f cartesian = vertices_[id].normal();
+  GPSCoordinateFast vertex_gps;
+  standard_calc::PointToCoord(cartesian, &vertex_gps);
+  return vertex_gps;
 }

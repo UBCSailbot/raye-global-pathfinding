@@ -4,7 +4,6 @@
 
 #include <cmath>
 
-#include <common/GeneralDefs.h>
 
 namespace standard_calc {
 
@@ -51,14 +50,6 @@ double VectorToDegrees(double x, double y) {
   }
 
   return angle;
-}
-
-double FindCosLawAngle(double a, double b, double c) {
-  if ((a < 1) || (b < 1) || (c < 1)) {
-    return 0;
-  } else {
-    return acos((pow(a, 2) + pow(b, 2) - pow(c, 2)) / (2 * a * b));
-  }
 }
 
 double BoundToPI(double angle) {
@@ -177,15 +168,45 @@ bool are_equal(double a, double b) {
   return are_equal(a, b, 0.000001);
 }
 
+bool almost_equal(const Eigen::Vector3f &point1, const Eigen::Vector3f &point2,  const double tolerance) {
+  return ((point1 - point2).norm() < tolerance);
+}
+
 double deg_to_rad(double degrees) {
   return (M_PI / 180.) * degrees;
 }
+
 double rad_to_deg(double radians) {
   return 180. * (radians / M_PI);
 }
 
-double low_pass_filter_update(double current, double raw, double beta) {
-  return current - beta * (current - raw);
+void CoordToPoint(const GPSCoordinateFast &coord, Eigen::Vector3f *surface_position, double r) {
+  // converting spherical coordinates to cartesian coordinates
+  (*surface_position)(0) = static_cast<float>(cos(coord.latitude()) * cos(coord.longitude()) * r);
+  (*surface_position)(1) = static_cast<float>(cos(coord.latitude()) * sin(coord.longitude()) * r);
+  (*surface_position)(2) = static_cast<float>(sin(coord.latitude()) * r);
+}
+
+bool PointToCoord(const Eigen::Vector3f &surface_position, GPSCoordinateFast *coord) {
+  bool on_surface;
+  // check if point is on sphere (within tolerance)
+  if (is_on_sphere(surface_position)) {
+    on_surface = true;
+    // converting cartesian coordinates to spherical coordinates
+    double lat = atan2(surface_position(2), sqrt(pow(surface_position(0), 2) + pow(surface_position(1), 2)));
+    double lng = atan2(surface_position(1), surface_position(0));
+    (*coord).set_lat_lng(lat, lng);
+  } else {
+    on_surface = false;
+  }
+  return on_surface;
+}
+
+bool is_on_sphere(const Eigen::Vector3f &point, const double R) {
+  // r is distance to origin
+  double r = point.norm();
+  // check if point is on sphere (within tolerance)
+  return (fabs(R - r) < sailbot::kPointTolerance);
 }
 
 }  // namespace standard_calc

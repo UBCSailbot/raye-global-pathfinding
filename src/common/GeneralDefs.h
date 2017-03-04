@@ -7,9 +7,16 @@
 
 namespace sailbot {
 
-// The mean radius of the Earth in meters
+/**
+ * The mean radius of the Earth in meters
+ */
 constexpr int kEarthRadius = 6371000;
 
-}
+/**
+ * The tolerance value used to check if two cartesian coordinates are "almost equal"
+ */
+static constexpr float kPointTolerance = 0.01;
+
+}  // namespace sailbot
 
 #endif  // COMMON_GENERALDEFS_H_

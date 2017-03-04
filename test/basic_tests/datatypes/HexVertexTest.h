@@ -4,7 +4,6 @@
 #define DATATYPES_HEXVERTEXTEST_H_
 
 #include <gtest/gtest.h>
-#include <datatypes/HexVertex.h>
 
 class HexVertexTest : public ::testing::Test {
  protected:

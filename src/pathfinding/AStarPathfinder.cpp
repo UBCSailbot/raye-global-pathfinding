@@ -38,7 +38,7 @@ std::vector<HexVertexId> AStarPathfinder::Run() {
       if (!closed_set.count({neighbour_id, new_time})
           || new_cost < closed_set.find({neighbour_id, new_time})->second.cost()) {
         double cost = new_cost + heuristic_->
-            calculate(planet_.GPSCoordinateFromHexIndex(neighbour_id), planet_.GPSCoordinateFromHexIndex(target_));
+            calculate(planet_.GPSCoordinateFromHexVertex(neighbour_id), planet_.GPSCoordinateFromHexVertex(target_));
 
         AStarVertex neighbour_node = AStarVertex(neighbour_id, new_time, cost);
         neighbour_node.set_parent(current.id_time_coordinate());

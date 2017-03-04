@@ -3,9 +3,37 @@
 #ifndef LOGIC_STANDARDCALC_H_
 #define LOGIC_STANDARDCALC_H_
 
-#include <datatypes/GPSCoordinateFast.h>
+#include <Eigen/Dense>
+
+#include "common/GeneralDefs.h"
+#include "datatypes/GPSCoordinateFast.h"
 
 namespace standard_calc {
+
+/**
+ * Outputs 3d point given the Coordinate (i.e. longitude, latitude)
+ * @param coord
+ * @param surface_position
+ * @return Whether on surface or not
+ */
+void CoordToPoint(const GPSCoordinateFast &coord, Eigen::Vector3f *surface_position, double r = sailbot::kEarthRadius);
+
+/**
+ * Outputs the Coordinate(i.e. longitude, latitude) given 3d point
+ * If input lies on sphere (within POINT_TOLERANCE) returns true
+ * Else it returns false
+ * @param coord
+ * @param surface_position
+ * @return Whether on surface or not
+ */
+bool PointToCoord(const Eigen::Vector3f &surface_position, GPSCoordinateFast *coord);
+
+/**
+ * Returns true or false depending on weather the point is on the sphere of given radius
+ * @param point (xyz cartesian coordinates) and R (radius of sphere)
+ * @return true (on sphere) or false (not on sphere)
+ */
+bool is_on_sphere(const Eigen::Vector3f &point, const double R = sailbot::kEarthRadius);
 
 /**
  * Calculates the "as the bird flies" distance between to coordinates using the Haversine formula.
@@ -23,15 +51,6 @@ uint32_t DistBetweenTwoCoords(const GPSCoordinateFast &coord1, const GPSCoordina
  * @return Bearing to dest from origin in degrees, relative to North. Positive angles rotate clockwise from North.
  */
 double AngleBetweenTwoCoords(const GPSCoordinateFast &origin, const GPSCoordinateFast &dest);
-
-/**
- * Calculates the cos law angle using c^2 = a^2 + b^2 - 2*a*b*cos(theta).
- * @param a Side length a.
- * @param b Side length b.
- * @param c Side length c.
- * @return Cos law angle in radians.
- */
-double FindCosLawAngle(double a, double b, double c);
 
 /**
  * Converts a vector to degrees with respect to North (up).
@@ -54,6 +73,7 @@ double BoundToPI(double angle);
  * @return The bounded angle in degrees.
  */
 double BoundTo180(double angle);
+
 /**
  * Bounds the provided angle between [-180, 180) degrees.
  * Ex. 360 becomes 0, 270 becomes -90, -450 becomes -90.
@@ -61,6 +81,7 @@ double BoundTo180(double angle);
  * @return The bounded angle in degrees.
  */
 int16_t BoundTo180Exact(int16_t angle);
+
 /**
  * Bounds the provided angle between [-180, 180) degrees * |multiplier|.
  * Ex. With a multiplier of 10, 3600 becomes 0, 2700 becomes -900, -4500 becomes -900.
@@ -99,28 +120,29 @@ bool are_equal(double a, double b, double epsilon);
 bool are_equal(double a, double b);
 
 /**
- * Converts degrees to redians.
+ * Checks if other vector is (within absoluteTolerance) equal to the vector object
+ * absoluteTolerance = tolerancePercentage * scale (e.g. 1% * 1000m = 10m tolerance)
+ * @param other vector
+ * @param scale: used to convert percent tolerance to absolute tolerance
+ * @return true if equal within tolerance, false otherwise
+ */
+bool almost_equal(const Eigen::Vector3f &point1,
+                  const Eigen::Vector3f &point2,
+                  const double tolerance = sailbot::kPointTolerance);
+
+/**
+ * Converts degrees to radians.
  * @param degrees Value to convert.
  * @return |degreees| converted to radians.
  */
 double deg_to_rad(double degrees);
+
 /**
  * Converts radians to degrees.
  * @param radians Value to convert.
  * @return |radians| converted to degrees.
  */
 double rad_to_deg(double radians);
-
-/**
- * Calculates the output of a low pass filter update.
- * Y(n) = (1-ß)*Y(n-1) + (ß*X(n))) = Y(n-1) - (ß*(Y(n-1)-X(n)))
- *
- * @param current Current value.
- * @param raw Raw value (typically sensor data).
- * @param beta Beta value (0 < B < 1).
- * @return Filtered value.
- */
-double low_pass_filter_update(double current, double raw, double beta);
 
 }  // namespace standard_calc
 

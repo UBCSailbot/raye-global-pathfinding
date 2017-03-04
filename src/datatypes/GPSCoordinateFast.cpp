@@ -1,4 +1,4 @@
-// Copyright 2016 UBC Sailbot
+// Copyright 2017 UBC Sailbot
 
 #include "datatypes/GPSCoordinateFast.h"
 
@@ -27,7 +27,14 @@ void GPSCoordinateFast::set_lat_lng_exact(int32_t latitude_exact, int32_t longit
   set_lng_exact(longitude_exact);
 }
 
-void GPSCoordinateFast::set_waypoint(const GPSCoordinate &coordinate) {
-  set_lat_lng_exact(coordinate.latitude_exact(), coordinate.longitude_exact());
-  set_waypoint_level(coordinate.waypoint_level());
+void GPSCoordinateFast::set_lat_lng(double lat, double lng) {
+  latitude_ = lat;
+  longitude_ = lng;
+}
+
+bool GPSCoordinateFast::almost_equal(const GPSCoordinateFast &other, const double scale) const {
+  // L1 norm of the difference between the two coordinates
+  double coord_diff_l1  = fabs(latitude_ - other.latitude()) + fabs(longitude_ - other.longitude());
+  double tolerance = kCoordTolerancePercentage * scale;
+  return (coord_diff_l1 < tolerance);
 }
