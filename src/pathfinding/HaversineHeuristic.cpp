@@ -9,6 +9,6 @@
 
 HaversineHeuristic::HaversineHeuristic() { }
 
-uint32_t HaversineHeuristic::calculate(const GPSCoordinateFast &source, const GPSCoordinateFast &target) {
+uint32_t HaversineHeuristic::calculate(const GPSCoordinateFast &source, const GPSCoordinateFast &target) const {
   return standard_calc::DistBetweenTwoCoords(source, target);
 }

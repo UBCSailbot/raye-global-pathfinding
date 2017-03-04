@@ -14,7 +14,7 @@ class NaiveCostCalculator: public CostCalculator {
    * @param target Target hex vertex id.
    * @return The cost for an edge.
    */
-  uint32_t calculate(HexVertexId target, HexVertexId source, uint32_t time) override;
+  uint32_t calculate(const HexVertexId source, const HexVertexId target, uint32_t time) const override;
 };
 
 #endif  // PATHFINDING_NAIVECOSTCALCULATOR_H_

@@ -19,7 +19,7 @@ class Heuristic {
    * @param target Target coordinate
    * @return A heuristic costs
    */
-  virtual uint32_t calculate(const GPSCoordinateFast &source, const GPSCoordinateFast &target) = 0;
+  virtual uint32_t calculate(const GPSCoordinateFast &source, const GPSCoordinateFast &target) const = 0;
 };
 
 #endif  // PATHFINDING_HEURISTIC_H_

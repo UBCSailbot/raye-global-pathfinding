@@ -341,3 +341,7 @@ bool HexPlanet::RayHitPlanet(const Eigen::Vector3f &p, const Eigen::Vector3f &di
     return true;
   }
 }
+
+GPSCoordinateFast HexPlanet::GPSCoordinateFromHexIndex(HexVertexId id)const {
+  return GPSCoordinateFast();
+}

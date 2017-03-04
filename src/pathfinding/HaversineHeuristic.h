@@ -15,7 +15,7 @@ class HaversineHeuristic: public Heuristic {
    * @param target Target coordinate
    * @return Distance in meters
    */
-  uint32_t calculate(const GPSCoordinateFast &source, const GPSCoordinateFast &target) override;
+  uint32_t calculate(const GPSCoordinateFast &source, const GPSCoordinateFast &target) const override;
 };
 
 #endif  // PATHFINDING_HAVERSINEHEURISTIC_H_

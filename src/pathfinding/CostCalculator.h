@@ -17,7 +17,7 @@ class CostCalculator {
    * @param target Target hex vertex id.
    * @return The cost for an edge.
    */
-  virtual uint32_t calculate(HexVertexId target, HexVertexId source, uint32_t time) = 0;
+  virtual uint32_t calculate(const HexVertexId source, const HexVertexId target, uint32_t time) const = 0;
 
  private:
   const HexPlanet &planet_;

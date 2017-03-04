@@ -3,7 +3,11 @@
 #ifndef PATHFINDING_ASTARPATHFINDER_H_
 #define PATHFINDING_ASTARPATHFINDER_H_
 
+#include <boost/any.hpp>
+#include <boost/unordered_map.hpp>
+
 #include "pathfinding/Pathfinder.h"
+#include "pathfinding/AStarVertex.h"
 
 class AStarPathfinder : public Pathfinder {
  public:
@@ -28,6 +32,11 @@ class AStarPathfinder : public Pathfinder {
    * @return The path from start_ to target_.
    */
   std::vector<HexVertexId> Run();
+
+ private:
+  boost::unordered_map<AStarVertex::IdTimeCoordinate, AStarVertex> closed_set;
+
+  std::vector<HexVertexId> ConstructPath(AStarVertex vertex);
 };
 
 #endif  // PATHFINDING_ASTARPATHFINDER_H_

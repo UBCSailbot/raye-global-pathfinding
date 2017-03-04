@@ -10,6 +10,8 @@
 
 #include <Eigen/Dense>
 
+#include "datatypes/GPSCoordinate.h"
+#include "datatypes/GPSCoordinateFast.h"
 #include "datatypes/HexTriangle.h"
 #include "datatypes/HexVertex.h"
 
@@ -71,6 +73,13 @@ class HexPlanet {
    * @return The index of the nearest hex.
    */
   size_t HexIndexFromPoint(Eigen::Vector3f surface_position);
+
+  /**
+   * Get a get a GPS Coordinate from a vertex id
+   * @param HexVertexId Hex Vertex Id on planet
+   * @return GPSCoordinate of that index
+   */
+  GPSCoordinateFast GPSCoordinateFromHexIndex(HexVertexId id) const;
 
   /**
    * Write the planet mesh to an output stream.
