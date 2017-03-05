@@ -4,7 +4,8 @@ set(TEST_FILES
         datatypes/HexVertexTest.cpp
         logic/StandardCalcTest.cpp
         planet/HexPlanetTest.cpp
-        pathfinding/AStarPathfinderTest.cpp)
+        pathfinding/AStarPathfinderTest.cpp
+        pathfinding/MockCostCalculator.cpp)
 
 include_directories(.)
 add_executable(run_basic_tests ${TEST_FILES})

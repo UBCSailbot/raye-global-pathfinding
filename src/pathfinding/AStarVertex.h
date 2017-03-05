@@ -13,14 +13,14 @@
  */
 class AStarVertex {
  public:
-  typedef std::pair<HexVertexId, uint32_t> IdTimeCoordinate;
+  typedef std::pair<HexVertexId, uint32_t> IdTimeIndex;
 
   /**
    * @param hex_vertex_id Identifier for the vertex
    * @param time Time step TODO(areksredzki): better define the units used here
    * @param cost The cost to this vertex + the heuristic to to the goal
    */
-  AStarVertex(HexVertexId hex_vertex_id, uint32_t time, double cost);
+  AStarVertex(HexVertexId hex_vertex_id, uint32_t time, double cost, double heuristic_cost);
 
   /**
    * @param hex_vertex_id Identifier for the vertex
@@ -28,7 +28,7 @@ class AStarVertex {
    * @param cost The cost to this vertex + the heuristic to to the goal
    * @param parent The ancestor to this node
    */
-  AStarVertex(HexVertexId hex_vertex_id, uint32_t time, double cost, IdTimeCoordinate parent);
+  AStarVertex(HexVertexId hex_vertex_id, uint32_t time, double cost, IdTimeIndex parent, double heuristic_cost_);
 
   HexVertexId hex_vertex_id() const;
 
@@ -36,23 +36,25 @@ class AStarVertex {
 
   double cost() const;
 
-  IdTimeCoordinate parent() const;
+  IdTimeIndex parent() const;
 
-  IdTimeCoordinate id_time_coordinate() const;
+  IdTimeIndex id_time_index() const;
 
-  void set_parent(const IdTimeCoordinate &parent);
+  void set_parent(const IdTimeIndex &parent);
 
   bool operator<(const AStarVertex &rhs) const;
 
+  double heuristic_cost() const;
+
  private:
-  /// Identifier for the vertex
-  HexVertexId hex_vertex_id_;
-  /// Time step TODO(areksredzki): better define the units used here
-  uint32_t time_;
+  /// The vertex id and time step for indexing closed set
+  IdTimeIndex id_time_index_;
   /// The cost to this vertex + the heuristic to to the goal
   double cost_;
   /// The ancestor to this node
-  IdTimeCoordinate parent_;
+  IdTimeIndex parent_;
+  /// The cost computed by the heuristic
+  double heuristic_cost_;
 };
 
 #endif  // PATHFINDING_ASTARVERTEX_H_

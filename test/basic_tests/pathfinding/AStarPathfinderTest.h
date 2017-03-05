@@ -15,6 +15,7 @@ class AStarPathfinderTest : public ::testing::Test {
   HexPlanet planet_2_;
   HexPlanet planet_3_;
   HexPlanet planet_4_;
+  static const std::array<HexVertexId, 6> kTestPath1;
 };
 
 #endif  // PATHFINDING_ASTARPATHFINDERTEST_H_

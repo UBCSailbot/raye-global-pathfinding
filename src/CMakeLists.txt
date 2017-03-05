@@ -12,6 +12,7 @@ set(LIB_SRCS
         pathfinding/AStarVertex.cpp
         pathfinding/HaversineHeuristic.cpp
         pathfinding/NaiveCostCalculator.cpp
+        pathfinding/NaiveHeuristic.cpp
         pathfinding/Pathfinder.cpp
         planet/HexPlanet.cpp)
 
@@ -30,6 +31,7 @@ set(LIB_HDRS
         pathfinding/HaversineHeuristic.h
         pathfinding/Heuristic.h
         pathfinding/NaiveCostCalculator.h
+        pathfinding/NaiveHeuristic.h
         pathfinding/Pathfinder.h
         planet/HexPlanet.h)
 

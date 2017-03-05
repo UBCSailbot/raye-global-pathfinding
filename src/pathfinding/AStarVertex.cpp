@@ -2,33 +2,40 @@
 
 #include "pathfinding/AStarVertex.h"
 
-AStarVertex::AStarVertex(HexVertexId hex_vertex_id, uint32_t time, double cost)
-    : hex_vertex_id_(hex_vertex_id), time_(time), cost_(cost), parent_({kInvalidHexVertexId, 0}) {}
+AStarVertex::AStarVertex(HexVertexId hex_vertex_id, uint32_t time, double cost, double heuristic_cost)
+    : id_time_index_({hex_vertex_id, time}), cost_(cost),
+      parent_({kInvalidHexVertexId, 0}), heuristic_cost_(heuristic_cost) {}
 
-AStarVertex::AStarVertex(HexVertexId hex_vertex_id, uint32_t time, double cost, IdTimeCoordinate parent)
-    : hex_vertex_id_(hex_vertex_id), time_(time), cost_(cost), parent_(parent) {}
+AStarVertex::AStarVertex(HexVertexId hex_vertex_id, uint32_t time, double cost,
+                         IdTimeIndex parent, double heuristic_cost)
+    : id_time_index_({hex_vertex_id, time}), cost_(cost),
+      parent_(parent), heuristic_cost_(heuristic_cost) {}
 
 bool AStarVertex::operator<(const AStarVertex &rhs) const {
-  return cost_ > rhs.cost();
+  return cost_ + heuristic_cost_ > rhs.cost() + rhs.heuristic_cost();
 }
 HexVertexId AStarVertex::hex_vertex_id() const {
-  return hex_vertex_id_;
+  return id_time_index_.first;
 }
 uint32_t AStarVertex::time() const {
-  return time_;
+  return id_time_index_.second;
 }
 double AStarVertex::cost() const {
   return cost_;
 }
-AStarVertex::IdTimeCoordinate AStarVertex::parent() const {
+AStarVertex::IdTimeIndex AStarVertex::parent() const {
   return parent_;
 }
-void AStarVertex::set_parent(const IdTimeCoordinate &parent) {
+void AStarVertex::set_parent(const IdTimeIndex &parent) {
   parent_ = parent;
 }
 
-AStarVertex::IdTimeCoordinate AStarVertex::id_time_coordinate() const {
-  return AStarVertex::IdTimeCoordinate(hex_vertex_id_, time_);
+AStarVertex::IdTimeIndex AStarVertex::id_time_index() const {
+  return id_time_index_;
+}
+
+double AStarVertex::heuristic_cost() const {
+  return heuristic_cost_;
 }
 
 

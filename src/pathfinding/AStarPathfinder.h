@@ -34,7 +34,7 @@ class AStarPathfinder : public Pathfinder {
   std::vector<HexVertexId> Run();
 
  private:
-  boost::unordered_map<AStarVertex::IdTimeCoordinate, AStarVertex> closed_set;
+  boost::unordered_map<AStarVertex::IdTimeIndex, AStarVertex> closed_set;
 
   std::vector<HexVertexId> ConstructPath(AStarVertex vertex);
 };
