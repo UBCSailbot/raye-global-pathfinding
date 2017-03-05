@@ -14,6 +14,7 @@ constexpr int kEarthRadius = 6371000;
 
 /**
  * The tolerance value used to check if two cartesian coordinates are "almost equal"
+ * Units: dimensionless; used on normalized vectors
  */
 static constexpr float kPointTolerance = 0.01;
 

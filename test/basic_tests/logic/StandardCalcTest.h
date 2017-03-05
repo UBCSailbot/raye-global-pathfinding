@@ -18,7 +18,7 @@ class StandardCalcTest : public ::testing::Test  {
   * @param z (float)
   * @return Eigen::Vector3f
   */
-  Eigen::Vector3f create_point(float x, float y, float z, float r = static_cast<float>(sailbot::kEarthRadius)) const;
+  Eigen::Vector3f create_point(float x, float y, float z, float r = 1.0) const;
 
   /**
    * Creates a GPSCoordinateFast object from latitude and longitude pair

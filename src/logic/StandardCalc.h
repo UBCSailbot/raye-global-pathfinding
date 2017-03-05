@@ -16,7 +16,7 @@ namespace standard_calc {
  * @param surface_position
  * @return Whether on surface or not
  */
-void CoordToPoint(const GPSCoordinateFast &coord, Eigen::Vector3f *surface_position, double r = sailbot::kEarthRadius);
+void CoordToPoint(const GPSCoordinateFast &coord, Eigen::Vector3f *surface_position, double r = 1.0);
 
 /**
  * Outputs the Coordinate(i.e. longitude, latitude) given 3d point
@@ -33,7 +33,7 @@ bool PointToCoord(const Eigen::Vector3f &surface_position, GPSCoordinateFast *co
  * @param point (xyz cartesian coordinates) and R (radius of sphere)
  * @return true (on sphere) or false (not on sphere)
  */
-bool is_on_sphere(const Eigen::Vector3f &point, const double R = sailbot::kEarthRadius);
+bool is_on_sphere(const Eigen::Vector3f &point, const double R = 1.0);
 
 /**
  * Calculates the "as the bird flies" distance between to coordinates using the Haversine formula.

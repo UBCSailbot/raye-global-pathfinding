@@ -32,9 +32,8 @@ void GPSCoordinateFast::set_lat_lng(double lat, double lng) {
   longitude_ = lng;
 }
 
-bool GPSCoordinateFast::almost_equal(const GPSCoordinateFast &other, const double scale) const {
+bool GPSCoordinateFast::almost_equal(const GPSCoordinateFast &other, const double tolerance) const {
   // L1 norm of the difference between the two coordinates
   double coord_diff_l1  = fabs(latitude_ - other.latitude()) + fabs(longitude_ - other.longitude());
-  double tolerance = kCoordTolerancePercentage * scale;
   return (coord_diff_l1 < tolerance);
 }

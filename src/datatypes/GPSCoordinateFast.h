@@ -13,11 +13,10 @@
 class GPSCoordinateFast: public GPSCoordinate {
  public:
   /**
-   * The tolerance percentage used to check if two coordinates are "almost equal"
-   * This value is dimensionless. To find absolute tolerance one needs a scaling factor:
-   * tolerance = percentTolerance * scale
+   * The tolerance value in radians used to check if two gps coordinates are "almost equal"
+   * Units: radians
    */
-  static constexpr float kCoordTolerancePercentage = 0.01;
+  static constexpr float kCoordTolerance = 0.01;
 
   GPSCoordinateFast();
   GPSCoordinateFast(int32_t latitude_exact, int32_t longitude_exact);
@@ -36,7 +35,7 @@ class GPSCoordinateFast: public GPSCoordinate {
    * @param scale: used to convert percent tolerance to absolute tolerance
    * @return true if equal within tolerance, false otherwise
    */
-  bool almost_equal(const GPSCoordinateFast &other, const double scale = M_PI) const;
+  bool almost_equal(const GPSCoordinateFast &other, const double tolerance = kCoordTolerance) const;
 
   /**
    * @return Latitude in radians
