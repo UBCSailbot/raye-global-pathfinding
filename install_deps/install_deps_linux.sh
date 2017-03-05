@@ -24,7 +24,7 @@ git submodule update --init --recursive
 # Update package manager indices to latest available.
 sudo apt-get update
 
-sudo apt-get install build-essential clang libboost-dev libglew-dev libglfw3-dev libglm-dev libeigen3-dev cppcheck -y
+sudo apt-get install build-essential clang libboost-dev libboost-program-options-dev libglew-dev libglfw3-dev libglm-dev libeigen3-dev cppcheck -y
 
 # CMake is needed to actually build the system
 sudo apt-get install cmake -y
