@@ -7,7 +7,7 @@
 #include "pathfinding/NaiveHeuristic.h"
 #include "common/GeneralDefs.h"
 
-const std::array<HexVertexId, 6> AStarPathfinderTest::kTestPath1 = {1, 110, 111, 267, 171, 86};
+const std::array<HexVertexId, 6> AStarPathfinderTest::kTestPath1 = {{1, 110, 111, 267, 171, 86}};
 
 AStarPathfinderTest::AStarPathfinderTest() :
     planet_1_(1), planet_2_(2), planet_3_(3), planet_4_(4) {}

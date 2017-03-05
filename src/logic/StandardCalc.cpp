@@ -4,7 +4,6 @@
 
 #include <cmath>
 
-
 namespace standard_calc {
 
 uint32_t DistBetweenTwoCoords(const GPSCoordinateFast &coord1, const GPSCoordinateFast &coord2) {
@@ -23,7 +22,7 @@ uint32_t DistBetweenTwoCoords(const GPSCoordinateFast &coord1, const GPSCoordina
   return static_cast<uint32_t> (sailbot::kEarthRadius * c);
 }
 
-double AngleBetweenTwoCoords(const GPSCoordinateFast &origin, const GPSCoordinateFast &dest) {
+double BearingBetweenTwoCoords(const GPSCoordinateFast &origin, const GPSCoordinateFast &dest) {
   if (origin == dest) {
     return 0;
   }
@@ -130,8 +129,7 @@ bool IsAngleBetween(double first_angle, double middle_angle, double second_angle
 }
 
 double calculate_angle_delta(double first_angle, double second_angle) {
-  double difference = first_angle - second_angle;
-
+  double difference = second_angle - first_angle;
   if (difference > 180) {
     difference -= 360;
   }
@@ -168,7 +166,7 @@ bool are_equal(double a, double b) {
   return are_equal(a, b, 0.000001);
 }
 
-bool almost_equal(const Eigen::Vector3f &point1, const Eigen::Vector3f &point2,  const double tolerance) {
+bool almost_equal(const Eigen::Vector3f &point1, const Eigen::Vector3f &point2, const double tolerance) {
   return ((point1 - point2).norm() < tolerance);
 }
 

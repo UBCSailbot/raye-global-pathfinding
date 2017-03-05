@@ -50,7 +50,7 @@ uint32_t DistBetweenTwoCoords(const GPSCoordinateFast &coord1, const GPSCoordina
  * @param dest Destination position.
  * @return Bearing to dest from origin in degrees, relative to North. Positive angles rotate clockwise from North.
  */
-double AngleBetweenTwoCoords(const GPSCoordinateFast &origin, const GPSCoordinateFast &dest);
+double BearingBetweenTwoCoords(const GPSCoordinateFast &origin, const GPSCoordinateFast &dest);
 
 /**
  * Converts a vector to degrees with respect to North (up).
@@ -67,7 +67,7 @@ double VectorToDegrees(double x, double y);
 double BoundToPI(double angle);
 
 /**
- * Bounds the provided angle between [-180, 180) degrees.
+ * Bounds the provided angle between (-180, 180] degrees.
  * Ex. 360 becomes 0, 270 becomes -90, -450 becomes -90.
  * @param angle Input angle in degrees.
  * @return The bounded angle in degrees.
@@ -75,7 +75,7 @@ double BoundToPI(double angle);
 double BoundTo180(double angle);
 
 /**
- * Bounds the provided angle between [-180, 180) degrees.
+ * Bounds the provided angle between (-180, 180] degrees.
  * Ex. 360 becomes 0, 270 becomes -90, -450 becomes -90.
  * @param angle Input angle in degrees.
  * @return The bounded angle in degrees.
@@ -83,7 +83,7 @@ double BoundTo180(double angle);
 int16_t BoundTo180Exact(int16_t angle);
 
 /**
- * Bounds the provided angle between [-180, 180) degrees * |multiplier|.
+ * Bounds the provided angle between (-180, 180] degrees * |multiplier|.
  * Ex. With a multiplier of 10, 3600 becomes 0, 2700 becomes -900, -4500 becomes -900.
  * @param angle Input angle in degrees * |multiplier|.
  * @param multiplier The exponent muliplier for a degree. A single degree is |multiplier|.
@@ -103,9 +103,10 @@ int32_t BoundTo180Exact(int32_t angle, int32_t multiplier);
 bool IsAngleBetween(double first_angle, double middle_angle, double second_angle);
 
 /**
- * calculate_angle_delta
- * Requires: first angle, second angle
- * Returns: the angle delta
+ * Calculate the smallest angle between two angles. Input angles must be between [-180, 180].
+ * @param first_angle First angle in degrees.
+ * @param second_angle Second angle in degrees.
+ * @return The smallest angle between |first_angle| and |second_angle| (signed).
  */
 double calculate_angle_delta(double first_angle, double second_angle);
 

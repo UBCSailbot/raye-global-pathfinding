@@ -11,7 +11,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/lib/protofiles)
 include_directories(${ProtobufIncludePath})
 list(APPEND CORE_LIBS protofiles)
 
-find_package(Boost 1.58 REQUIRED)
+find_package(Boost 1.58 COMPONENTS program_options REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 
 find_package(Eigen3 REQUIRED)

@@ -9,8 +9,8 @@
 #include <common/GeneralDefs.h>
 #include <datatypes/GPSCoordinateFast.h>
 
-class StandardCalcTest : public ::testing::Test  {
- private:
+class StandardCalcTest : public ::testing::Test {
+ protected:
   /**
   * Creates an Eigen::Vector3f object from input coordinates
   * @param x (float)
@@ -28,7 +28,6 @@ class StandardCalcTest : public ::testing::Test  {
    */
   GPSCoordinateFast create_coordinate(double latitude, double longitude) const;
 
- protected:
   /**
    * Creates a string representation of the input point
    * @param point (Eigen::Vector3f)
@@ -44,25 +43,19 @@ class StandardCalcTest : public ::testing::Test  {
    * test_point >> (test point description, test_point_data)
    */
   typedef std::map<std::string, conversion_test_point_data_t> conversion_test_point_t;
-  /**
-   * iterator type for test_point
-   */
-  typedef conversion_test_point_t::iterator it_t;
 
   /**
    * test points for conversion test
    */
   // TODO(puya): add more test points from within the quadrants and not on surface
   conversion_test_point_t conversion_test_points_{
-      {"Origin"            , {create_coordinate(0  ,   0), create_point(1 ,  0,  0)}},
-      {"Opposite to Origin", {create_coordinate(0  , 180), create_point(-1,  0,  0)}},
-      {"North Pole"        , {create_coordinate(90 ,   0), create_point(0 ,  0,  1)}},
-      {"South Pole"        , {create_coordinate(-90,   0), create_point(0 ,  0, -1)}},
-      {"East on Equator"   , {create_coordinate(0  ,  90), create_point(0 ,  1,  0)}},
-      {"West on Equator"   , {create_coordinate(0  , -90), create_point(0 , -1,  0)}},
+      {"Origin", {create_coordinate(0, 0), create_point(1, 0, 0)}},
+      {"Opposite to Origin", {create_coordinate(0, 180), create_point(-1, 0, 0)}},
+      {"North Pole", {create_coordinate(90, 0), create_point(0, 0, 1)}},
+      {"South Pole", {create_coordinate(-90, 0), create_point(0, 0, -1)}},
+      {"East on Equator", {create_coordinate(0, 90), create_point(0, 1, 0)}},
+      {"West on Equator", {create_coordinate(0, -90), create_point(0, -1, 0)}},
   };
 };
 
 #endif  // LOGIC_STANDARDCALCTEST_H_
-
-
