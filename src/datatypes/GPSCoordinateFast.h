@@ -19,8 +19,16 @@ class GPSCoordinateFast: public GPSCoordinate {
   static constexpr float kCoordTolerance = 0.01;
 
   GPSCoordinateFast();
+  /**
+   * @param latitude_exact Latitude in degrees * kExactCoordinateScaleFactor
+   * @param longitude_exact Longitude in degrees * kExactCoordinateScaleFactor
+   */
   GPSCoordinateFast(int32_t latitude_exact, int32_t longitude_exact);
-  explicit GPSCoordinateFast(const GPSCoordinate &coordinate);
+  /**
+   * @param latitude Latitude in radians
+   * @param longitude Longitude in radians
+   */
+  GPSCoordinateFast(double latitude, double longitude);
 
   void set_lat_exact(int32_t latitude_exact);
   void set_lng_exact(int32_t longitude_exact);

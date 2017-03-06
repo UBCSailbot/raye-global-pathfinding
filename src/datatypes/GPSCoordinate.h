@@ -11,7 +11,11 @@ class GPSCoordinate {
   static constexpr int32_t kExactCoordinateScaleFactor = static_cast<int32_t> (10000000);
 
   GPSCoordinate();
-  GPSCoordinate(int32_t latitude, int32_t longitude);
+  /**
+   * @param latitude_exact Latitude in degrees * kExactCoordinateScaleFactor
+   * @param longitude_exact Longitude in degrees * kExactCoordinateScaleFactor
+   */
+  GPSCoordinate(int32_t latitude_exact, int32_t longitude_exact);
 
   /**
    * @param other Other GPS Coordinate.

@@ -8,8 +8,8 @@ GPSCoordinateFast::GPSCoordinateFast() {}
 GPSCoordinateFast::GPSCoordinateFast(int32_t latitude_exact, int32_t longitude_exact) {
   set_lat_lng_exact(latitude_exact, longitude_exact);
 }
-GPSCoordinateFast::GPSCoordinateFast(const GPSCoordinate &coordinate) {
-  set_lat_lng_exact(coordinate.latitude_exact(), coordinate.longitude_exact());
+GPSCoordinateFast::GPSCoordinateFast(double latitude, double longitude) {
+  set_lat_lng(latitude, longitude);
 }
 
 void GPSCoordinateFast::set_lat_exact(int32_t latitude_exact) {
@@ -34,6 +34,6 @@ void GPSCoordinateFast::set_lat_lng(double lat, double lng) {
 
 bool GPSCoordinateFast::almost_equal(const GPSCoordinateFast &other, const double tolerance) const {
   // L1 norm of the difference between the two coordinates
-  double coord_diff_l1  = fabs(latitude_ - other.latitude()) + fabs(longitude_ - other.longitude());
+  double coord_diff_l1 = fabs(latitude_ - other.latitude()) + fabs(longitude_ - other.longitude());
   return (coord_diff_l1 < tolerance);
 }

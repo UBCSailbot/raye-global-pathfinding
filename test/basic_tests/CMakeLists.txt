@@ -1,6 +1,7 @@
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 set(TEST_FILES
+        datatypes/GPSCoordinateTest.cpp
         datatypes/HexVertexTest.cpp
         logic/StandardCalcTest.cpp
         planet/HexPlanetTest.cpp
