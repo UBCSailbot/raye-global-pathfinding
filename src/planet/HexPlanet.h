@@ -9,6 +9,8 @@
 #include <array>
 
 #include <Eigen/Dense>
+#include <unordered_map>
+#include <boost/unordered_map.hpp>
 
 #include "datatypes/GPSCoordinate.h"
 #include "datatypes/GPSCoordinateFast.h"
@@ -75,11 +77,22 @@ class HexPlanet {
   HexVertexId HexVertexFromPoint(Eigen::Vector3f surface_position);
 
   /**
-   * Get a get a GPS Coordinate from a vertex id
-   * @param HexVertexId Hex Vertex Id on planet
-   * @return GPSCoordinate of that index
+   * Get a get a GPS Coordinate from a vertex ID.
+   * Note: The results are cached for improved performance. The returned reference is safe to hold for the lifetime of
+   * the planet.
+   * @param HexVertexId Hex Vertex ID on planet.
+   * @return GPSCoordinate of that index.
    */
-  GPSCoordinateFast GPSCoordinateFromHexVertex(HexVertexId id) const;
+  const GPSCoordinateFast &GPSCoordinateFromHexVertex(HexVertexId id);
+
+  /**
+   * Get the distance (in meters) between two vertices as computed by the Haversine formula.
+   * Note: The results are cached for improved performance.
+   * @param source Source vertex ID.
+   * @param target Target vertex ID.
+   * @return Distance in meters between soure and target.
+   */
+  uint32_t DistanceBetweenVertices(HexVertexId source, HexVertexId target);
 
   /**
    * Write the planet mesh to an output stream.
@@ -100,6 +113,18 @@ class HexPlanet {
   std::vector<HexVertex> vertices_;
   /// Triangles (and thus the edges)
   std::vector<HexTriangle> triangles_;
+
+  /**
+   * Vertex coordinate mapping.
+   * This is stored separate from the HexVertexes since these are computed on the fly as needed.
+   */
+  std::unordered_map<HexVertexId, GPSCoordinateFast> vertex_coordinates_;
+
+  /**
+   * Distances cache.
+   * Stores the distance between two vertices keyed a source/target pair as computed by the Haversine formula.
+   */
+  boost::unordered_map<std::pair<HexVertexId, HexVertexId>, uint32_t> vertex_distances_;
 
   /**
    * Builds the initial icosahedron (20 sided die).

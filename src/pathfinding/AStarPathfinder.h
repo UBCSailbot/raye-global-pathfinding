@@ -20,9 +20,9 @@ class AStarPathfinder : public Pathfinder {
    * @param start Start vertex id.
    * @param target Target vertex id.
    */
-  AStarPathfinder(const HexPlanet &planet,
-                  Heuristic *heuristic,
-                  CostCalculator *cost_calculator,
+  AStarPathfinder(HexPlanet &planet,
+                  const Heuristic &heuristic,
+                  const CostCalculator &cost_calculator,
                   HexVertexId start,
                   HexVertexId target);
 
@@ -31,7 +31,7 @@ class AStarPathfinder : public Pathfinder {
    * @throw std::runtime_error Pathfinding error.
    * @return The path from start_ to target_.
    */
-  std::vector<HexVertexId> Run();
+  Result Run();
 
  private:
   boost::unordered_map<AStarVertex::IdTimeIndex, AStarVertex> closed_set;

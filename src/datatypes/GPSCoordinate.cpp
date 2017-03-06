@@ -1,5 +1,9 @@
 // Copyright 2016 UBC Sailbot
 
+#include <iomanip>
+#include <sstream>
+#include <cmath>
+
 #include "datatypes/GPSCoordinate.h"
 
 GPSCoordinate::GPSCoordinate() {}
@@ -29,7 +33,31 @@ bool GPSCoordinate::operator!=(const GPSCoordinate &other) const {
 }
 
 std::string GPSCoordinate::to_string() const {
-  std::string coord_str;
-  coord_str = "(" + std::to_string(latitude_exact_) + ", " + std::to_string(longitude_exact_) + ")";
-  return coord_str;
+  std::stringstream coord_str;
+  coord_str << "("
+            << to_string_helper(latitude_exact_)
+            << ", "
+            << to_string_helper(longitude_exact_)
+            << ")";
+  return coord_str.str();
+}
+
+std::string GPSCoordinate::to_string_latitude() const {
+  return to_string_helper(latitude_exact_);
+}
+
+std::string GPSCoordinate::to_string_longitude() const {
+  return to_string_helper(longitude_exact_);
+}
+
+std::string GPSCoordinate::to_string_helper(int32_t input) {
+  std::stringstream coord_str;
+
+  int input_part_whole = input / kExactCoordinateScaleFactor;
+  int input_part_fractional = abs(input) % kExactCoordinateScaleFactor;
+
+  coord_str << std::setfill('0')
+            << input_part_whole << "." << std::setw(kExactCoordinateDecimalPlaces) << input_part_fractional;
+
+  return coord_str.str();
 }

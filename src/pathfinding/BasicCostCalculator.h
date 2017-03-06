@@ -7,7 +7,7 @@
 #include "pathfinding/CostCalculator.h"
 #include "planet/HexPlanet.h"
 
-class BasicCostCalculator: public CostCalculator {
+class BasicCostCalculator : public CostCalculator {
  public:
   /**
    * Creates a BasicCostCalculator instance that gets the cost from one point
@@ -15,39 +15,34 @@ class BasicCostCalculator: public CostCalculator {
    * handle its deletion.
    * @param planet The planet.
    * @param map The risk map for the planet.
-   * @throw std::runtime_error If map pointer is null.
    */
-  explicit BasicCostCalculator(const HexPlanet &planet, BasicHexMap *map);
+  explicit BasicCostCalculator(HexPlanet &planet, std::unique_ptr<BasicHexMap> &map);
 
   /**
-   * Calculates the cost to get between two points.
-   * @param target The destination vertex ID.
-   * @param source The source vertex ID.
+   * Computes the a distance between two points using the Haversine formula and the BasicHexMap.
+   * Note: Currently just increments time by one.
+   * @param source Source vertex ID.
+   * @param target Target vertex ID.
+   * @param time Starting time step.
    * @throw std::runtime_error if target or source does not exist on the planet.
-   * @return The cost or risk to get from source to target.
+   * @return The cost (distance in meters + BasicHexMap based cost) and ending time step for an edge.
    */
-  uint32_t calculate(const HexVertexId target, const HexVertexId source, uint32_t) const override;
-
-  /**
-   * Destroy this cost calculator and its associated risk map.
-   */
-  ~BasicCostCalculator();
+  Result calculate(HexVertexId target, HexVertexId source, uint32_t start_time) const override;
 
   // Class can't be copied
-  BasicCostCalculator(const BasicCostCalculator&) = delete;
+  BasicCostCalculator(const BasicCostCalculator &) = delete;
 
   // Class can't be moved
-  BasicCostCalculator(BasicCostCalculator&&) = delete;
+  BasicCostCalculator(BasicCostCalculator &&) = delete;
 
   // Class can't be copy assigned
-  BasicCostCalculator &operator= (const BasicCostCalculator&) = delete;
+  BasicCostCalculator &operator=(const BasicCostCalculator &) = delete;
 
   // Class can't be move assigned
-  BasicCostCalculator &operator=(BasicCostCalculator&&) = delete;
+  BasicCostCalculator &operator=(BasicCostCalculator &&) = delete;
 
  private:
-  HexPlanet planet_;
-  BasicHexMap *map_;
+  std::unique_ptr<BasicHexMap> map_;
 };
 
 #endif  // PATHFINDING_BASICCOSTCALCULATOR_H_

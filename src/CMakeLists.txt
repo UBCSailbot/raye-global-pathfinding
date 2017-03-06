@@ -12,10 +12,12 @@ set(LIB_SRCS
         pathfinding/AStarVertex.cpp
         pathfinding/BasicCostCalculator.cpp
         pathfinding/BasicHexMap.cpp
+        pathfinding/HaversineCostCalculator.cpp
         pathfinding/HaversineHeuristic.cpp
         pathfinding/NaiveCostCalculator.cpp
         pathfinding/NaiveHeuristic.cpp
         pathfinding/Pathfinder.cpp
+        pathfinding/PathfinderResultPrinter.cpp
         planet/HexPlanet.cpp)
 
 set(LIB_HDRS
@@ -32,11 +34,13 @@ set(LIB_HDRS
         pathfinding/BasicCostCalculator.h
         pathfinding/BasicHexMap.h
         pathfinding/CostCalculator.h
+        pathfinding/HaversineCostCalculator.h
         pathfinding/HaversineHeuristic.h
         pathfinding/Heuristic.h
         pathfinding/NaiveCostCalculator.h
         pathfinding/NaiveHeuristic.h
         pathfinding/Pathfinder.h
+        pathfinding/PathfinderResultPrinter.h
         planet/HexPlanet.h)
 
 # Define the src_core library target

@@ -11,6 +11,12 @@
 
 class Pathfinder {
  public:
+  struct Result {
+    std::vector<HexVertexId> path;
+    double cost;
+    uint32_t time;
+  };
+
   /**
    * Creates a Pathfinder instance. Each instance pertains to a specific pathfinding scenario.
    * Note: ensure that the heuristic and cost_calculator are compatible!
@@ -20,9 +26,9 @@ class Pathfinder {
    * @param start Start vertex id.
    * @param target Target vertex id.
    */
-  Pathfinder(const HexPlanet &planet,
-             Heuristic *heuristic,
-             CostCalculator *cost_calculator,
+  Pathfinder(HexPlanet &planet,
+             const Heuristic &heuristic,
+             const CostCalculator &cost_calculator,
              HexVertexId start,
              HexVertexId target);
 
@@ -31,12 +37,12 @@ class Pathfinder {
    * @throw std::runtime_error Pathfinding error.
    * @return The path from start_ to target_.
    */
-  virtual std::vector<HexVertexId> Run() = 0;
+  virtual Result Run() = 0;
 
  protected:
-  const HexPlanet &planet_;
-  const Heuristic *heuristic_;
-  const CostCalculator *cost_calculator_;
+  HexPlanet &planet_;
+  const Heuristic &heuristic_;
+  const CostCalculator &cost_calculator_;
 
   const HexVertexId start_;
   const HexVertexId target_;

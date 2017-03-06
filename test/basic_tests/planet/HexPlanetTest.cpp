@@ -16,11 +16,9 @@ TEST_F(HexPlanetTest, HexPlanetCreationTest) {
   EXPECT_EQ(hex_planet.vertex_count(), static_cast<size_t>(2432));
 }
 
-/*
- * This is a test of the UpdateVertexNeighbours method, which is
- * ran in the HexPlanet constructor.
- * Check that for every vertex "i" in the HexPlanet,
- * every neighbour of vertex "i" contains "i" as a neighbour.
+/**
+ * This is a test of the UpdateVertexNeighbours method, which is run in the HexPlanet constructor.
+ * Check that for every vertex "i" in the HexPlanet, every neighbour of vertex "i" contains "i" as a neighbour.
  * This is done with multiple subdivisions.
  */
 TEST_F(HexPlanetTest, UpdateVertexNeighboursTest) {
@@ -56,8 +54,10 @@ TEST_F(HexPlanetTest, UpdateVertexNeighboursTest) {
   }
 }
 
-// Test that neighbour reciprocity using HexPlanet methods
-// Also test that vertices have the expected number of neighbours
+/**
+ * Test that neighbour reciprocity using HexPlanet methods.
+ * It also tests that vertices have the expected number of neighbours
+ */
 TEST_F(HexPlanetTest, GetNeighboursTest) {
   HexPlanet planet = HexPlanet(kGetNeighboursTestPlanetSize);
   size_t num_vertices = planet.vertex_count();
@@ -67,13 +67,13 @@ TEST_F(HexPlanetTest, GetNeighboursTest) {
     planet.GetNeighbours(i, &neighbours);
     bool has_invalid_vertex = false;
 
-    for (const HexVertexId &neighbour_id : neighbours) {
-      // there should be a maximum of one invalid vertex per neighbour
+    for (HexVertexId neighbour_id : neighbours) {
+      // There should be a maximum of one invalid vertex per neighbour
       if (neighbour_id == kInvalidHexVertexId) {
         EXPECT_FALSE(has_invalid_vertex);
         has_invalid_vertex = true;
       } else {
-        // check for neighbourship reciprocity
+        // Check for neighbourship reciprocity
         std::array<HexVertexId, 6> next_neighbours;
         planet.GetNeighbours(neighbour_id, &next_neighbours);
 

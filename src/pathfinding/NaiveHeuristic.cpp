@@ -1,9 +1,10 @@
 // Copyright 2017 UBC Sailbot
 
-#include "NaiveHeuristic.h"
+#include "pathfinding/NaiveHeuristic.h"
 
-NaiveHeuristic::NaiveHeuristic(uint32_t default_cost) : default_cost_(default_cost) {}
+NaiveHeuristic::NaiveHeuristic(HexPlanet &planet, uint32_t cost)
+    : Heuristic(planet), cost_(cost) {}
 
-uint32_t NaiveHeuristic::calculate(const GPSCoordinateFast &source, const GPSCoordinateFast &target) const {
-  return default_cost_;
+uint32_t NaiveHeuristic::calculate(HexVertexId, HexVertexId) const {
+  return cost_;
 }

@@ -5,20 +5,17 @@
 #include <memory>
 #include <queue>
 
-AStarPathfinder::AStarPathfinder(const HexPlanet &planet,
-                                 Heuristic *heuristic,
-                                 CostCalculator *cost_calculator,
+AStarPathfinder::AStarPathfinder(HexPlanet &planet,
+                                 const Heuristic &heuristic,
+                                 const CostCalculator &cost_calculator,
                                  HexVertexId start,
                                  HexVertexId target)
     : Pathfinder(planet, heuristic, cost_calculator, start, target) {}
 
-std::vector<HexVertexId> AStarPathfinder::Run() {
+Pathfinder::Result AStarPathfinder::Run() {
   std::priority_queue<AStarVertex, std::vector<AStarVertex>> open_set;
 
-  const GPSCoordinateFast &start_GPS_coordinate = planet_.GPSCoordinateFromHexVertex(start_);
-  const GPSCoordinateFast &target_GPS_coordinate = planet_.GPSCoordinateFromHexVertex(target_);
-
-  AStarVertex start_vertex(start_, 0, 0, heuristic_->calculate(start_GPS_coordinate, target_GPS_coordinate));
+  AStarVertex start_vertex(start_, 0, 0, heuristic_.calculate(start_, target_));
   open_set.push(start_vertex);
 
   closed_set.insert({start_vertex.id_time_index(), start_vertex});
@@ -28,7 +25,7 @@ std::vector<HexVertexId> AStarPathfinder::Run() {
     open_set.pop();
 
     if (current.hex_vertex_id() == target_) {
-      return ConstructPath(current);
+      return {ConstructPath(current), current.cost(), current.time()};
     }
 
     const AStarVertex::IdTimeIndex &current_id_time_index = current.id_time_index();
@@ -36,17 +33,16 @@ std::vector<HexVertexId> AStarPathfinder::Run() {
     const std::array<HexVertexId, 6> &neighbours = vertex.neighbours;
     for (size_t i = 0; i < vertex.neighbour_count; i++) {
       HexVertexId neighbour_id = neighbours[i];
-      double new_cost = current.cost() + cost_calculator_->
-          calculate(current.hex_vertex_id(), neighbour_id, current.time());
-      uint32_t new_time = current.time() + 1;
-      AStarVertex::IdTimeIndex neighbour_id_time_index(neighbour_id, new_time);
+      auto cost_time = cost_calculator_.calculate(current.hex_vertex_id(), neighbour_id, current.time());
+      double new_cost = current.cost() + cost_time.cost;
+
+      AStarVertex::IdTimeIndex neighbour_id_time_index(neighbour_id, cost_time.time);
       bool already_visited = closed_set.count(neighbour_id_time_index) > 0;
 
       if (!already_visited || new_cost < closed_set.find(neighbour_id_time_index)->second.cost()) {
-        const GPSCoordinateFast &neighbour_GPS_coordinate = planet_.GPSCoordinateFromHexVertex(neighbour_id);
-        uint32_t heuristic_cost = heuristic_->calculate(neighbour_GPS_coordinate, target_GPS_coordinate);
+        uint32_t heuristic_cost = heuristic_.calculate(neighbour_id, target_);
 
-        AStarVertex neighbour_node = AStarVertex(neighbour_id, new_time, new_cost, heuristic_cost);
+        AStarVertex neighbour_node = AStarVertex(neighbour_id, cost_time.time, new_cost, heuristic_cost);
         neighbour_node.set_parent(current_id_time_index);
 
         open_set.push(neighbour_node);
@@ -58,7 +54,7 @@ std::vector<HexVertexId> AStarPathfinder::Run() {
     }
   }
 
-  return std::vector<HexVertexId>();
+  return {{}, 0, 0};
 }
 
 std::vector<HexVertexId> AStarPathfinder::ConstructPath(AStarVertex vertex) {

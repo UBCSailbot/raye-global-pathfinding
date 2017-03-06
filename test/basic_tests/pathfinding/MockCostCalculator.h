@@ -11,14 +11,15 @@ class MockCostCalculator : public CostCalculator {
  public:
   typedef boost::unordered_map<std::tuple<HexVertexId, HexVertexId, uint32_t>, uint32_t> MockCostMap;
 
-  explicit MockCostCalculator(const HexPlanet &planet, const MockCostMap &mock_cost_map, uint32_t default_cost = 1);
+  explicit MockCostCalculator(HexPlanet &planet, const MockCostMap &mock_cost_map, uint32_t default_cost = 1);
 
   /**
-   * @param source Source hex vertex id.
-   * @param target Target hex vertex id.
+   * @param source Source vertex ID.
+   * @param target Target vertex ID.
+   * @param start_time Starting time step.
    * @return The cost for an edge.
    */
-  uint32_t calculate(const HexVertexId source, const HexVertexId target, uint32_t time) const override;
+  Result calculate(const HexVertexId source, const HexVertexId target, uint32_t start_time) const override;
 
  private:
   MockCostMap mock_cost_map_;

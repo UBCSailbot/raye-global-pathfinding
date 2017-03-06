@@ -9,9 +9,8 @@
 
 class BasicHexMapTest : public ::testing::Test {
  protected:
-  HexPlanet planet;
-  BasicHexMap map;
   BasicHexMapTest();
+  HexPlanet planet_1_;
 };
 
 

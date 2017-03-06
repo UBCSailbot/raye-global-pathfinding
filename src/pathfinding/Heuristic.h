@@ -5,6 +5,7 @@
 
 #include <cstdint>
 
+#include "planet/HexPlanet.h"
 #include "datatypes/GPSCoordinateFast.h"
 
 /**
@@ -14,12 +15,17 @@
  */
 class Heuristic {
  public:
+  explicit Heuristic(HexPlanet &planet) : planet_(planet) {}
+
   /**
-   * @param source Source coordinate
-   * @param target Target coordinate
+   * @param source Source vertex id
+   * @param target Target vertex id
    * @return A heuristic costs
    */
-  virtual uint32_t calculate(const GPSCoordinateFast &source, const GPSCoordinateFast &target) const = 0;
+  virtual uint32_t calculate(HexVertexId source, HexVertexId target) const = 0;
+
+ protected:
+  HexPlanet &planet_;
 };
 
 #endif  // PATHFINDING_HEURISTIC_H_

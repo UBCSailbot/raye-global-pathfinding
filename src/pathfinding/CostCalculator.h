@@ -10,17 +10,23 @@
 
 class CostCalculator {
  public:
-  explicit CostCalculator(const HexPlanet &planet) : planet_(planet) {}
+  struct Result {
+    uint32_t cost;
+    uint32_t time;
+  };
+
+  explicit CostCalculator(HexPlanet &planet) : planet_(planet) {}
 
   /**
-   * @param source Source hex vertex id.
-   * @param target Target hex vertex id.
-   * @return The cost for an edge.
+   * @param source Source hex vertex ID.
+   * @param target Target hex vertex ID.
+   * @param start_time Starting time step.
+   * @return The cost and ending time step for an edge.
    */
-  virtual uint32_t calculate(const HexVertexId source, const HexVertexId target, uint32_t time) const = 0;
+  virtual Result calculate(const HexVertexId source, const HexVertexId target, uint32_t start_time) const = 0;
 
- private:
-  const HexPlanet &planet_;
+ protected:
+  HexPlanet &planet_;
 };
 
 #endif  // PATHFINDING_COSTCALCULATOR_H_

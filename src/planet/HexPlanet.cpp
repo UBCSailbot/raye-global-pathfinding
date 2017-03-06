@@ -7,7 +7,6 @@
 #include <cmath>
 #include <iostream>
 #include <sstream>
-#include <unordered_map>
 #include <unordered_set>
 
 #include "logic/StandardCalc.h"
@@ -345,9 +344,36 @@ bool HexPlanet::RayHitPlanet(const Eigen::Vector3f &p, const Eigen::Vector3f &di
   }
 }
 
-GPSCoordinateFast HexPlanet::GPSCoordinateFromHexVertex(HexVertexId id)const {
-  Eigen::Vector3f cartesian = vertices_[id].normal();
-  GPSCoordinateFast vertex_gps;
-  standard_calc::PointToCoord(cartesian, &vertex_gps);
-  return vertex_gps;
+const GPSCoordinateFast &HexPlanet::GPSCoordinateFromHexVertex(HexVertexId id) {
+  // Check if the GPSCoordinate has already been created.
+  auto search = vertex_coordinates_.find(id);
+  if (search != vertex_coordinates_.end()) {
+    // The coordinate already exists, return it.
+    return search->second;
+  } else {
+    // Compute the coordinate, save it, return it.
+    Eigen::Vector3f cartesian = vertices_[id].normal();
+    vertex_coordinates_.insert({id, standard_calc::PointToCoord(cartesian)});
+    return vertex_coordinates_[id];
+  }
+}
+
+uint32_t HexPlanet::DistanceBetweenVertices(HexVertexId source, HexVertexId target) {
+  if (source == target) {
+    return 0;
+  }
+  std::pair<HexVertexId, HexVertexId> key = {source, target};
+  // Check if the distance has already been computed.
+  auto search = vertex_distances_.find(key);
+  if (search != vertex_distances_.end()) {
+    // The distance already exists, return it.
+    return search->second;
+  } else {
+    // Compute the distance, save it, return it.
+    const GPSCoordinateFast &source_coord = GPSCoordinateFromHexVertex(source);
+    const GPSCoordinateFast &target_coord = GPSCoordinateFromHexVertex(target);
+    uint32_t distance = standard_calc::DistBetweenTwoCoords(source_coord, target_coord);
+    vertex_distances_.insert({key, distance});
+    return distance;
+  }
 }

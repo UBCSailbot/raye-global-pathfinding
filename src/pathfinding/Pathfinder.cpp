@@ -2,9 +2,9 @@
 
 #include "Pathfinder.h"
 
-Pathfinder::Pathfinder(const HexPlanet &planet,
-                       Heuristic *heuristic,
-                       CostCalculator *cost_calculator,
+Pathfinder::Pathfinder(HexPlanet &planet,
+                       const Heuristic &heuristic,
+                       const CostCalculator &cost_calculator,
                        HexVertexId start,
                        HexVertexId target)
     : planet_(planet),

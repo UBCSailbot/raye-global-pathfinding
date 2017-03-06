@@ -7,14 +7,24 @@
 
 class NaiveCostCalculator: public CostCalculator {
  public:
-  explicit NaiveCostCalculator(const HexPlanet &planet);
+  /**
+   * @param planet The planet used for cost calculations. Note: Not used by this cost calculator.
+   * @param cost The cost that will always be returned.
+   */
+  explicit NaiveCostCalculator(HexPlanet &planet, uint32_t cost = 1);
 
   /**
-   * @param source Source hex vertex id.
-   * @param target Target hex vertex id.
-   * @return The cost for an edge.
+   * Note: This cost calculator doesn't actually use the source & target IDs.
+   * Note: Currently just increments time by one.
+   * @param source Source vertex ID.
+   * @param target Target vertex ID.
+   * @param start_time Starting time step.
+   * @return The cost (defined during construction) and ending time step for an edge.
    */
-  uint32_t calculate(const HexVertexId source, const HexVertexId target, uint32_t time) const override;
+  Result calculate(const HexVertexId source, const HexVertexId target, uint32_t start_time) const override;
+
+ private:
+  uint32_t cost_;
 };
 
 #endif  // PATHFINDING_NAIVECOSTCALCULATOR_H_

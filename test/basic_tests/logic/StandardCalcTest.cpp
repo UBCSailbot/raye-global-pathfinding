@@ -48,8 +48,7 @@ TEST_F(StandardCalcTest, PointToCoord) {
     const GPSCoordinateFast &coordinate = data.first;
     const Eigen::Vector3f &cartesian = data.second;
 
-    GPSCoordinateFast converted(0, 0);
-    standard_calc::PointToCoord(cartesian, &converted);
+    GPSCoordinateFast converted = standard_calc::PointToCoord(cartesian);
 
     EXPECT_TRUE(coordinate.almost_equal(converted))
               << std::endl << "Test point >>>>> '" << description << "' <<<<< failed." << std::endl

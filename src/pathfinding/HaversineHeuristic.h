@@ -3,19 +3,19 @@
 #ifndef PATHFINDING_HAVERSINEHEURISTIC_H_
 #define PATHFINDING_HAVERSINEHEURISTIC_H_
 
-#include "Heuristic.h"
+#include "pathfinding/Heuristic.h"
 
 class HaversineHeuristic: public Heuristic {
  public:
-  HaversineHeuristic();
+  explicit HaversineHeuristic(HexPlanet &planet);
 
   /**
    * Computes the a distance heuristic between two points using the Haversine formula.
-   * @param source Source coordinate
-   * @param target Target coordinate
+   * @param source Source vertex ID.
+   * @param target Target vertex ID.
    * @return Distance in meters
    */
-  uint32_t calculate(const GPSCoordinateFast &source, const GPSCoordinateFast &target) const override;
+  uint32_t calculate(HexVertexId source, HexVertexId target) const override;
 };
 
 #endif  // PATHFINDING_HAVERSINEHEURISTIC_H_

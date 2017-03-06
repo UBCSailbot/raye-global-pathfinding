@@ -1,9 +1,11 @@
 // Copyright 2017 UBC Sailbot
 
-#include "NaiveCostCalculator.h"
+#include "pathfinding/NaiveCostCalculator.h"
 
-NaiveCostCalculator::NaiveCostCalculator(const HexPlanet &planet) : CostCalculator(planet) {}
+NaiveCostCalculator::NaiveCostCalculator(HexPlanet &planet, uint32_t cost) : CostCalculator(planet), cost_(cost) {}
 
-uint32_t NaiveCostCalculator::calculate(const HexVertexId source, const HexVertexId target, uint32_t time) const {
-  return 1;
+CostCalculator::Result NaiveCostCalculator::calculate(const HexVertexId,
+                                                      const HexVertexId,
+                                                      uint32_t start_time) const {
+  return {cost_, start_time + 1};
 }

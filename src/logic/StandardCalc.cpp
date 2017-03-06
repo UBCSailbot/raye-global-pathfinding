@@ -179,25 +179,22 @@ double rad_to_deg(double radians) {
 }
 
 void CoordToPoint(const GPSCoordinateFast &coord, Eigen::Vector3f *surface_position, double r) {
-  // converting spherical coordinates to cartesian coordinates
+  // Converting spherical coordinates to cartesian coordinates
   (*surface_position)(0) = static_cast<float>(cos(coord.latitude()) * cos(coord.longitude()) * r);
   (*surface_position)(1) = static_cast<float>(cos(coord.latitude()) * sin(coord.longitude()) * r);
   (*surface_position)(2) = static_cast<float>(sin(coord.latitude()) * r);
 }
 
-bool PointToCoord(const Eigen::Vector3f &surface_position, GPSCoordinateFast *coord) {
-  bool on_surface;
-  // check if point is on sphere (within tolerance)
-  if (is_on_sphere(surface_position)) {
-    on_surface = true;
-    // converting cartesian coordinates to spherical coordinates
-    double lat = atan2(surface_position(2), sqrt(pow(surface_position(0), 2) + pow(surface_position(1), 2)));
-    double lng = atan2(surface_position(1), surface_position(0));
-    (*coord).set_lat_lng(lat, lng);
-  } else {
-    on_surface = false;
+GPSCoordinateFast PointToCoord(const Eigen::Vector3f &surface_position) {
+  // Check if point is on sphere (within tolerance)
+  if (!is_on_sphere(surface_position)) {
+    throw std::runtime_error("PointToCoord called with position that is not on the planet surface.");
   }
-  return on_surface;
+
+  // Converting cartesian coordinates to spherical coordinates
+  double lat = atan2(surface_position(2), sqrt(pow(surface_position(0), 2) + pow(surface_position(1), 2)));
+  double lng = atan2(surface_position(1), surface_position(0));
+  return GPSCoordinateFast(lat, lng);
 }
 
 bool is_on_sphere(const Eigen::Vector3f &point, const double R) {

@@ -13,93 +13,112 @@ AStarPathfinderTest::AStarPathfinderTest() :
     planet_1_(1), planet_2_(2), planet_3_(3), planet_4_(4) {}
 
 TEST_F(AStarPathfinderTest, ReturnsEmptyPathForSameTarget) {
-  HaversineHeuristic heuristic_;
+  HaversineHeuristic heuristic_(planet_2_);
   NaiveCostCalculator cost_calculator_(planet_2_);
-  AStarPathfinder pathfinder(planet_2_, &heuristic_, &cost_calculator_, 0, 0);
+  AStarPathfinder pathfinder(planet_2_, heuristic_, cost_calculator_, 0, 0);
   auto result = pathfinder.Run();
 
-  ASSERT_EQ(result.size(), static_cast<size_t>(1));
-  EXPECT_EQ(result[0], static_cast<HexVertexId>(0));
+  EXPECT_EQ(result.cost, 0);
+  EXPECT_EQ(result.time, 0u);
+  ASSERT_EQ(result.path.size(), static_cast<size_t>(1));
+  EXPECT_EQ(result.path[0], static_cast<HexVertexId>(0));
 }
 
 TEST_F(AStarPathfinderTest, ReturnPathSizeTwo) {
-  HaversineHeuristic heuristic_;
+  HaversineHeuristic heuristic_(planet_2_);
   NaiveCostCalculator cost_calculator_(planet_2_);
-  AStarPathfinder pathfinder(planet_2_, &heuristic_, &cost_calculator_, 0, 32);
+  AStarPathfinder pathfinder(planet_2_, heuristic_, cost_calculator_, 0, 32);
   auto result = pathfinder.Run();
 
-  ASSERT_EQ(result.size(), static_cast<size_t>(2));
-  EXPECT_EQ(result[0], static_cast<HexVertexId>(0));
-  EXPECT_EQ(result[1], static_cast<HexVertexId>(32));
+  EXPECT_EQ(result.cost, 1);
+  EXPECT_EQ(result.time, 1u);
+  ASSERT_EQ(result.path.size(), static_cast<size_t>(2));
+  EXPECT_EQ(result.path[0], static_cast<HexVertexId>(0));
+  EXPECT_EQ(result.path[1], static_cast<HexVertexId>(32));
 }
 
 TEST_F(AStarPathfinderTest, ShouldFindSameLengthPathBothWays) {
-  HaversineHeuristic heuristic_;
+  HaversineHeuristic heuristic_(planet_2_);
   NaiveCostCalculator cost_calculator_(planet_2_);
 
-  AStarPathfinder pathfinder1(planet_2_, &heuristic_, &cost_calculator_, 0, 90);
+  AStarPathfinder pathfinder1(planet_2_, heuristic_, cost_calculator_, 0, 90);
   auto result1 = pathfinder1.Run();
 
-  AStarPathfinder pathfinder2(planet_2_, &heuristic_, &cost_calculator_, 90, 0);
+  AStarPathfinder pathfinder2(planet_2_, heuristic_, cost_calculator_, 90, 0);
   auto result2 = pathfinder2.Run();
 
-  EXPECT_GT(result1.size(), static_cast<size_t>(2));
-  EXPECT_GT(result2.size(), static_cast<size_t>(2));
-  EXPECT_EQ(result2.size(), result1.size());
+  EXPECT_EQ(result1.cost, 6);
+  EXPECT_EQ(result1.time, 6u);
+  EXPECT_EQ(result2.cost, 6);
+  EXPECT_EQ(result2.time, 6u);
+  EXPECT_GT(result1.path.size(), static_cast<size_t>(2));
+  EXPECT_GT(result2.path.size(), static_cast<size_t>(2));
+  EXPECT_EQ(result2.path.size(), result1.path.size());
 }
 
 TEST_F(AStarPathfinderTest, FindsLowestCostPath) {
-  NaiveHeuristic heuristic;
+  NaiveHeuristic heuristic(planet_3_);
+
   MockCostCalculator::MockCostMap mock_cost_map;
   mock_cost_map.insert({std::make_tuple(1, 110, 0), 1});
   mock_cost_map.insert({std::make_tuple(110, 111, 1), 1});
   mock_cost_map.insert({std::make_tuple(111, 267, 2), 1});
   mock_cost_map.insert({std::make_tuple(267, 171, 3), 1});
   mock_cost_map.insert({std::make_tuple(171, 86, 4), 1});
-
   MockCostCalculator cost_calculator_(planet_3_, mock_cost_map, 2);
-  AStarPathfinder pathfinder(planet_3_, &heuristic, &cost_calculator_, 1, 86);
+
+  AStarPathfinder pathfinder(planet_3_, heuristic, cost_calculator_, 1, 86);
   auto result = pathfinder.Run();
 
-  ASSERT_EQ(result.size(), static_cast<size_t>(6));
-  EXPECT_EQ(result[0], kTestPath1[0]);
-  EXPECT_EQ(result[1], kTestPath1[1]);
-  EXPECT_EQ(result[2], kTestPath1[2]);
-  EXPECT_EQ(result[3], kTestPath1[3]);
-  EXPECT_EQ(result[4], kTestPath1[4]);
-  EXPECT_EQ(result[5], kTestPath1[5]);
+  EXPECT_EQ(result.cost, 5);
+  EXPECT_EQ(result.time, 5u);
+  ASSERT_EQ(result.path.size(), static_cast<size_t>(6));
+  EXPECT_EQ(result.path[0], kTestPath1[0]);
+  EXPECT_EQ(result.path[1], kTestPath1[1]);
+  EXPECT_EQ(result.path[2], kTestPath1[2]);
+  EXPECT_EQ(result.path[3], kTestPath1[3]);
+  EXPECT_EQ(result.path[4], kTestPath1[4]);
+  EXPECT_EQ(result.path[5], kTestPath1[5]);
 }
 
 TEST_F(AStarPathfinderTest, WillEventuallyFindTheWay) {
-  NaiveHeuristic heuristic;
+  // Uses a valid but useless heuristic. Same behaviour as Dijkstra.
+  // Warning: this runs in 3D (time) so it scales poorly, keep the size small.
+  NaiveHeuristic heuristic(planet_3_, 0);
+
   MockCostCalculator::MockCostMap mock_cost_map;
   mock_cost_map.insert({std::make_tuple(1, 110, 0), 19});
   mock_cost_map.insert({std::make_tuple(110, 111, 1), 1});
   mock_cost_map.insert({std::make_tuple(111, 267, 2), 1});
   mock_cost_map.insert({std::make_tuple(267, 171, 3), 1});
   mock_cost_map.insert({std::make_tuple(171, 86, 4), 1});
-
   MockCostCalculator cost_calculator_(planet_3_, mock_cost_map, 10);
-  AStarPathfinder pathfinder(planet_3_, &heuristic, &cost_calculator_, 1, 86);
+
+  AStarPathfinder pathfinder(planet_3_, heuristic, cost_calculator_, 1, 86);
   auto result = pathfinder.Run();
 
-  ASSERT_EQ(result.size(), kTestPath1.size());
-  EXPECT_EQ(result[0], kTestPath1[0]);
-  EXPECT_EQ(result[1], kTestPath1[1]);
-  EXPECT_EQ(result[2], kTestPath1[2]);
-  EXPECT_EQ(result[3], kTestPath1[3]);
-  EXPECT_EQ(result[4], kTestPath1[4]);
-  EXPECT_EQ(result[5], kTestPath1[5]);
+  EXPECT_EQ(result.cost, 23);
+  EXPECT_EQ(result.time, 5u);
+  ASSERT_EQ(result.path.size(), kTestPath1.size());
+  EXPECT_EQ(result.path[0], kTestPath1[0]);
+  EXPECT_EQ(result.path[1], kTestPath1[1]);
+  EXPECT_EQ(result.path[2], kTestPath1[2]);
+  EXPECT_EQ(result.path[3], kTestPath1[3]);
+  EXPECT_EQ(result.path[4], kTestPath1[4]);
+  EXPECT_EQ(result.path[5], kTestPath1[5]);
 }
 
+// TODO(denis): Describe what this tests.
 TEST_F(AStarPathfinderTest, WillWaitAndFindLowCost) {
-  NaiveHeuristic heuristic_;
+  NaiveHeuristic heuristic_(planet_3_);
+
   MockCostCalculator::MockCostMap mock_cost_map;
   mock_cost_map.insert({std::make_tuple(1, 110, 0), 30});
   mock_cost_map.insert({std::make_tuple(110, 111, 1), 1});
   mock_cost_map.insert({std::make_tuple(111, 267, 2), 1});
   mock_cost_map.insert({std::make_tuple(267, 171, 3), 1});
   mock_cost_map.insert({std::make_tuple(171, 86, 4), 1});
+
   for (auto id : kTestPath1) {
     const HexVertex &vertex = planet_3_.vertex(id);
     const std::array<HexVertexId, 6> &neighbours = vertex.neighbours;
@@ -114,37 +133,41 @@ TEST_F(AStarPathfinderTest, WillWaitAndFindLowCost) {
   }
 
   MockCostCalculator cost_calculator_(planet_3_, mock_cost_map, 10);
-  AStarPathfinder pathfinder(planet_3_, &heuristic_, &cost_calculator_, 1, 86);
+  AStarPathfinder pathfinder(planet_3_, heuristic_, cost_calculator_, 1, 86);
   auto result = pathfinder.Run();
 
-  ASSERT_EQ(result.size(), kTestPath1.size());
-  EXPECT_EQ(result[0], kTestPath1[0]);
-  EXPECT_EQ(result[1], kTestPath1[1]);
-  EXPECT_EQ(result[2], kTestPath1[2]);
-  EXPECT_EQ(result[3], kTestPath1[3]);
-  EXPECT_EQ(result[4], kTestPath1[4]);
-  EXPECT_EQ(result[5], kTestPath1[5]);
+  EXPECT_EQ(result.cost, 34);
+  EXPECT_EQ(result.time, 5u);
+  ASSERT_EQ(result.path.size(), kTestPath1.size());
+  EXPECT_EQ(result.path[0], kTestPath1[0]);
+  EXPECT_EQ(result.path[1], kTestPath1[1]);
+  EXPECT_EQ(result.path[2], kTestPath1[2]);
+  EXPECT_EQ(result.path[3], kTestPath1[3]);
+  EXPECT_EQ(result.path[4], kTestPath1[4]);
+  EXPECT_EQ(result.path[5], kTestPath1[5]);
 }
 
 TEST_F(AStarPathfinderTest, FindsLowestCostPathHaversine) {
-  HaversineHeuristic heuristic;
+  HaversineHeuristic heuristic(planet_3_);
+
   MockCostCalculator::MockCostMap mock_cost_map;
   mock_cost_map.insert({std::make_tuple(1, 110, 0), sailbot::kEarthRadius});
   mock_cost_map.insert({std::make_tuple(110, 111, 1), sailbot::kEarthRadius});
   mock_cost_map.insert({std::make_tuple(111, 267, 2), sailbot::kEarthRadius});
   mock_cost_map.insert({std::make_tuple(267, 171, 3), sailbot::kEarthRadius});
   mock_cost_map.insert({std::make_tuple(171, 86, 4), sailbot::kEarthRadius});
-
   MockCostCalculator cost_calculator_(planet_3_, mock_cost_map, sailbot::kEarthRadius + 10);
-  AStarPathfinder pathfinder(planet_3_, &heuristic, &cost_calculator_, 1, 86);
+
+  AStarPathfinder pathfinder(planet_3_, heuristic, cost_calculator_, 1, 86);
   auto result = pathfinder.Run();
 
-  ASSERT_EQ(result.size(), static_cast<size_t>(6));
-  EXPECT_EQ(result[0], kTestPath1[0]);
-  EXPECT_EQ(result[1], kTestPath1[1]);
-  EXPECT_EQ(result[2], kTestPath1[2]);
-  EXPECT_EQ(result[3], kTestPath1[3]);
-  EXPECT_EQ(result[4], kTestPath1[4]);
-  EXPECT_EQ(result[5], kTestPath1[5]);
+  EXPECT_EQ(result.cost, 31855000);
+  EXPECT_EQ(result.time, 5u);
+  ASSERT_EQ(result.path.size(), static_cast<size_t>(6));
+  EXPECT_EQ(result.path[0], kTestPath1[0]);
+  EXPECT_EQ(result.path[1], kTestPath1[1]);
+  EXPECT_EQ(result.path[2], kTestPath1[2]);
+  EXPECT_EQ(result.path[3], kTestPath1[3]);
+  EXPECT_EQ(result.path[4], kTestPath1[4]);
+  EXPECT_EQ(result.path[5], kTestPath1[5]);
 }
-

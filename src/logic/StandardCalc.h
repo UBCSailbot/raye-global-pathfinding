@@ -19,14 +19,12 @@ namespace standard_calc {
 void CoordToPoint(const GPSCoordinateFast &coord, Eigen::Vector3f *surface_position, double r = 1.0);
 
 /**
- * Outputs the Coordinate(i.e. longitude, latitude) given 3d point
- * If input lies on sphere (within POINT_TOLERANCE) returns true
- * Else it returns false
- * @param coord
- * @param surface_position
- * @return Whether on surface or not
+ * Computes the GPS Coordinate (i.e. longitude, latitude) given 3D point.
+ * @param surface_position A vector that describes a point of the planet's surface.
+ * @throws std::runtime_error If the surface_position isn't on the surface of the planet (within POINT_TOLERANCE).
+ * @return The GPS Coordinate of the surface position.
  */
-bool PointToCoord(const Eigen::Vector3f &surface_position, GPSCoordinateFast *coord);
+GPSCoordinateFast PointToCoord(const Eigen::Vector3f &surface_position);
 
 /**
  * Returns true or false depending on weather the point is on the sphere of given radius
