@@ -16,26 +16,26 @@ TEST_F(GPSCoordinateTest, TestEmptyConstructor) {
 }
 
 TEST_F(GPSCoordinateTest, TestRadianConstructor) {
-//  GPSCoordinateFast coordinate = GPSCoordinateFast(0, 0);
-//
-//  EXPECT_EQ(0., coordinate.latitude());
-//  EXPECT_EQ(0, coordinate.latitude_exact());
-//  EXPECT_EQ(0., coordinate.longitude());
-//  EXPECT_EQ(0, coordinate.longitude_exact());
-//
-//  coordinate = GPSCoordinateFast(M_PI, M_PI);
-//
-//  EXPECT_EQ(M_PI, coordinate.latitude());
-//  EXPECT_EQ(1800000000, coordinate.latitude_exact());
-//  EXPECT_EQ(M_PI, coordinate.longitude());
-//  EXPECT_EQ(1800000000, coordinate.longitude_exact());
-//
-//  coordinate = GPSCoordinateFast(M_PI / 2, M_PI / 2);
-//
-//  EXPECT_EQ(M_PI / 2, coordinate.latitude());
-//  EXPECT_EQ(900000000, coordinate.latitude_exact());
-//  EXPECT_EQ(M_PI / 2, coordinate.longitude());
-//  EXPECT_EQ(900000000, coordinate.longitude_exact());
+  GPSCoordinateFast coordinate = GPSCoordinateFast(0, 0);
+
+  EXPECT_EQ(0., coordinate.latitude());
+  EXPECT_EQ(0, coordinate.latitude_exact());
+  EXPECT_EQ(0., coordinate.longitude());
+  EXPECT_EQ(0, coordinate.longitude_exact());
+
+  coordinate = GPSCoordinateFast(M_PI, M_PI);
+
+  EXPECT_EQ(M_PI, coordinate.latitude());
+  EXPECT_EQ(1800000000, coordinate.latitude_exact());
+  EXPECT_EQ(M_PI, coordinate.longitude());
+  EXPECT_EQ(1800000000, coordinate.longitude_exact());
+
+  coordinate = GPSCoordinateFast(M_PI / 2, M_PI / 2);
+
+  EXPECT_EQ(M_PI / 2, coordinate.latitude());
+  EXPECT_EQ(900000000, coordinate.latitude_exact());
+  EXPECT_EQ(M_PI / 2, coordinate.longitude());
+  EXPECT_EQ(900000000, coordinate.longitude_exact());
 }
 
 TEST_F(GPSCoordinateTest, TestExactConstructor) {

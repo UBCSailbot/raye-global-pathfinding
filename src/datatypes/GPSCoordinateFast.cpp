@@ -30,6 +30,10 @@ void GPSCoordinateFast::set_lat_lng_exact(int32_t latitude_exact, int32_t longit
 void GPSCoordinateFast::set_lat_lng(double lat, double lng) {
   latitude_ = lat;
   longitude_ = lng;
+  longitude_exact_ =
+      static_cast<uint32_t >(standard_calc::rad_to_deg(longitude_) * (kExactCoordinateScaleFactor));
+  latitude_exact_ =
+      static_cast<uint32_t >(standard_calc::rad_to_deg(latitude_) * (kExactCoordinateScaleFactor));
 }
 
 bool GPSCoordinateFast::almost_equal(const GPSCoordinateFast &other, const double tolerance) const {
