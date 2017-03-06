@@ -1,8 +1,8 @@
 // Copyright 2017 UBC Sailbot
 
 #include <iostream>
+
 #include <boost/program_options.hpp>
-#include <boost/bind.hpp>
 
 #include <pathfinding/HaversineHeuristic.h>
 #include <pathfinding/NaiveCostCalculator.h>
@@ -32,12 +32,16 @@ int main(int argc, char const *argv[]) {
 
     HexPlanet planet(vm["p"].as<int>());
 
-    if (vm.count("help")) {
-      std::cout << desc << '\n';
+    if (vm.count("help") || vm.size() == 0) {
+      // Show help
+      std::cout << desc;
+      return EXIT_SUCCESS;
     }
+
     if (vm.count("p")) {
-      std::cout << "Planet Size: " << vm["p"].as<int>() << '\n';
+      std::cout << "Planet Size: " << vm["p"].as<int>() << std::endl;
     }
+
     if (vm.count("n")) {
       find_neighbors(vm["n"].as<HexVertexId>(), planet);
     } else if (vm.count("f") && (vm["f"].as<std::vector<HexVertexId> >().size() == 2)) {
@@ -53,16 +57,10 @@ int main(int argc, char const *argv[]) {
       }
       std::cout << std::endl;
     }
-
-    boost::program_options::notify(vm);
-    return 0;
   } catch (const boost::program_options::error &ex) {
     std::cerr << ex.what() << std::endl;
   } catch (const std::runtime_error &ex) {
     std::cerr << "Pathfinding Error:" << std::endl;
     std::cerr << ex.what() << std::endl;
   }
-
-  return 0;
-
 }

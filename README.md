@@ -70,7 +70,7 @@ set(TEST_FILES
     example_tests/NewTest.h)
 ```
 
-To run the tests, use CMake to compile the project, then run `basic_tests` in `build`.
+To run the tests, use CMake to compile the project, then run `basic_tests` in `build/bin`.
 It will notify you if tests pass or fail.
 
 If your tests fail, it will make the build fail which will make people upset.
