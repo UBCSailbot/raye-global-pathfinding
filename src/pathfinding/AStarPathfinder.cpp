@@ -4,6 +4,7 @@
 
 #include <memory>
 #include <queue>
+#include <iostream>
 
 AStarPathfinder::AStarPathfinder(HexPlanet &planet,
                                  const Heuristic &heuristic,
@@ -14,47 +15,47 @@ AStarPathfinder::AStarPathfinder(HexPlanet &planet,
 
 Pathfinder::Result AStarPathfinder::Run() {
   std::priority_queue<AStarVertex, std::vector<AStarVertex>> open_set;
+  TimeIndexVertexMap closed_set;
 
-  AStarVertex start_vertex(start_, 0, 0, heuristic_.calculate(start_, target_));
+  AStarVertex start_vertex(start_, 0, 0, heuristic_.calculate(start_, target_), {kInvalidHexVertexId, 0});
   open_set.push(start_vertex);
 
-  closed_set.insert({start_vertex.id_time_index(), start_vertex});
-
-  // TODO(tbd): There is currently no check to see that the location is at all reachable.
+  // TODO(areksredzki): There is currently no check to see that the location is at all reachable.
   // Since there are no bounds on the time dimension, the pathfinder will run forever.
   while (!open_set.empty()) {
-    auto current = open_set.top();
+    AStarVertex current = open_set.top();
     open_set.pop();
+
+    const AStarVertex::IdTimeIndex &current_id_time_index = current.id_time_index();
+
+    if (closed_set.find(current_id_time_index) != closed_set.end()) {
+      // This IdTimeIndex has already been visited (with a lower cost) so continue to the next one.
+      continue;
+    }
+
+    // Add to closed set.
+    closed_set.insert(std::make_pair(current_id_time_index, current));
 
     if (current.hex_vertex_id() == target_) {
       stats_.closed_set_size = closed_set.size();
       stats_.open_set_size = open_set.size();
-      return {ConstructPath(current), current.cost(), current.time()};
+      return {ConstructPath(current, closed_set), current.cost(), current.time()};
     }
 
-    const AStarVertex::IdTimeIndex &current_id_time_index = current.id_time_index();
     const HexVertex &vertex = planet_.vertex(current.hex_vertex_id());
-    const std::array<HexVertexId, 6> &neighbours = vertex.neighbours;
     for (size_t i = 0; i < vertex.neighbour_count; i++) {
-      HexVertexId neighbour_id = neighbours[i];
+      HexVertexId neighbour_id = vertex.neighbours[i];
+
+      // Calculate the cost and time between the current vertex and this neighbour.
       auto cost_time = cost_calculator_.calculate(current.hex_vertex_id(), neighbour_id, current.time());
+      // Total cost from the start to this neighbour.
       double new_cost = current.cost() + cost_time.cost;
 
-      AStarVertex::IdTimeIndex neighbour_id_time_index(neighbour_id, cost_time.time);
-      bool already_visited = closed_set.count(neighbour_id_time_index) > 0;
+      // Heuristic cost from this neighbour to the target.
+      uint32_t heuristic_cost = heuristic_.calculate(neighbour_id, target_);
 
-      if (!already_visited || new_cost < closed_set.find(neighbour_id_time_index)->second.cost()) {
-        uint32_t heuristic_cost = heuristic_.calculate(neighbour_id, target_);
-
-        AStarVertex neighbour_node = AStarVertex(neighbour_id, cost_time.time, new_cost, heuristic_cost);
-        neighbour_node.set_parent(current_id_time_index);
-
-        open_set.push(neighbour_node);
-        if (already_visited) {
-          closed_set.erase(neighbour_id_time_index);
-        }
-        closed_set.insert({neighbour_id_time_index, neighbour_node});
-      }
+      // Add the neighbour to the open set in place (no copy/move operations apart from shuffling the priority_queue).
+      open_set.emplace(neighbour_id, cost_time.time, new_cost, heuristic_cost, current_id_time_index);
     }
   }
 
@@ -65,15 +66,20 @@ Pathfinder::Result AStarPathfinder::Run() {
   return {{}, 0, 0};
 }
 
-std::vector<HexVertexId> AStarPathfinder::ConstructPath(AStarVertex vertex) {
+std::vector<HexVertexId> AStarPathfinder::ConstructPath(AStarVertex vertex, const TimeIndexVertexMap &closed_set) {
   auto path = std::deque<HexVertexId>();
 
-  while (closed_set.count(vertex.id_time_index())) {
+  auto it = closed_set.find(vertex.id_time_index());
+
+  while (it != closed_set.end()) {
+    vertex = it->second;
     path.push_front(vertex.hex_vertex_id());
+
     if (vertex.hex_vertex_id() == start_) {
       break;
     }
-    vertex = closed_set.find(vertex.parent())->second;
+
+    it  = closed_set.find(vertex.parent());
   }
 
   return {path.begin(), path.end()};

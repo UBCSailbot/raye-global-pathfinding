@@ -18,10 +18,20 @@
 #include "datatypes/HexVertex.h"
 
 /**
- * A planet mesh in which verticies have 6 neighbours (sometimes 5), making it look like it's composed of hex tiles.
+ * @brief A planet mesh in which most vertices have 6 neighbours, making it look like it's composed of hex tiles.
+ * Note: All vertices have either 6 or 5 neighbours.
  */
 class HexPlanet {
  public:
+  /// A pair of HexVertexId.
+  typedef std::pair<HexVertexId, HexVertexId> HexVertexPair;
+  /// A mapping between edges (HexVertexPair) and a pair of triangles
+  typedef std::map<HexVertexPair, std::pair<uint32_t, uint32_t> > AdjacencyMap;
+
+  /**
+   * Create a HexPlanet with the given subdivision level.
+   * @param subdivision_level The subdivision count.
+   */
   explicit HexPlanet(int subdivision_level);
 
   /**
@@ -118,13 +128,13 @@ class HexPlanet {
    * Vertex coordinate mapping.
    * This is stored separate from the HexVertexes since these are computed on the fly as needed.
    */
-  std::unordered_map<HexVertexId, GPSCoordinateFast> vertex_coordinates_;
+  boost::unordered_map<HexVertexId, GPSCoordinateFast> vertex_coordinates_;
 
   /**
    * Distances cache.
    * Stores the distance between two vertices keyed a source/target pair as computed by the Haversine formula.
    */
-  boost::unordered_map<std::pair<HexVertexId, HexVertexId>, uint32_t> vertex_distances_;
+  boost::unordered_map<HexVertexPair, uint32_t> vertex_distances_;
 
   /**
    * Builds the initial icosahedron (20 sided die).
@@ -150,6 +160,14 @@ class HexPlanet {
    * This pushes out new vertices.
    */
   void ProjectToSphere();
+
+  /**
+   * Add one of two triangles that are associated with each edge.
+   * @param edge Edge to associate.
+   * @param triangle_index Triangle index to register.
+   * @param adjacency_map A map between edges and triangle pairs to update.
+   */
+  void UpdateAdjacencyInfo(const HexVertexPair &edge, uint32_t triangle_index, AdjacencyMap &adjacency_map);
 };
 
 #endif  // PLANET_HEXPLANET_H_

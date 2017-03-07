@@ -143,17 +143,19 @@ void HexPlanet::build_level_0() {
   triangles_.push_back(HexTriangle(8, 3, 5));
 }
 
-typedef std::map<std::pair<uint32_t, uint32_t>, std::pair<uint32_t, uint32_t> > AdjacencyMap;
-
-void UpdateAdjacencyInfo(const std::pair<uint32_t, uint32_t> &edge, uint32_t triangle_index, AdjacencyMap *am) {
-  AdjacencyMap::iterator i = am->find(edge);
-  if (i == am->end()) {
-    (*am)[edge] = std::make_pair(triangle_index, -1);
+void HexPlanet::UpdateAdjacencyInfo(const std::pair<uint32_t, uint32_t> &edge,
+                                    uint32_t triangle_index,
+                                    HexPlanet::AdjacencyMap &adjacency_map) {
+  auto i = adjacency_map.find(edge);
+  if (i == adjacency_map.end()) {
+    // Add the edge to the adjacency map (record the first triangle).
+    adjacency_map[edge] = std::make_pair(triangle_index, -1);
   } else {
+    // Record the second triangle that's attached to the edge.
     // i->second is the value in the map (a pair of triangle indexes)
     // the first index was set in create (above)
     if (i->second.second != kInvalidHexVertexId) {
-      std::cerr << "Error in UpdateAdjacencyInfo!" << std::endl;
+      throw std::runtime_error("Adjacency map contains kInvalidHexVertexIdError");
     }
     i->second.second = triangle_index;
   }
@@ -164,14 +166,14 @@ void HexPlanet::Subdivide() {
   AdjacencyMap adjacency_info;
   for (uint32_t ti = 0; ti != triangles_.size(); ++ti) {
     const HexTriangle &t = triangles_[ti];
-    std::pair<uint32_t, uint32_t> edge_a_b(std::min(t.vertex_a, t.vertex_b), std::max(t.vertex_a, t.vertex_b));
-    UpdateAdjacencyInfo(edge_a_b, ti, &adjacency_info);
+    HexVertexPair edge_a_b(std::min(t.vertex_a, t.vertex_b), std::max(t.vertex_a, t.vertex_b));
+    UpdateAdjacencyInfo(edge_a_b, ti, adjacency_info);
 
-    std::pair<uint32_t, uint32_t> edge_b_c(std::min(t.vertex_b, t.vertex_c), std::max(t.vertex_b, t.vertex_c));
-    UpdateAdjacencyInfo(edge_b_c, ti, &adjacency_info);
+    HexVertexPair edge_b_c(std::min(t.vertex_b, t.vertex_c), std::max(t.vertex_b, t.vertex_c));
+    UpdateAdjacencyInfo(edge_b_c, ti, adjacency_info);
 
-    std::pair<uint32_t, uint32_t> edge_c_a(std::min(t.vertex_c, t.vertex_a), std::max(t.vertex_c, t.vertex_a));
-    UpdateAdjacencyInfo(edge_c_a, ti, &adjacency_info);
+    HexVertexPair edge_c_a(std::min(t.vertex_c, t.vertex_a), std::max(t.vertex_c, t.vertex_a));
+    UpdateAdjacencyInfo(edge_c_a, ti, adjacency_info);
   }
 
   // For each triangle in the old mesh, create a new vertex at the center

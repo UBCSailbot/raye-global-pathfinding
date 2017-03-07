@@ -2,14 +2,12 @@
 
 #include "pathfinding/AStarVertex.h"
 
-AStarVertex::AStarVertex(HexVertexId hex_vertex_id, uint32_t time, double cost, double heuristic_cost)
-    : id_time_index_({hex_vertex_id, time}), cost_(cost),
-      parent_({kInvalidHexVertexId, 0}), heuristic_cost_(heuristic_cost) {}
-
-AStarVertex::AStarVertex(HexVertexId hex_vertex_id, uint32_t time, double cost,
-                         IdTimeIndex parent, double heuristic_cost)
-    : id_time_index_({hex_vertex_id, time}), cost_(cost),
-      parent_(parent), heuristic_cost_(heuristic_cost) {}
+AStarVertex::AStarVertex(HexVertexId hex_vertex_id,
+                         uint32_t time,
+                         double cost,
+                         double heuristic_cost,
+                         IdTimeIndex parent)
+    : id_time_index_({hex_vertex_id, time}), cost_(cost), heuristic_cost_(heuristic_cost), parent_(parent) {}
 
 bool AStarVertex::operator<(const AStarVertex &rhs) const {
   return cost_ + heuristic_cost_ > rhs.cost() + rhs.heuristic_cost();
