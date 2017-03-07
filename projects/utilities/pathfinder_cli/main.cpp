@@ -34,7 +34,11 @@ void find_coordinates(HexPlanet &planet, const std::vector<HexVertexId> &ids) {
   }
 }
 
-Pathfinder::Result run_pathfinder(HexPlanet &planet, HexVertexId source, HexVertexId target, bool silent) {
+Pathfinder::Result run_pathfinder(HexPlanet &planet,
+                                  HexVertexId source,
+                                  HexVertexId target,
+                                  bool silent,
+                                  bool verbose) {
   HaversineHeuristic heuristic = HaversineHeuristic(planet);
   HaversineCostCalculator cost_calculator = HaversineCostCalculator(planet);
   AStarPathfinder pathfinder(planet, heuristic, cost_calculator, source, target);
@@ -50,13 +54,22 @@ Pathfinder::Result run_pathfinder(HexPlanet &planet, HexVertexId source, HexVert
     auto end_time = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end_time - start_time;
     std::cout << std::fixed
-        << "Pathfinding Complete (" << elapsed_seconds.count() << "s)" << std::endl << std::endl;
+              << "Pathfinding Complete (" << elapsed_seconds.count() << "s)" << std::endl;
+
+    if (verbose) {
+      auto stats = pathfinder.stats();
+      std::cout << std::fixed
+                << "Closed Set: " << stats.closed_set_size << std::endl
+                << "Open Set:   " << stats.open_set_size << " (on exit)" << std::endl;
+    }
+
+    std::cout << std::endl;
   }
 
   return result;
 }
 
-HexPlanet generate_planet(int subdivision_level, bool silent) {
+HexPlanet generate_planet(int subdivision_level, bool silent, bool verbose) {
   if (!silent) {
     std::cout << "Generating HexPlanet of Size: " << subdivision_level << std::endl;
   }
@@ -68,7 +81,15 @@ HexPlanet generate_planet(int subdivision_level, bool silent) {
     auto end_time = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end_time - start_time;
     std::cout << std::fixed
-        << "Planet Generation Complete (" << elapsed_seconds.count() << "s)" << std::endl << std::endl;
+              << "Planet Generation Complete (" << elapsed_seconds.count() << "s)" << std::endl;
+
+    if (verbose) {
+      std::cout << std::fixed
+                << "Vertices:  " << planet.vertex_count() << std::endl
+                << "Triangles: " << planet.triangle_count() << std::endl;
+    }
+
+    std::cout << std::endl;
   }
 
   return planet;
@@ -112,7 +133,7 @@ int main(int argc, char const *argv[]) {
     bool verbose = vm.count("v") > 0 && !silent;
 
     auto planet_size = vm["p"].as<int>();
-    HexPlanet planet = generate_planet(planet_size, silent);
+    HexPlanet planet = generate_planet(planet_size, silent, verbose);
 
     if (vm.count("n")) {
       find_neighbours(planet, vm["n"].as<HexVertexId>());
@@ -125,10 +146,11 @@ int main(int argc, char const *argv[]) {
         throw std::runtime_error("Pathfinding requires two hex IDs: <start> <end>");
       }
 
-      auto result = run_pathfinder(planet, points[0], points[1], silent);
+      auto result = run_pathfinder(planet, points[0], points[1], silent, verbose);
 
       switch (format) {
         case OutputFormat::kDefault:
+          // Print default
           std::cout << PathfinderResultPrinter::PrintDefault(result);
 
           if (verbose) {
@@ -137,6 +159,7 @@ int main(int argc, char const *argv[]) {
           }
           break;
         case OutputFormat::kKML:
+          // Print KML
           std::cout << PathfinderResultPrinter::PrintKML(planet, result);
           break;
       }

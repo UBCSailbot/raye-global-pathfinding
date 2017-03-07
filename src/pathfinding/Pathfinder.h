@@ -11,10 +11,23 @@
 
 class Pathfinder {
  public:
+  /**
+   * The result of a pathfinder run.
+   */
   struct Result {
     std::vector<HexVertexId> path;
     double cost;
     uint32_t time;
+  };
+
+  /**
+   * Object for storing stats that would normally be lost outside of the scope of Run().
+   */
+  struct Stats {
+    /// The size of the closed set at the end of Run(). This is the number of states (vertex & time) visited.
+    size_t closed_set_size;
+    /// The size of the open set at the end of Run(). This is the number of states (vertex & time) to be visited.
+    size_t open_set_size;
   };
 
   /**
@@ -39,6 +52,11 @@ class Pathfinder {
    */
   virtual Result Run() = 0;
 
+  /**
+   * @return The stats computed during the pathfinder run.
+   */
+  const Stats &stats() const;
+
  protected:
   HexPlanet &planet_;
   const Heuristic &heuristic_;
@@ -46,6 +64,8 @@ class Pathfinder {
 
   const HexVertexId start_;
   const HexVertexId target_;
+
+  Stats stats_ = {0, 0};
 };
 
 #endif  // PATHFINDING_PATHFINDER_H_

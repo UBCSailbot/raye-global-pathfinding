@@ -19,3 +19,7 @@ Pathfinder::Pathfinder(HexPlanet &planet,
     throw std::runtime_error("Target is not a valid vertex.");
   }
 }
+
+const Pathfinder::Stats &Pathfinder::stats() const {
+  return stats_;
+}

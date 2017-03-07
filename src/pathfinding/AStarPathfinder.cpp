@@ -20,11 +20,15 @@ Pathfinder::Result AStarPathfinder::Run() {
 
   closed_set.insert({start_vertex.id_time_index(), start_vertex});
 
+  // TODO(tbd): There is currently no check to see that the location is at all reachable.
+  // Since there are no bounds on the time dimension, the pathfinder will run forever.
   while (!open_set.empty()) {
     auto current = open_set.top();
     open_set.pop();
 
     if (current.hex_vertex_id() == target_) {
+      stats_.closed_set_size = closed_set.size();
+      stats_.open_set_size = open_set.size();
       return {ConstructPath(current), current.cost(), current.time()};
     }
 
@@ -54,6 +58,10 @@ Pathfinder::Result AStarPathfinder::Run() {
     }
   }
 
+  // Should be the total number of nodes in the graph (currently infinite).
+  stats_.closed_set_size = closed_set.size();
+  // Should be 0.
+  stats_.open_set_size = open_set.size();
   return {{}, 0, 0};
 }
 
