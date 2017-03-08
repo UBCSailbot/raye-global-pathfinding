@@ -4,8 +4,6 @@
 
 NaiveCostCalculator::NaiveCostCalculator(HexPlanet &planet, uint32_t cost) : CostCalculator(planet), cost_(cost) {}
 
-CostCalculator::Result NaiveCostCalculator::calculate(const HexVertexId,
-                                                      const HexVertexId,
-                                                      uint32_t start_time) const {
+CostCalculator::Result NaiveCostCalculator::calculate_target(HexVertexId, HexVertexId, uint32_t start_time) const {
   return {cost_, start_time + 1};
 }

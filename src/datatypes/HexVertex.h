@@ -3,10 +3,12 @@
 #ifndef DATATYPES_HEXVERTEX_H_
 #define DATATYPES_HEXVERTEX_H_
 
-#include "HexDefs.h"
+#include <array>
 
 #include <Eigen/Dense>
-#include <array>
+
+#include "datatypes/HexDefs.h"
+#include "datatypes/GPSCoordinateFast.h"
 
 /**
  * A HexVertex is a single vertex in a HexPlanet. It is a single vertex of the dual mesh.
@@ -18,10 +20,13 @@ class HexVertex {
 
   explicit HexVertex(Eigen::Vector3f p);
 
-  Eigen::Vector3f normal() const;
+  Eigen::Vector3f normal() const { return vertex_position.normalized(); }
 
   /// The position of the vertex.
   Eigen::Vector3f vertex_position;
+
+  /// The GPS coordinate of the vertex.
+  GPSCoordinateFast coordinate;
 
   /**
    * Array of neighbouring vertex IDs.
@@ -31,6 +36,12 @@ class HexVertex {
   std::array<HexVertexId, kMaxHexVertexNeighbourCount> neighbours =
       {{kInvalidHexVertexId, kInvalidHexVertexId, kInvalidHexVertexId, kInvalidHexVertexId, kInvalidHexVertexId,
         kInvalidHexVertexId}};
+
+  /**
+   * Array of the distances to neighbouring vertices, whose IDs are stored in |neighbours|.
+   * When initialized, this contains 5 or more commonly 6 valid distances.
+   */
+  std::array<HexVertexId, kMaxHexVertexNeighbourCount> neighbour_distances = {{0, 0, 0, 0, 0, 0}};
 
   HexVertexId neighbour_count = 0;
 };

@@ -1,19 +1,20 @@
 // Copyright 2017 UBC Sailbot
 
 #include "HexPlanetTest.h"
+
 #include <planet/HexPlanet.h>
 
 /// The planet subdivision count used for tests
-static constexpr int kTestPlanetSize = 7;
-
-/// The planet subdivision count used for GetNeighboursTest
-static constexpr int kGetNeighboursTestPlanetSize = 3;
+static constexpr int kTestPlanetSize = 6;
+static constexpr size_t kTestPlanetVertexCount = 7292;
+static constexpr size_t kTestPlanetTriangleCount = 14580;
 
 HexPlanetTest::HexPlanetTest() {}
 
 TEST_F(HexPlanetTest, HexPlanetCreationTest) {
-  HexPlanet hex_planet = HexPlanet(5);
-  EXPECT_EQ(hex_planet.vertex_count(), static_cast<size_t>(2432));
+  HexPlanet hex_planet = HexPlanet(kTestPlanetSize);
+  EXPECT_EQ(hex_planet.vertex_count(), kTestPlanetVertexCount);
+  EXPECT_EQ(hex_planet.triangle_count(), kTestPlanetTriangleCount);
 }
 
 /**
@@ -21,9 +22,9 @@ TEST_F(HexPlanetTest, HexPlanetCreationTest) {
  * Check that for every vertex "i" in the HexPlanet, every neighbour of vertex "i" contains "i" as a neighbour.
  * This is done with multiple subdivisions.
  */
-TEST_F(HexPlanetTest, UpdateVertexNeighboursTest) {
+TEST_F(HexPlanetTest, ComputeVertexNeighboursTest) {
   // Run the test with sub divisions ranging from 0 to kTestPlanetSize
-  for (int subdivisions = 0; subdivisions < kTestPlanetSize; subdivisions++) {
+  for (int subdivisions = 0; subdivisions <= kTestPlanetSize; subdivisions++) {
     HexPlanet hex_planet = HexPlanet(subdivisions);
 
     // Check every vertex in the hexplanet
@@ -49,36 +50,6 @@ TEST_F(HexPlanetTest, UpdateVertexNeighboursTest) {
         // We expect vertex i to be a neighbour, since this vertex (vertex "id") is one of neighbours of i.
         EXPECT_TRUE(std::find(neighbours_of_neighbour.begin(), neighbours_of_neighbour.end(), i) !=
             neighbours_of_neighbour.end());
-      }
-    }
-  }
-}
-
-/**
- * Test that neighbour reciprocity using HexPlanet methods.
- * It also tests that vertices have the expected number of neighbours
- */
-TEST_F(HexPlanetTest, GetNeighboursTest) {
-  HexPlanet planet = HexPlanet(kGetNeighboursTestPlanetSize);
-  size_t num_vertices = planet.vertex_count();
-
-  for (HexVertexId i = 0; i < num_vertices; ++i) {
-    std::array<HexVertexId, 6> neighbours;
-    planet.GetNeighbours(i, &neighbours);
-    bool has_invalid_vertex = false;
-
-    for (HexVertexId neighbour_id : neighbours) {
-      // There should be a maximum of one invalid vertex per neighbour
-      if (neighbour_id == kInvalidHexVertexId) {
-        EXPECT_FALSE(has_invalid_vertex);
-        has_invalid_vertex = true;
-      } else {
-        // Check for neighbourship reciprocity
-        std::array<HexVertexId, 6> next_neighbours;
-        planet.GetNeighbours(neighbour_id, &next_neighbours);
-
-        EXPECT_TRUE(std::find(next_neighbours.begin(), next_neighbours.end(), i)
-                        != next_neighbours.end());
       }
     }
   }

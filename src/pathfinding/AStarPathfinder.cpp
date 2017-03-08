@@ -15,6 +15,9 @@ AStarPathfinder::AStarPathfinder(HexPlanet &planet,
 Pathfinder::Result AStarPathfinder::Run() {
   std::priority_queue<AStarVertex> open_set;
   TimeIndexVertexMap closed_set;
+  if (planet_.subdivision_level() >= kClosedSetReservePlanetSize) {
+    closed_set.reserve(kClosedSetReserveSize);
+  }
 
   // Add start state.
   open_set.emplace(start_, 0, 0, heuristic_.calculate(start_, target_), std::make_pair(kInvalidHexVertexId, 0));
@@ -46,7 +49,7 @@ Pathfinder::Result AStarPathfinder::Run() {
       HexVertexId neighbour_id = vertex.neighbours[i];
 
       // Calculate the cost and time between the current vertex and this neighbour.
-      auto cost_time = cost_calculator_.calculate(current.hex_vertex_id(), neighbour_id, current.time());
+      auto cost_time = cost_calculator_.calculate_neighbour(current.hex_vertex_id(), i, current.time());
       // Total cost from the start to this neighbour.
       double neighbour_cost = current.cost() + cost_time.cost;
 

@@ -27,8 +27,14 @@ HexPlanet::HexPlanet(int subdivision_level) {
 
   RepairNormals();
 
-  // Initialize the neighbours of each vertex
-  UpdateVertexNeighbours();
+  // Initialize the coordinate for each vertex
+  ComputeVertexCoordinates();
+
+  // Initialize the neighbours for each vertex
+  ComputeVertexNeighbours();
+
+  // Initialize the neighbour distances for each vertex
+  ComputeVertexNeighbourDistances();
 }
 
 float round_epsilon(float a) {
@@ -251,7 +257,49 @@ HexVertexId HexPlanet::HexVertexFromPoint(Eigen::Vector3f surface_position) {
   return best_hex;
 }
 
-void HexPlanet::UpdateVertexNeighbours() {
+bool HexPlanet::RayHitPlanet(const Eigen::Vector3f &p, const Eigen::Vector3f &dir, Eigen::Vector3f *result) {
+  float a, b, c, d;
+  a = dir.dot(dir);
+  b = (2.0f * dir).dot(p);
+  c = p.dot(p) - 1;
+  d = b * b - 4.0f * a * c;
+
+  if (d <= 0) {
+    return false;
+  } else {
+    *result = p + ((-b - sqrtf(d)) / 2.0f * a) * dir;
+    return true;
+  }
+}
+
+uint32_t HexPlanet::DistanceBetweenVertices(HexVertexId source, HexVertexId target) {
+  if (source == target) {
+    return 0;
+  }
+  std::pair<HexVertexId, HexVertexId> key = {source, target};
+  // Check if the distance has already been computed.
+  auto search = vertex_distances_.find(key);
+  if (search != vertex_distances_.end()) {
+    // The distance already exists, return it.
+    return search->second;
+  } else {
+    // Compute the distance, save it, return it.
+    const GPSCoordinateFast &source_coord = vertices_[source].coordinate;
+    const GPSCoordinateFast &target_coord = vertices_[target].coordinate;
+    uint32_t distance = standard_calc::DistBetweenTwoCoords(source_coord, target_coord);
+    vertex_distances_.insert({key, distance});
+    return distance;
+  }
+}
+
+void HexPlanet::ComputeVertexCoordinates() {
+  for (HexVertex &vertex : vertices_) {
+    Eigen::Vector3f cartesian = vertex.normal();
+    vertex.coordinate = standard_calc::PointToCoord(cartesian);
+  }
+}
+
+void HexPlanet::ComputeVertexNeighbours() {
   std::vector<std::unordered_set<HexVertexId>> neighbour_map;
   neighbour_map.reserve(vertices_.size());
 
@@ -295,87 +343,12 @@ void HexPlanet::UpdateVertexNeighbours() {
   }
 }
 
-void HexPlanet::GetNeighbours(HexVertexId vertex_index, std::array<HexVertexId, 6> *neighbours) const {
-  std::set<HexVertexId> candidates;
-
-  // Find neighbours
-  for (HexVertexId ti = 0; ti < triangles_.size(); ti++) {
-    if (triangles_[ti].vertex_a == vertex_index) {
-      candidates.insert(triangles_[ti].vertex_b);
-      candidates.insert(triangles_[ti].vertex_c);
-    } else if (triangles_[ti].vertex_b == vertex_index) {
-      candidates.insert(triangles_[ti].vertex_a);
-      candidates.insert(triangles_[ti].vertex_c);
-    } else if (triangles_[ti].vertex_c == vertex_index) {
-      candidates.insert(triangles_[ti].vertex_a);
-      candidates.insert(triangles_[ti].vertex_b);
+void HexPlanet::ComputeVertexNeighbourDistances() {
+  for (HexVertex &vertex : vertices_) {
+    for (size_t i = 0; i < vertex.neighbour_count; i++) {
+      HexVertexId neighbour_id = vertex.neighbours[i];
+      const HexVertex &target = vertices_[neighbour_id];
+      vertex.neighbour_distances[i] = standard_calc::DistBetweenTwoCoords(vertex.coordinate, target.coordinate);
     }
-  }
-
-  // There mustn't be more than 6 neighbours for any vertex.
-  if (candidates.size() > HexVertex::kMaxHexVertexNeighbourCount) {
-    throw std::runtime_error("There must not be more than 6 neighbours for any vertex.");
-  }
-
-  size_t i = 0;
-
-  // Populate the neighbours array with the candidates.
-  for (HexVertexId c : candidates) {
-    (*neighbours)[i] = c;
-    i++;
-  }
-
-  // Set the rest of the neighbour array to the default (kInvalidHexVertexId).
-  for (; i < HexVertex::kMaxHexVertexNeighbourCount; i++) {
-    (*neighbours)[i] = kInvalidHexVertexId;
-  }
-}
-
-bool HexPlanet::RayHitPlanet(const Eigen::Vector3f &p, const Eigen::Vector3f &dir, Eigen::Vector3f *result) {
-  float a, b, c, d;
-  a = dir.dot(dir);
-  b = (2.0f * dir).dot(p);
-  c = p.dot(p) - 1;
-  d = b * b - 4.0f * a * c;
-
-  if (d <= 0) {
-    return false;
-  } else {
-    *result = p + ((-b - sqrtf(d)) / 2.0f * a) * dir;
-    return true;
-  }
-}
-
-const GPSCoordinateFast &HexPlanet::GPSCoordinateFromHexVertex(HexVertexId id) {
-  // Check if the GPSCoordinate has already been created.
-  auto search = vertex_coordinates_.find(id);
-  if (search != vertex_coordinates_.end()) {
-    // The coordinate already exists, return it.
-    return search->second;
-  } else {
-    // Compute the coordinate, save it, return it.
-    Eigen::Vector3f cartesian = vertices_[id].normal();
-    vertex_coordinates_.insert({id, standard_calc::PointToCoord(cartesian)});
-    return vertex_coordinates_[id];
-  }
-}
-
-uint32_t HexPlanet::DistanceBetweenVertices(HexVertexId source, HexVertexId target) {
-  if (source == target) {
-    return 0;
-  }
-  std::pair<HexVertexId, HexVertexId> key = {source, target};
-  // Check if the distance has already been computed.
-  auto search = vertex_distances_.find(key);
-  if (search != vertex_distances_.end()) {
-    // The distance already exists, return it.
-    return search->second;
-  } else {
-    // Compute the distance, save it, return it.
-    const GPSCoordinateFast &source_coord = GPSCoordinateFromHexVertex(source);
-    const GPSCoordinateFast &target_coord = GPSCoordinateFromHexVertex(target);
-    uint32_t distance = standard_calc::DistBetweenTwoCoords(source_coord, target_coord);
-    vertex_distances_.insert({key, distance});
-    return distance;
   }
 }

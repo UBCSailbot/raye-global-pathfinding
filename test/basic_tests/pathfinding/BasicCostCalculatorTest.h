@@ -10,7 +10,7 @@
 
 class BasicCostCalculatorTest : public ::testing::Test {
  protected:
-  HexPlanet planet;
+  HexPlanet planet_;
   BasicCostCalculatorTest();
 };
 

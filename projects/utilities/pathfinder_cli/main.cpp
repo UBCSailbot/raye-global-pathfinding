@@ -29,8 +29,7 @@ void find_neighbours(const HexPlanet &planet, HexVertexId id) {
 void find_coordinates(HexPlanet &planet, const std::vector<HexVertexId> &ids) {
   std::cout << "Finding coordinates for vertices: <id> (<lat>, <lng>)" << std::endl;
   for (HexVertexId id : ids) {
-    auto coord = planet.GPSCoordinateFromHexVertex(id);
-    std::cout << id << " " << coord.to_string() << std::endl;
+    std::cout << id << " " << planet.vertex(id).coordinate.to_string() << std::endl;
   }
 }
 

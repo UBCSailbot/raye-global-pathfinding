@@ -18,12 +18,29 @@ class CostCalculator {
   explicit CostCalculator(HexPlanet &planet) : planet_(planet) {}
 
   /**
+   * Calculate the cost to an immediate neighbour of |source|.
+   * @param source Source hex vertex ID.
+   * @param neighbour Target hex vertex's position in |source|'s neighbour array.
+   * @param start_time Starting time step.
+   * @throw std::runtime_error |neighbour| is invalid.
+   * @return The cost and ending time step for an edge.
+   */
+  virtual Result calculate_neighbour(HexVertexId source, size_t neighbour, uint32_t start_time) const {
+    const HexVertex &source_vertex = planet_.vertex(source);
+    if (neighbour >= source_vertex.neighbour_count) {
+      throw std::runtime_error("Calculating cost to invalid neighbour");
+    }
+    HexVertexId target = source_vertex.neighbours[neighbour];
+    return calculate_target(source, target, start_time);
+  }
+
+  /**
    * @param source Source hex vertex ID.
    * @param target Target hex vertex ID.
    * @param start_time Starting time step.
    * @return The cost and ending time step for an edge.
    */
-  virtual Result calculate(const HexVertexId source, const HexVertexId target, uint32_t start_time) const = 0;
+  virtual Result calculate_target(HexVertexId source, HexVertexId target, uint32_t start_time) const = 0;
 
  protected:
   HexPlanet &planet_;

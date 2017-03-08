@@ -3,7 +3,6 @@
 #ifndef PATHFINDING_ASTARPATHFINDER_H_
 #define PATHFINDING_ASTARPATHFINDER_H_
 
-#include <boost/any.hpp>
 #include <boost/unordered_map.hpp>
 
 #include "pathfinding/Pathfinder.h"
@@ -11,6 +10,11 @@
 
 class AStarPathfinder : public Pathfinder {
  public:
+  /// The number of states for which to reserve the closed set for to avoid rehashing.
+  static constexpr size_t kClosedSetReserveSize = 5000000;
+  /// The minimum planet subdivision number for the closed set reservation to be active.
+  static constexpr int kClosedSetReservePlanetSize = 9;
+
   /**
    * Creates a Pathfinder instance. Each instance pertains to a specific pathfinding scenario.
    * Note: ensure that the heuristic and cost_calculator are compatible!

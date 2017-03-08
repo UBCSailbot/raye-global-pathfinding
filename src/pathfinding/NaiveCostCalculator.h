@@ -21,7 +21,7 @@ class NaiveCostCalculator: public CostCalculator {
    * @param start_time Starting time step.
    * @return The cost (defined during construction) and ending time step for an edge.
    */
-  Result calculate(const HexVertexId source, const HexVertexId target, uint32_t start_time) const override;
+  Result calculate_target(HexVertexId source, HexVertexId target, uint32_t start_time) const override;
 
  private:
   uint32_t cost_;

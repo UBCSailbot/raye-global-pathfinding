@@ -4,10 +4,9 @@
 #define PATHFINDING_BASICCOSTCALCULATOR_H_
 
 #include "pathfinding/BasicHexMap.h"
-#include "pathfinding/CostCalculator.h"
-#include "planet/HexPlanet.h"
+#include "pathfinding/HaversineCostCalculator.h"
 
-class BasicCostCalculator : public CostCalculator {
+class BasicCostCalculator : public HaversineCostCalculator {
  public:
   /**
    * Creates a BasicCostCalculator instance that gets the cost from one point
@@ -19,15 +18,26 @@ class BasicCostCalculator : public CostCalculator {
   explicit BasicCostCalculator(HexPlanet &planet, std::unique_ptr<BasicHexMap> &map);
 
   /**
-   * Computes the a distance between two points using the Haversine formula and the BasicHexMap.
+   * Calculate the cost to an immediate neighbour of |source| using the Haversine formula and the BasicHexMap.
+   * @param source Source hex vertex ID.
+   * @param neighbour Target hex vertex's position in |source|'s neighbour array.
+   * @param start_time Starting time step.
+   * @throw std::runtime_error |neighbour| is invalid.
+   * @return The cost (distance in meters + BasicHexMap based cost) and ending time step for an edge.
+   */
+  Result calculate_neighbour(HexVertexId source, size_t neighbour, uint32_t start_time) const override;
+
+  /**
+   * Computes the a cost between two points using the Haversine formula and the BasicHexMap.
    * Note: Currently just increments time by one.
+   * @warning Use calculate_neighbour() if possible!
    * @param source Source vertex ID.
    * @param target Target vertex ID.
    * @param time Starting time step.
-   * @throw std::runtime_error if target or source does not exist on the planet.
+   * @throw std::runtime_error If target or source does not exist on the planet.
    * @return The cost (distance in meters + BasicHexMap based cost) and ending time step for an edge.
    */
-  Result calculate(HexVertexId target, HexVertexId source, uint32_t start_time) const override;
+  Result calculate_target(HexVertexId source, HexVertexId target, uint32_t start_time) const override;
 
   // Class can't be copied
   BasicCostCalculator(const BasicCostCalculator &) = delete;
@@ -43,6 +53,7 @@ class BasicCostCalculator : public CostCalculator {
 
  private:
   std::unique_ptr<BasicHexMap> map_;
+  uint32_t calculate_map_cost(HexVertexId target, HexVertexId source, uint32_t start_time) const;
 };
 
 #endif  // PATHFINDING_BASICCOSTCALCULATOR_H_

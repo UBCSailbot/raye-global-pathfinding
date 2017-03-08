@@ -4,25 +4,32 @@
 
 #include <iostream>
 
-#include "logic/StandardCalc.h"
-
 BasicCostCalculator::BasicCostCalculator(HexPlanet &planet, std::unique_ptr<BasicHexMap> &map)
-    : CostCalculator(planet), map_(std::move(map)) {}
+    : HaversineCostCalculator(planet), map_(std::move(map)) {}
 
-CostCalculator::Result BasicCostCalculator::calculate(HexVertexId target,
-                                                      HexVertexId source,
-                                                      uint32_t start_time) const {
-  // Check that they are valid vertices
-  if (target >= planet_.vertex_count() || source >= planet_.vertex_count()) {
-    throw std::runtime_error("Target or source vertex does not exist.");
-  }
+CostCalculator::Result BasicCostCalculator::calculate_neighbour(HexVertexId source,
+                                                                size_t neighbour,
+                                                                uint32_t start_time) const {
+  Result result = HaversineCostCalculator::calculate_neighbour(source, neighbour, start_time);
 
-  uint32_t distance_cost = planet_.DistanceBetweenVertices(source, target);
-  uint32_t map_cost = map_->get_risk(source) + map_->get_risk(target);
-  uint32_t cost = distance_cost + map_cost;
+  // Get neighbour vertex ID; |neighbour| is valid because otherwise an exception would have been thrown earlier.
+  HexVertexId target = planet_.vertex(source).neighbours[neighbour];
 
-  // TODO(areksredzki): Use better logic for handling time steps.
-  uint32_t end_time = start_time + 1;
+  result.cost += calculate_map_cost(source, target, start_time);
 
-  return {cost, end_time};
+  return result;
+}
+
+CostCalculator::Result BasicCostCalculator::calculate_target(HexVertexId source,
+                                                             HexVertexId target,
+                                                             uint32_t start_time) const {
+  Result result = HaversineCostCalculator::calculate_target(source, target, start_time);
+
+  result.cost += calculate_map_cost(source, target, start_time);
+
+  return result;
+}
+
+uint32_t BasicCostCalculator::calculate_map_cost(HexVertexId target, HexVertexId source, uint32_t) const {
+  return map_->get_risk(source) + map_->get_risk(target);
 }

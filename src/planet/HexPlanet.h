@@ -24,7 +24,7 @@
 class HexPlanet {
  public:
   /// A pair of HexVertexId.
-  typedef std::pair<HexVertexId, HexVertexId> HexVertexPair;
+  typedef const std::pair<HexVertexId, HexVertexId> HexVertexPair;
   /// A mapping between edges (HexVertexPair) and a pair of triangles
   typedef std::map<HexVertexPair, std::pair<uint32_t, uint32_t> > AdjacencyMap;
 
@@ -33,6 +33,11 @@ class HexPlanet {
    * @param subdivision_level The subdivision count.
    */
   explicit HexPlanet(int subdivision_level);
+
+  /**
+   * @return The number of subdivisions used to generate the planet.
+   */
+  int subdivision_level() const { return subdivision_level_; }
 
   /**
    * @return The number of vertices in the planet mesh.
@@ -57,19 +62,6 @@ class HexPlanet {
   const HexTriangle &triangle(size_t triangle_index) const { return triangles_[triangle_index]; }
 
   /**
-   * Efficiently update all vertex neighbours.
-   */
-  void UpdateVertexNeighbours();
-
-  /**
-   * Returns the indices of the neighbours of this vertex.
-   * Note: Usually 6 but can be 5. No particular order.
-   * @param vertex_index Target vertex index
-   * @param neighbours Destination array
-   */
-  void GetNeighbours(HexVertexId vertex_index, std::array<HexVertexId, 6> *neighbours) const;
-
-  /**
    * Returns a point on the planet's surface given a ray
    * @param p Ray origin
    * @param dir Ray direction
@@ -87,20 +79,12 @@ class HexPlanet {
   HexVertexId HexVertexFromPoint(Eigen::Vector3f surface_position);
 
   /**
-   * Get a get a GPS Coordinate from a vertex ID.
-   * Note: The results are cached for improved performance. The returned reference is safe to hold for the lifetime of
-   * the planet.
-   * @param HexVertexId Hex Vertex ID on planet.
-   * @return GPSCoordinate of that index.
-   */
-  const GPSCoordinateFast &GPSCoordinateFromHexVertex(HexVertexId id);
-
-  /**
    * Get the distance (in meters) between two vertices as computed by the Haversine formula.
+   * @warning Use |vertex(source).neighbour_distances| when possible!
    * Note: The results are cached for improved performance.
    * @param source Source vertex ID.
    * @param target Target vertex ID.
-   * @return Distance in meters between soure and target.
+   * @return Distance in meters between source and target.
    */
   uint32_t DistanceBetweenVertices(HexVertexId source, HexVertexId target);
 
@@ -125,14 +109,9 @@ class HexPlanet {
   std::vector<HexTriangle> triangles_;
 
   /**
-   * Vertex coordinate mapping.
-   * This is stored separate from the HexVertexes since these are computed on the fly as needed.
-   */
-  std::unordered_map<HexVertexId, GPSCoordinateFast> vertex_coordinates_;
-
-  /**
-   * Distances cache.
+   * Distance cache.
    * Stores the distance between two vertices keyed a source/target pair as computed by the Haversine formula.
+   * @warning this is not to be used for storing distances between direct neighbours.
    */
   boost::unordered_map<HexVertexPair, uint32_t> vertex_distances_;
 
@@ -151,7 +130,7 @@ class HexPlanet {
   /**
    * Perform sqrt(3) subdivision on the planet mesh.
    * Creates two triangles in the new mesh for every edge in the original mesh.
-   * Note: Normals should be repaired after subdivision are complete
+   * Note: Normals should be repaired after subdivision are complete.
    */
   void Subdivide();
 
@@ -160,6 +139,21 @@ class HexPlanet {
    * This pushes out new vertices.
    */
   void ProjectToSphere();
+
+  /**
+   * Compute (and cache) the GPS Coordinates of each vertex.
+   */
+  void ComputeVertexCoordinates();
+
+  /**
+   * Efficiently compute (and cache) all vertex neighbours.
+   */
+  void ComputeVertexNeighbours();
+
+  /**
+   * Compute (and cache) the distance to the neighbours of each vertex.
+   */
+  void ComputeVertexNeighbourDistances();
 
   /**
    * Add one of two triangles that are associated with each edge.
