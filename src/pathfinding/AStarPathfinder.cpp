@@ -4,7 +4,6 @@
 
 #include <memory>
 #include <queue>
-#include <iostream>
 
 AStarPathfinder::AStarPathfinder(HexPlanet &planet,
                                  const Heuristic &heuristic,
@@ -14,11 +13,11 @@ AStarPathfinder::AStarPathfinder(HexPlanet &planet,
     : Pathfinder(planet, heuristic, cost_calculator, start, target) {}
 
 Pathfinder::Result AStarPathfinder::Run() {
-  std::priority_queue<AStarVertex, std::vector<AStarVertex>> open_set;
+  std::priority_queue<AStarVertex> open_set;
   TimeIndexVertexMap closed_set;
 
-  AStarVertex start_vertex(start_, 0, 0, heuristic_.calculate(start_, target_), {kInvalidHexVertexId, 0});
-  open_set.push(start_vertex);
+  // Add start state.
+  open_set.emplace(start_, 0, 0, heuristic_.calculate(start_, target_), std::make_pair(kInvalidHexVertexId, 0));
 
   // TODO(areksredzki): There is currently no check to see that the location is at all reachable.
   // Since there are no bounds on the time dimension, the pathfinder will run forever.
@@ -34,7 +33,7 @@ Pathfinder::Result AStarPathfinder::Run() {
     }
 
     // Add to closed set.
-    closed_set.insert(std::make_pair(current_id_time_index, current));
+    closed_set.insert({current_id_time_index, current});
 
     if (current.hex_vertex_id() == target_) {
       stats_.closed_set_size = closed_set.size();
@@ -49,13 +48,13 @@ Pathfinder::Result AStarPathfinder::Run() {
       // Calculate the cost and time between the current vertex and this neighbour.
       auto cost_time = cost_calculator_.calculate(current.hex_vertex_id(), neighbour_id, current.time());
       // Total cost from the start to this neighbour.
-      double new_cost = current.cost() + cost_time.cost;
+      double neighbour_cost = current.cost() + cost_time.cost;
 
       // Heuristic cost from this neighbour to the target.
       uint32_t heuristic_cost = heuristic_.calculate(neighbour_id, target_);
 
       // Add the neighbour to the open set in place (no copy/move operations apart from shuffling the priority_queue).
-      open_set.emplace(neighbour_id, cost_time.time, new_cost, heuristic_cost, current_id_time_index);
+      open_set.emplace(neighbour_id, cost_time.time, neighbour_cost, heuristic_cost, current_id_time_index);
     }
   }
 

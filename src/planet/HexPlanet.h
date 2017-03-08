@@ -128,7 +128,7 @@ class HexPlanet {
    * Vertex coordinate mapping.
    * This is stored separate from the HexVertexes since these are computed on the fly as needed.
    */
-  boost::unordered_map<HexVertexId, GPSCoordinateFast> vertex_coordinates_;
+  std::unordered_map<HexVertexId, GPSCoordinateFast> vertex_coordinates_;
 
   /**
    * Distances cache.

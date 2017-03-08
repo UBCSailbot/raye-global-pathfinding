@@ -23,12 +23,25 @@ class GPSCoordinate {
    * @param other Other GPS Coordinate.
    * @return Whether two GPS Coordinates represent the exact same position.
    */
-  bool operator==(const GPSCoordinate &other) const;
+  bool operator==(const GPSCoordinate &other) const {
+    return latitude_exact_ == other.latitude_exact() && longitude_exact_ == other.longitude_exact();
+  }
   /**
    * @param other Other GPS Coordinate.
    * @return Whether two GPS Coordinates do not represent the exact same position.
    */
-  bool operator!=(const GPSCoordinate &other) const;
+  bool operator!=(const GPSCoordinate &other) const {
+    return latitude_exact_ != other.latitude_exact() || longitude_exact_ != other.longitude_exact();
+  }
+
+  /**
+   * @return Exact latitude in degrees * kExactCoordinateScaleFactor
+   */
+  int32_t latitude_exact() const { return latitude_exact_; }
+  /**
+   * @return Exact longitude in degrees * kExactCoordinateScaleFactor
+   */
+  int32_t longitude_exact() const { return longitude_exact_; }
 
   /**
    * Returns a well-formatted string representation of the exact coordinate, (lat, lng)
@@ -50,15 +63,6 @@ class GPSCoordinate {
    * @return String representation of coordinate.
    */
   std::string to_string_longitude() const;
-
-  /**
-   * @return Exact latitude in degrees * kExactCoordinateScaleFactor
-   */
-  int32_t latitude_exact() const { return latitude_exact_; }
-  /**
-   * @return Exact longitude in degrees * kExactCoordinateScaleFactor
-   */
-  int32_t longitude_exact() const { return longitude_exact_; }
 
   virtual void set_lat_exact(int32_t latitude_exact);
   virtual void set_lng_exact(int32_t longitude_exact);

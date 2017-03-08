@@ -24,14 +24,6 @@ void GPSCoordinate::set_lat_lng_exact(int32_t latitude_exact, int32_t longitude_
   longitude_exact_ = longitude_exact;
 }
 
-bool GPSCoordinate::operator==(const GPSCoordinate &other) const {
-  return latitude_exact_ == other.latitude_exact() && longitude_exact_ == other.longitude_exact();
-}
-
-bool GPSCoordinate::operator!=(const GPSCoordinate &other) const {
-  return latitude_exact_ != other.latitude_exact() || longitude_exact_ != other.longitude_exact();
-}
-
 std::string GPSCoordinate::to_string() const {
   std::stringstream coord_str;
   coord_str << "("
