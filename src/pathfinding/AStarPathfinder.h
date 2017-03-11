@@ -38,9 +38,17 @@ class AStarPathfinder : public Pathfinder {
   Result Run();
 
  private:
-  typedef boost::unordered_map<AStarVertex::IdTimeIndex, AStarVertex> TimeIndexVertexMap;
+  struct VisitedStateData {
+    /// The cost to this vertex (and time) from the start.
+    uint32_t cost;
+    /// The ancestor to this node.
+    AStarVertex::IdTimeIndex parent;
+  };
 
-  std::vector<HexVertexId> ConstructPath(AStarVertex vertex, const TimeIndexVertexMap &closed_set);
+  typedef boost::unordered_map<AStarVertex::IdTimeIndex, AStarVertex> TimeIndexVertexMap;
+  typedef boost::unordered_map<AStarVertex::IdTimeIndex, VisitedStateData> TimeIndexValueMap;
+
+  std::vector<HexVertexId> ConstructPath(AStarVertex::IdTimeIndex vertex, const TimeIndexValueMap &visited);
 };
 
 #endif  // PATHFINDING_ASTARPATHFINDER_H_

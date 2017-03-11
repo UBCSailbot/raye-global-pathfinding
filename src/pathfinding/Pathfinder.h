@@ -16,7 +16,7 @@ class Pathfinder {
    */
   struct Result {
     std::vector<HexVertexId> path;
-    double cost;
+    uint32_t cost;
     uint32_t time;
   };
 
