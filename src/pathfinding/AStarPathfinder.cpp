@@ -3,7 +3,7 @@
 #include "pathfinding/AStarPathfinder.h"
 
 #include <memory>
-#include <queue>
+#include <iostream>
 
 AStarPathfinder::AStarPathfinder(HexPlanet &planet,
                                  const Heuristic &heuristic,
@@ -29,16 +29,18 @@ Pathfinder::Result AStarPathfinder::Run() {
     AStarVertex current = open_set.top();
     open_set.pop();
 
-    if (current.hex_vertex_id() == target_) {
-      stats_.closed_set_size = visited.size();
-      stats_.open_set_size = open_set.size();
-      return {ConstructPath(current.id_time_index(), visited), current.cost(), current.time()};
-    }
-
     // The best data for this IdTimeIndex up util now.
     VisitedStateData current_data = visited[current.id_time_index()];
 
+    if (current.hex_vertex_id() == target_) {
+      stats_.closed_set_size = visited.size();
+      stats_.open_set_size = open_set.size();
+      return {ConstructPath(current.id_time_index(), visited), current_data.cost, current.time()};
+    }
+
     const HexVertex &vertex = planet_.vertex(current.hex_vertex_id());
+
+    // Process edges to direct neighbours
     for (size_t i = 0; i < vertex.neighbour_count; i++) {
       HexVertexId neighbour_id = vertex.neighbours[i];
 
@@ -52,19 +54,24 @@ Pathfinder::Result AStarPathfinder::Run() {
       uint32_t heuristic_cost = heuristic_.calculate(neighbour_id, target_);
 
       AStarVertex::IdTimeIndex neighbour_id_time_index(neighbour_id, cost_time.time);
-      auto search = visited.find(neighbour_id_time_index);
+      AddNeighbour(open_set, visited, current.id_time_index(), neighbour_id_time_index, neighbour_cost, heuristic_cost);
+    }
 
-      if (search == visited.end() || neighbour_cost < search->second.cost) {
-        if (search == visited.end()) {
-          // Create the VisitedData instance.
-          visited[neighbour_id_time_index] = VisitedStateData{neighbour_cost, current.id_time_index()};
-        } else {
-          // Update the members of the existing VisitedData instance.
-          search->second = {neighbour_cost, current.id_time_index()};
-        }
+    if (cost_calculator_.is_indirect_neighbour_safe()) {
+      // Process edges to indirect neighbours
+      for (HexVertexId neighbour_id : vertex.indirect_neighbours) {
+        // Calculate the cost and time between the current vertex and this neighbour.
+        auto cost_time = cost_calculator_.calculate_target(current.hex_vertex_id(), neighbour_id, current.time());
 
-        // Add the neighbour to the open set in place (no copy/move operations apart from shuffling the priority_queue).
-        open_set.emplace(neighbour_id, cost_time.time, neighbour_cost + heuristic_cost);
+        // Total cost from the start to this neighbour.
+        uint32_t neighbour_cost = current_data.cost + cost_time.cost;
+
+        // Heuristic cost from this neighbour to the target.
+        uint32_t heuristic_cost = heuristic_.calculate(neighbour_id, target_);
+
+        AStarVertex::IdTimeIndex neighbour_id_time_index(neighbour_id, cost_time.time);
+        AddNeighbour(open_set, visited, current.id_time_index(), neighbour_id_time_index, neighbour_cost,
+                     heuristic_cost);
       }
     }
   }
@@ -74,6 +81,28 @@ Pathfinder::Result AStarPathfinder::Run() {
   // Should be 0.
   stats_.open_set_size = open_set.size();
   return {{}, 0, 0};
+}
+
+void AStarPathfinder::AddNeighbour(VertexQueue &open_set,
+                                   TimeIndexValueMap &visited,
+                                   const AStarVertex::IdTimeIndex &current_id_time_index,
+                                   const AStarVertex::IdTimeIndex &neighbour_id_time_index,
+                                   uint32_t neighbour_cost,
+                                   uint32_t heuristic_cost) {
+  auto item = visited.find(neighbour_id_time_index);
+
+  if (item == visited.end() || neighbour_cost < item->second.cost) {
+    if (item == visited.end()) {
+      // Create the VisitedData instance.
+      visited[neighbour_id_time_index] = VisitedStateData{neighbour_cost, current_id_time_index};
+    } else {
+      // Update the members of the existing VisitedData instance.
+      item->second = {neighbour_cost, current_id_time_index};
+    }
+
+    // Add the neighbour to the open set in place (no copy/move operations apart from shuffling the priority_queue).
+    open_set.emplace(neighbour_id_time_index, neighbour_cost + heuristic_cost);
+  }
 }
 
 std::vector<HexVertexId> AStarPathfinder::ConstructPath(AStarVertex::IdTimeIndex vertex,

@@ -16,11 +16,19 @@ class AStarVertex {
   typedef std::pair<HexVertexId, uint32_t> IdTimeIndex;
 
   /**
+   * @param id_time_index Identifier for the vertex and time.
+   * @param cost The cost to this vertex from the start.
+   */
+  AStarVertex(const IdTimeIndex &id_time_index, uint32_t cost)
+      : id_time_index_(id_time_index), cost_(cost) {}
+
+  /**
    * @param hex_vertex_id Identifier for the vertex.
    * @param time Time step.
    * @param cost The cost to this vertex from the start.
    */
-  AStarVertex(HexVertexId hex_vertex_id, uint32_t time, uint32_t cost);
+  AStarVertex(HexVertexId hex_vertex_id, uint32_t time, uint32_t cost)
+      : id_time_index_({hex_vertex_id, time}), cost_(cost) {}
 
   HexVertexId hex_vertex_id() const { return id_time_index_.first; }
 

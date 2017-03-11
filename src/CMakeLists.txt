@@ -9,7 +9,6 @@ set(LIB_SRCS
         datatypes/HexVertex.cpp
         logic/StandardCalc.cpp
         pathfinding/AStarPathfinder.cpp
-        pathfinding/AStarVertex.cpp
         pathfinding/BasicCostCalculator.cpp
         pathfinding/BasicHexMap.cpp
         pathfinding/HaversineCostCalculator.cpp

@@ -11,6 +11,8 @@
 #include <pathfinding/AStarPathfinder.h>
 #include <pathfinding/PathfinderResultPrinter.h>
 
+constexpr uint8_t kInvalidIndirectNeighbourDepth = static_cast<uint8_t> (-1);
+
 enum class OutputFormat {
   kDefault,
   kKML
@@ -68,13 +70,15 @@ Pathfinder::Result run_pathfinder(HexPlanet &planet,
   return result;
 }
 
-HexPlanet generate_planet(int subdivision_level, bool silent, bool verbose) {
+HexPlanet generate_planet(uint8_t subdivision_level, uint8_t indirect_neighbour_depth, bool silent, bool verbose) {
   if (!silent) {
-    std::cout << "Generating HexPlanet of Size: " << subdivision_level << std::endl;
+    std::cout << "Generating HexPlanet of Size: " << static_cast<int> (subdivision_level) << std::endl;
   }
   auto start_time = std::chrono::system_clock::now();
 
-  HexPlanet planet(subdivision_level);
+  HexPlanet planet = indirect_neighbour_depth != kInvalidIndirectNeighbourDepth ? HexPlanet(subdivision_level,
+                                                                                            indirect_neighbour_depth)
+                                                                                : HexPlanet(subdivision_level);
 
   if (!silent) {
     auto end_time = std::chrono::system_clock::now();
@@ -103,6 +107,7 @@ int main(int argc, char const *argv[]) {
         ("s,silent", "Silence useful output")
         ("p,planet_size", boost::program_options::value<int>()->default_value(1), "Planet Size")
         ("n,neighbour", boost::program_options::value<HexVertexId>(), "Vertex to find neighbours")
+        ("i,indirect", boost::program_options::value<int>(), "Indirect neighbour depth")
         ("c,coordinates",
          boost::program_options::value<HexVertexId>()->multitoken(),
          "Vertexes for which to find GPS Coordinates")
@@ -131,8 +136,10 @@ int main(int argc, char const *argv[]) {
 
     bool verbose = vm.count("v") > 0 && !silent;
 
-    auto planet_size = vm["p"].as<int>();
-    HexPlanet planet = generate_planet(planet_size, silent, verbose);
+    uint8_t planet_size = static_cast<uint8_t> (vm["p"].as<int>());
+    uint8_t indirect_neighbour_depth = (vm.count("i") > 0) ? static_cast<uint8_t> (vm["i"].as<int>())
+                                                           : kInvalidIndirectNeighbourDepth;
+    HexPlanet planet = generate_planet(planet_size, indirect_neighbour_depth, silent, verbose);
 
     if (vm.count("n")) {
       find_neighbours(planet, vm["n"].as<HexVertexId>());

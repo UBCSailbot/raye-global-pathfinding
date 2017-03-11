@@ -39,17 +39,22 @@ class BasicCostCalculator : public HaversineCostCalculator {
    */
   Result calculate_target(HexVertexId source, HexVertexId target, uint32_t start_time) const override;
 
-  // Class can't be copied
+  /// Class can't be copied
   BasicCostCalculator(const BasicCostCalculator &) = delete;
 
-  // Class can't be moved
+  /// Class can't be moved
   BasicCostCalculator(BasicCostCalculator &&) = delete;
 
-  // Class can't be copy assigned
+  /// Class can't be copy assigned
   BasicCostCalculator &operator=(const BasicCostCalculator &) = delete;
 
-  // Class can't be move assigned
+  /// Class can't be move assigned
   BasicCostCalculator &operator=(BasicCostCalculator &&) = delete;
+
+  /**
+   * @return Whether this cost calculator is safe for usage with indirect neighbours.
+   */
+  bool is_indirect_neighbour_safe() const override { return false; }
 
  private:
   std::unique_ptr<BasicHexMap> map_;

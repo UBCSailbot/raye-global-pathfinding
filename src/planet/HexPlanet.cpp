@@ -2,16 +2,13 @@
 
 #include "planet/HexPlanet.h"
 
-#include <map>
-#include <set>
 #include <cmath>
 #include <iostream>
 #include <sstream>
-#include <unordered_set>
 
 #include "logic/StandardCalc.h"
 
-HexPlanet::HexPlanet(int subdivision_level) {
+HexPlanet::HexPlanet(uint8_t subdivision_level, uint8_t indirect_neighbour_depth) {
   // Build initial (level 0) mesh
   build_level_0();
 
@@ -35,6 +32,9 @@ HexPlanet::HexPlanet(int subdivision_level) {
 
   // Initialize the neighbour distances for each vertex
   ComputeVertexNeighbourDistances();
+
+  // Initialize the indirect (but close) neighbours for each vertex
+  ComputeIndirectVertexNeighbours(indirect_neighbour_depth);
 }
 
 float round_epsilon(float a) {
@@ -340,6 +340,57 @@ void HexPlanet::ComputeVertexNeighbours() {
     for (; j < HexVertex::kMaxHexVertexNeighbourCount; j++) {
       vertices_[i].neighbours[j] = kInvalidHexVertexId;
     }
+  }
+}
+
+void HexPlanet::ComputeIndirectVertexNeighbours(uint8_t depth) {
+  // TODO(areksredzki): Multithread!
+  for (HexVertexId id = 0; id < vertices_.size(); id++) {
+    HexVertex &vertex = vertices_[id];
+
+    std::unordered_set<HexVertexId> neighbour_map;
+
+    // Allocate enough space for the max number of entries that could be necessary to avoid rehashing.
+    neighbour_map.reserve(kDefaultIndirectNeighbourMapSize);
+
+    // Add the subject HexVertex itself.
+    neighbour_map.insert(id);
+
+    // Add the direct neighbours
+    for (size_t i = 0; i < vertex.neighbour_count; i++) {
+      neighbour_map.insert(vertex.neighbours[i]);
+    }
+
+    // If a neighbour doesn't exist in the set, add it to vertex.indirect_neighbours.
+    for (size_t i = 0; i < vertex.neighbour_count; i++) {
+      ComputeIndirectVertexNeighbourHelper(vertex, neighbour_map, vertex.neighbours[i], depth);
+    }
+  }
+}
+
+void HexPlanet::ComputeIndirectVertexNeighbourHelper(HexVertex &vertex,
+                                                     std::unordered_set<HexVertexId> &neighbour_map,
+                                                     HexVertexId parent_id,
+                                                     uint8_t depth) {
+  if (depth == 0) {
+    return;
+  }
+
+  HexVertex &neighbour = vertices_[parent_id];
+  for (size_t i = 0; i < neighbour.neighbour_count; i++) {
+    HexVertexId indirect_neighbour_candidate = neighbour.neighbours[i];
+    // If a neighbour candidate hasn't been seen before (isn't in the neighbour_map), then add it to
+    // vertex.indirect_neighbours.
+    if (neighbour_map.find(indirect_neighbour_candidate) == neighbour_map.end()) {
+      neighbour_map.insert(indirect_neighbour_candidate);
+      vertex.indirect_neighbours.push_back(indirect_neighbour_candidate);
+    }
+
+    // Recurse to the next level
+    ComputeIndirectVertexNeighbourHelper(vertex,
+                                         neighbour_map,
+                                         indirect_neighbour_candidate,
+                                         static_cast<uint8_t> (depth - 1));
   }
 }
 

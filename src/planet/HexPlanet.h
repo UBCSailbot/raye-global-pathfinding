@@ -9,6 +9,7 @@
 #include <array>
 
 #include <Eigen/Dense>
+#include <unordered_set>
 #include <unordered_map>
 #include <boost/unordered_map.hpp>
 
@@ -31,8 +32,9 @@ class HexPlanet {
   /**
    * Create a HexPlanet with the given subdivision level.
    * @param subdivision_level The subdivision count.
+   * @param indirect_neighbour_depth The depth with which indirect neighbours should be computed. 0 for none.
    */
-  explicit HexPlanet(int subdivision_level);
+  explicit HexPlanet(uint8_t subdivision_level, uint8_t indirect_neighbour_depth = kDefaultIndirectNeighbourDepth);
 
   /**
    * @return The number of subdivisions used to generate the planet.
@@ -100,8 +102,13 @@ class HexPlanet {
   void Read(std::istream &i);
 
  protected:
+  /// The default maximum depth for indirect neighbour calculation.
+  static constexpr uint8_t kDefaultIndirectNeighbourDepth = 2;
+  /// The maximum number of elements for a neighbour_map size of 19 for kDefaultIndirectNeighbourDepth.
+  static constexpr uint8_t kDefaultIndirectNeighbourMapSize = 19;
+
   /// Current subdivision level (0 is an icosahedron).
-  int subdivision_level_ = 0;
+  uint8_t subdivision_level_ = 0;
 
   /// Vertices
   std::vector<HexVertex> vertices_;
@@ -149,6 +156,24 @@ class HexPlanet {
    * Efficiently compute (and cache) all vertex neighbours.
    */
   void ComputeVertexNeighbours();
+
+  /**
+   * Efficiently compute (and cache) indirect (distance of two edges from the current) vertex neighbours.
+   */
+  void ComputeIndirectVertexNeighbours(uint8_t depth = kDefaultIndirectNeighbourDepth);
+
+  /**
+   * Recursively adds neighbours to the neighbour_map and to to vertex.indirect_neighbours if they aren't already
+   * in the neighbour_map.
+   * @param vertex The vertex of which the indirect_neighbours are being computed.
+   * @param neighbour_map A map of all seen neighbours for the vertex(including itself and direct neighbours).
+   * @param parent_id Current vertex who's direct neighbours should be be added.
+   * @param depth The current depth, terminates at 0.
+   */
+  void ComputeIndirectVertexNeighbourHelper(HexVertex &vertex,
+                                            std::unordered_set<HexVertexId> &neighbour_map,
+                                            HexVertexId parent_id,
+                                            uint8_t depth);
 
   /**
    * Compute (and cache) the distance to the neighbours of each vertex.

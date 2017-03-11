@@ -12,7 +12,7 @@ static constexpr size_t kSizeOfTestPlanet = 4;
 /// Default travel time to use in cost calculations
 static constexpr uint32_t kTravelTime = 1;
 
-BasicCostCalculatorTest::BasicCostCalculatorTest() : planet_(kSizeOfTestPlanet) {}
+BasicCostCalculatorTest::BasicCostCalculatorTest() : planet_(kSizeOfTestPlanet, 0) {}
 
 /**
  * Test that cost is calculated correctly when calculator is given two valid vertex IDs.

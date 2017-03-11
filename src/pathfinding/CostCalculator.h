@@ -5,13 +5,15 @@
 
 #include <cstdint>
 
-#include <planet/HexPlanet.h>
-#include <datatypes/HexDefs.h>
+#include "planet/HexPlanet.h"
+#include "datatypes/HexDefs.h"
 
 class CostCalculator {
  public:
   struct Result {
+    /// The computed edge cost.
     uint32_t cost;
+    /// The ending time step.
     uint32_t time;
   };
 
@@ -41,6 +43,11 @@ class CostCalculator {
    * @return The cost and ending time step for an edge.
    */
   virtual Result calculate_target(HexVertexId source, HexVertexId target, uint32_t start_time) const = 0;
+
+  /**
+   * @return Whether this cost calculator is safe for usage with indirect neighbours.
+   */
+  virtual bool is_indirect_neighbour_safe() const { return false; }
 
  protected:
   HexPlanet &planet_;

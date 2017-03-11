@@ -3,7 +3,6 @@
 #include "pathfinding/BasicHexMap.h"
 
 #include <ctime>
-#include <iostream>
 
 constexpr uint32_t BasicHexMap::kDefaultRisk = 0;
 constexpr uint32_t BasicHexMap::kDefaultMaxRisk = 10;

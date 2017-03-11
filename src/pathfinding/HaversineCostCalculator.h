@@ -30,6 +30,11 @@ class HaversineCostCalculator : public CostCalculator {
    * @return The cost (distance in meters) and ending time step for an edge.
    */
   Result calculate_target(HexVertexId source, HexVertexId target, uint32_t start_time) const override;
+
+  /**
+   * @return Whether this cost calculator is safe for usage with indirect neighbours.
+   */
+  bool is_indirect_neighbour_safe() const override { return true; }
 };
 
 #endif  // PATHFINDING_HAVERSINECOSTCALCULATOR_H_

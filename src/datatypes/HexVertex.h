@@ -6,6 +6,7 @@
 #include <array>
 
 #include <Eigen/Dense>
+#include <vector>
 
 #include "datatypes/HexDefs.h"
 #include "datatypes/GPSCoordinateFast.h"
@@ -42,6 +43,14 @@ class HexVertex {
    * When initialized, this contains 5 or more commonly 6 valid distances.
    */
   std::array<HexVertexId, kMaxHexVertexNeighbourCount> neighbour_distances = {{0, 0, 0, 0, 0, 0}};
+
+  /**
+   * Storage of indirect neighbours.
+   * These are used to increase the angular resolution of pathfinding that's possible by making distant neighbours
+   * accessible. Because of the HexPlanet's geometry this greatly increases the quality of the path since it reduces
+   * the need to zig-zag.
+   */
+  std::vector<HexVertexId> indirect_neighbours;
 
   HexVertexId neighbour_count = 0;
 };

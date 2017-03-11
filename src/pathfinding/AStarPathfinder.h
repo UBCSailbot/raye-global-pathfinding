@@ -4,6 +4,7 @@
 #define PATHFINDING_ASTARPATHFINDER_H_
 
 #include <boost/unordered_map.hpp>
+#include <queue>
 
 #include "pathfinding/Pathfinder.h"
 #include "pathfinding/AStarVertex.h"
@@ -45,8 +46,25 @@ class AStarPathfinder : public Pathfinder {
     AStarVertex::IdTimeIndex parent;
   };
 
-  typedef boost::unordered_map<AStarVertex::IdTimeIndex, AStarVertex> TimeIndexVertexMap;
+  typedef std::priority_queue<AStarVertex, std::vector<AStarVertex>, std::greater<AStarVertex>> VertexQueue;
   typedef boost::unordered_map<AStarVertex::IdTimeIndex, VisitedStateData> TimeIndexValueMap;
+
+  /**
+   * If a neighbour state expansion provides a new lowest cost to the neighbour, add it to the open set and visited
+   * state data.
+   * @param open_set The open set.
+   * @param visited Visited state data.
+   * @param current_id_time_index IdTimeIndex of the "current" state.
+   * @param neighbour_id_time_index IdTimeIndex of the "neighbour" state.
+   * @param neighbour_cost The cost from start to the neighbour state. Note: this is not just cost from "current".
+   * @param heuristic_cost The heuristic cost to the target.
+   */
+  void AddNeighbour(VertexQueue &open_set,
+                    TimeIndexValueMap &visited,
+                    const AStarVertex::IdTimeIndex &current_id_time_index,
+                    const AStarVertex::IdTimeIndex &neighbour_id_time_index,
+                    uint32_t neighbour_cost,
+                    uint32_t heuristic_cost);
 
   std::vector<HexVertexId> ConstructPath(AStarVertex::IdTimeIndex vertex, const TimeIndexValueMap &visited);
 };

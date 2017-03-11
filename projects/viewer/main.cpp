@@ -316,7 +316,7 @@ void AppMain() {
 
   // Generate planet
   double gen_time = glfwGetTime();
-  auto planet = std::unique_ptr<HexPlanet>(new HexPlanet(kPlanetSubdivisions));
+  std::unique_ptr<HexPlanet> planet = std::make_unique<HexPlanet>(kPlanetSubdivisions);
   int gen_time_delta = static_cast<int> ((glfwGetTime() - gen_time) * 1000);
   std::cout << "Planet generation took: " << gen_time_delta << " ms" << std::endl;
 

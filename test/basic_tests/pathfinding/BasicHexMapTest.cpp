@@ -2,7 +2,7 @@
 
 #include "pathfinding/BasicHexMapTest.h"
 
-BasicHexMapTest::BasicHexMapTest() : planet_1_(1) {}
+BasicHexMapTest::BasicHexMapTest() : planet_1_(1, 0) {}
 
 /**
  * Test that the risk for all the vertices are within a valid range.
