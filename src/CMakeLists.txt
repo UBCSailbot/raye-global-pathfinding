@@ -17,6 +17,8 @@ set(LIB_SRCS
         pathfinding/NaiveHeuristic.cpp
         pathfinding/Pathfinder.cpp
         pathfinding/PathfinderResultPrinter.cpp
+        pathfinding/WeatherCostCalculator.cpp
+        pathfinding/WeatherHexMap.cpp
         planet/HexPlanet.cpp)
 
 set(LIB_HDRS
@@ -27,6 +29,7 @@ set(LIB_HDRS
         datatypes/HexTriangle.h
         datatypes/HexVertex.h
         datatypes/MapData.h
+        datatypes/WeatherDatum.h
         logic/StandardCalc.h
         pathfinding/AStarPathfinder.h
         pathfinding/AStarVertex.h
@@ -40,6 +43,8 @@ set(LIB_HDRS
         pathfinding/NaiveHeuristic.h
         pathfinding/Pathfinder.h
         pathfinding/PathfinderResultPrinter.h
+        pathfinding/WeatherCostCalculator.h
+        pathfinding/WeatherHexMap.h
         planet/HexPlanet.h)
 
 # Define the src_core library target

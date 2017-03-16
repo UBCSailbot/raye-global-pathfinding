@@ -8,6 +8,8 @@ set(TEST_FILES
         pathfinding/BasicCostCalculatorTest.cpp
         pathfinding/BasicHexMapTest.cpp
         pathfinding/MockCostCalculator.cpp
+        pathfinding/WeatherCostCalculatorTest.cpp
+        pathfinding/WeatherHexMapTest.cpp
         planet/HexPlanetTest.cpp)
 
 include_directories(.)
