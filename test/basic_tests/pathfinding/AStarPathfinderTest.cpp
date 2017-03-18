@@ -151,6 +151,7 @@ TEST_F(AStarPathfinderTest, FindsLowestCostPathHaversine) {
   HaversineHeuristic heuristic(planet_3_);
 
   MockCostCalculator::MockCostMap mock_cost_map;
+  // Uses earth radius so that the heuristic is valid.
   mock_cost_map.insert({std::make_tuple(1, 110, 0), sailbot::kEarthRadius});
   mock_cost_map.insert({std::make_tuple(110, 111, 1), sailbot::kEarthRadius});
   mock_cost_map.insert({std::make_tuple(111, 267, 2), sailbot::kEarthRadius});

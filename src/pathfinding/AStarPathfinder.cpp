@@ -9,8 +9,13 @@ AStarPathfinder::AStarPathfinder(HexPlanet &planet,
                                  const Heuristic &heuristic,
                                  const CostCalculator &cost_calculator,
                                  HexVertexId start,
-                                 HexVertexId target)
-    : Pathfinder(planet, heuristic, cost_calculator, start, target) {}
+                                 HexVertexId target,
+                                 bool use_indirect_neighbours)
+    : Pathfinder(planet, heuristic, cost_calculator, start, target), use_indirect_neighbours_(use_indirect_neighbours) {
+  if (use_indirect_neighbours_ && !cost_calculator_.is_indirect_neighbour_safe()) {
+    throw std::runtime_error("This cost calculator cannot be safely used with indirect neighbours");
+  }
+}
 
 Pathfinder::Result AStarPathfinder::Run() {
   std::priority_queue<AStarVertex, std::vector<AStarVertex>, std::greater<AStarVertex>> open_set;
@@ -57,7 +62,7 @@ Pathfinder::Result AStarPathfinder::Run() {
       AddNeighbour(open_set, visited, current.id_time_index(), neighbour_id_time_index, neighbour_cost, heuristic_cost);
     }
 
-    if (cost_calculator_.is_indirect_neighbour_safe()) {
+    if (use_indirect_neighbours_) {
       // Process edges to indirect neighbours
       for (HexVertexId neighbour_id : vertex.indirect_neighbours) {
         // Calculate the cost and time between the current vertex and this neighbour.

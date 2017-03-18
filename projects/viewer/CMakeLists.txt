@@ -16,17 +16,22 @@ endif()
 
 # Define the source code
 set(${PROJECT_NAME}_SRCS
-        main.cpp
-        Shader.cpp
-        Shader.h
-        Controls.cpp
-        Controls.h
-        Camera.cpp
-        Camera.h
         ArcBall.cpp
         ArcBall.h
+        Camera.cpp
+        Camera.h
+        ColourUtils.h
+        Controls.cpp
+        Controls.h
+        EdgeRenderer.cpp
+        EdgeRenderer.h
+        main.cpp
+        PlanetRenderer.cpp
+        PlanetRenderer.h
         Program.cpp
-        Program.h)
+        Program.h
+        Shader.cpp
+        Shader.h)
 
 set(${PROJECT_NAME}_LIBS src_core ${glfw3_LIBRARY} ${OPENGL_gl_LIBRARY})
 
@@ -35,5 +40,5 @@ if (NOT APPLE)
 endif()
 
 # Define the executable
-add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SRCS})
+add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SRCS} EdgeRenderer.cpp PlanetRenderer.h ColourUtils.h EdgeUtils.cpp EdgeUtils.h)
 target_link_libraries(${PROJECT_NAME} glfw ${${PROJECT_NAME}_LIBS})

@@ -25,7 +25,7 @@
 class HexPlanet {
  public:
   /// A pair of HexVertexId.
-  typedef const std::pair<HexVertexId, HexVertexId> HexVertexPair;
+  typedef std::pair<HexVertexId, HexVertexId> HexVertexPair;
   /// A mapping between edges (HexVertexPair) and a pair of triangles
   typedef std::map<HexVertexPair, std::pair<uint32_t, uint32_t> > AdjacencyMap;
 

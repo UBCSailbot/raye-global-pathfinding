@@ -42,7 +42,7 @@ Pathfinder::Result run_pathfinder(HexPlanet &planet,
                                   bool verbose) {
   HaversineHeuristic heuristic = HaversineHeuristic(planet);
   HaversineCostCalculator cost_calculator = HaversineCostCalculator(planet);
-  AStarPathfinder pathfinder(planet, heuristic, cost_calculator, source, target);
+  AStarPathfinder pathfinder(planet, heuristic, cost_calculator, source, target, true);
 
   if (!silent) {
     std::cout << "Pathfinding from " << source << " to " << target << std::endl;

@@ -24,12 +24,17 @@ class AStarPathfinder : public Pathfinder {
    * @param cost_calculator CostCalculator to use.
    * @param start Start vertex id.
    * @param target Target vertex id.
+   * @param use_indirect_neighbours Whether to use indirect neighbours for pathfinding. Be aware that this will
+   * change the output. Though it improves the output path and is recommended, it isn't always desired. It's off by
+   * default to avoid unexpected behaviour.
+   * @throw std::runtime_error If use_indirect_neighbours is true but cost_calculator doesn't support it.
    */
   AStarPathfinder(HexPlanet &planet,
                   const Heuristic &heuristic,
                   const CostCalculator &cost_calculator,
                   HexVertexId start,
-                  HexVertexId target);
+                  HexVertexId target,
+                  bool use_indirect_neighbours = false);
 
   /**
    * Find the path from start to target.
@@ -48,6 +53,9 @@ class AStarPathfinder : public Pathfinder {
 
   typedef std::priority_queue<AStarVertex, std::vector<AStarVertex>, std::greater<AStarVertex>> VertexQueue;
   typedef boost::unordered_map<AStarVertex::IdTimeIndex, VisitedStateData> TimeIndexValueMap;
+
+  /// Whether to use indirect neighbours for pathfinding.
+  bool use_indirect_neighbours_;
 
   /**
    * If a neighbour state expansion provides a new lowest cost to the neighbour, add it to the open set and visited

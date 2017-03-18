@@ -170,6 +170,10 @@ void Program::setUniform(const GLchar *name, const glm::mat4 &m, GLboolean trans
   glUniformMatrix4fv(uniform(name), 1, transpose, glm::value_ptr(m));
 }
 
+void Program::setUniform(const GLchar *uniformName, const glm::vec2 &v) {
+  setUniform2v(uniformName, glm::value_ptr(v));
+}
+
 void Program::setUniform(const GLchar *uniformName, const glm::vec3 &v) {
   setUniform3v(uniformName, glm::value_ptr(v));
 }
