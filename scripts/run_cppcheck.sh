@@ -13,7 +13,8 @@ CPPCHECK_ARGS="\
 --template='{file}:{line}:{severity}:{message}' \
 --suppress=missingInclude \
 --suppress=unusedFunction \
---suppress=unmatchedSuppression"
+--suppress=unmatchedSuppression \
+--inline-suppr"
 
 filtered_output() {
     cat ${CPPCHECK_FILE} | grep -v "Cppcheck cannot find all the include files"

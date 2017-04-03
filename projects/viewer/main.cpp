@@ -15,6 +15,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <logic/StandardCalc.h>
+#include <nanogui/formhelper.h>
+#include <nanogui/screen.h>
+#include <nanogui/slider.h>
+#include <nanogui/toolbutton.h>
 #include <planet/HexPlanet.h>
 #include <random>
 #include <pathfinding/CostCalculator.h>
@@ -30,21 +35,21 @@
 #include "EdgeUtils.h"
 
 /// The default planet subdivision count.
-constexpr uint8_t kDefaultPlanetSubdivisions = 0;
+constexpr uint8_t kDefaultPlanetSubdivisions = 3;
 /// The minimum subdivision count for indirect neighbours to be used during pathfinding.
 constexpr uint8_t kIndirectNeighbourSubdivisionMin = 3;
 /// The minimum number of seconds between planet regeneration that is allowed.
 constexpr double kPlanetRegenCooldown = 0.25f;
 /// The minimum number of seconds between pathfinding runs that is allowed.
 constexpr double kPathfindingCooldown = 0.10f;
-constexpr int kScreenWidth = 800;
+constexpr int kScreenWidth = 1000;
 constexpr int kScreenHeight = 800;
 constexpr float kScreenFieldOfView = kScreenWidth / static_cast<float> (kScreenHeight);
 constexpr float kMaxFPS = 60.f;
 // constexpr float kMouseSensitivity = 0.1f;
 constexpr float kZoomSensitivity = -0.2f;
 constexpr float kMoveSpeed = 2.0;
-constexpr GLfloat kDegreesPerSecond = 20.0f;
+constexpr GLfloat kDegreesPerSecond = 0.0f;
 constexpr const char *kWindowTitle = "HexPlanet viewer";
 
 /// Main viewer window
@@ -70,11 +75,13 @@ double last_planet_generation_time = 0;
 /// Last pathfinding time, in seconds from GLFW start.
 double last_pathfinding_time = 0;
 
+// the nanogui screen
+nanogui::Screen *nanogui_screen;
+
 /// Search source.
 HexVertexId source = 0;
 /// Search target.
 HexVertexId target = 5;
-
 
 Pathfinder::Result run_pathfinder(std::unique_ptr<HexPlanet> &planet,
                                   HexVertexId source,
@@ -84,7 +91,6 @@ Pathfinder::Result run_pathfinder(std::unique_ptr<HexPlanet> &planet,
 void randomize_source_target(HexVertexId max_vertex_id);
 void find_render_path(std::unique_ptr<HexPlanet> &planet);
 std::unique_ptr<HexPlanet> generate_planet(uint8_t subdivision_count);
-
 
 /**
  * Draws a single frame.
@@ -101,6 +107,13 @@ static void Render() {
   // Portion of the final transformation matrix (each renderer defines a model matrix)
   glm::mat4 view_projection = projection * view;
 
+  // These openGL properties need to
+  // be set each time. This is because
+  // nanogui undoes them.
+  glEnable(GL_CULL_FACE);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LEQUAL);
+
   // Draw the planet
   planet_renderer->Draw(view_projection);
 
@@ -110,8 +123,33 @@ static void Render() {
   // Draw the path
   path_renderer->Draw(view_projection, viewport);
 
+  // Draw nanogui
+  nanogui_screen->drawContents();
+  nanogui_screen->drawWidgets();
+
   // Swap the display buffers (displays what was just drawn)
   glfwSwapBuffers(window);
+}
+
+/**
+ * Change the number of divisions on the planet
+ * @param new_subdivisions
+ * @param planet
+ */
+void UpdatePlanetDivisions(uint8_t new_subdivisions, std::unique_ptr<HexPlanet> &planet) {
+  // Regenerate if the desired subdivision is different.
+  if (new_subdivisions != planet_subdivisions) {
+    if (last_planet_generation_time + kPlanetRegenCooldown < glfwGetTime()) {
+      planet_subdivisions = new_subdivisions;
+
+      // Regenerate the planet. Old one is automatically deleted.
+      planet = generate_planet(planet_subdivisions);
+
+      last_planet_generation_time = glfwGetTime();
+    } else {
+      std::cout << "We Require More Minerals" << std::endl;
+    }
+  }
 }
 
 /**
@@ -149,29 +187,6 @@ void Update(std::unique_ptr<HexPlanet> &planet, float seconds_elapsed) {
     main_camera.offsetPosition(seconds_elapsed * kMoveSpeed * -glm::vec3(0, 1, 0));
   } else if (glfwGetKey(window, 'X')) {
     main_camera.offsetPosition(seconds_elapsed * kMoveSpeed * glm::vec3(0, 1, 0));
-  }
-
-  // Planet regeneration
-  uint8_t new_subdivisions = planet_subdivisions;
-
-  if (glfwGetKey(window, '-') && new_subdivisions > 0) {
-    new_subdivisions--;
-  } else if (glfwGetKey(window, '=') && new_subdivisions < 10) {
-    new_subdivisions++;
-  }
-
-  // Regenerate if the desired subdivision is different.
-  if (new_subdivisions != planet_subdivisions) {
-    if (last_planet_generation_time + kPlanetRegenCooldown < glfwGetTime()) {
-      planet_subdivisions = new_subdivisions;
-
-      // Regenerate the planet. Old one is automatically deleted.
-      planet = generate_planet(planet_subdivisions);
-
-      last_planet_generation_time = glfwGetTime();
-    } else {
-      std::cout << "We Require More Minerals" << std::endl;
-    }
   }
 
   if (glfwGetKey(window, 'P') && last_pathfinding_time + kPathfindingCooldown < glfwGetTime()) {
@@ -244,13 +259,13 @@ Pathfinder::Result run_pathfinder(std::unique_ptr<HexPlanet> &planet,
     auto end_time = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end_time - start_time;
     std::cout << std::fixed
-        << "Pathfinding Complete (" << elapsed_seconds.count() << "s)" << std::endl;
+              << "Pathfinding Complete (" << elapsed_seconds.count() << "s)" << std::endl;
 
     if (verbose) {
       auto stats = pathfinder.stats();
       std::cout << std::fixed
-          << "Closed Set: " << stats.closed_set_size << std::endl
-          << "Open Set:   " << stats.open_set_size << " (on exit)" << std::endl;
+                << "Closed Set: " << stats.closed_set_size << std::endl
+                << "Open Set:   " << stats.open_set_size << " (on exit)" << std::endl;
     }
 
     std::cout << std::endl;
@@ -322,6 +337,182 @@ std::unique_ptr<HexPlanet> generate_planet(uint8_t subdivision_count) {
 }
 
 /**
+ * Initialize the nanogui panel.
+ * @param planet
+ */
+void initialize_nanogui(std::unique_ptr<HexPlanet> &planet) {
+  // Create a nanogui screen and pass the glfw pointer to initialize
+  nanogui_screen = new nanogui::Screen();
+  nanogui_screen->initialize(window, true);
+
+  nanogui::Window *nanogui_window = new nanogui::Window(nanogui_screen, "");
+  nanogui_window->setPosition(Eigen::Vector2i(0, 15));
+  nanogui_window->setLayout(new nanogui::GroupLayout());
+
+  // Create the section which is used to increase/decrease number of divisions.
+  new nanogui::Label(nanogui_window, "Change Number of Divisions", "sans-bold");
+  nanogui::Widget *planet_divisions_widget = new nanogui::Widget(nanogui_window);
+  planet_divisions_widget->setLayout(new nanogui::BoxLayout(nanogui::Orientation::Horizontal,
+                                                            nanogui::Alignment::Middle, 0, 12));
+
+  nanogui::Button *b = new nanogui::Button(planet_divisions_widget);
+  b->setCaption(" - ");
+  b->setCallback([&planet] {
+    // Planet regeneration
+    uint8_t new_subdivisions = planet_subdivisions;
+    if (new_subdivisions > 0) {
+      UpdatePlanetDivisions(--new_subdivisions, planet);
+    }
+  });
+  // cppcheck-suppress memleak
+  b = new nanogui::Button(planet_divisions_widget);
+  b->setCaption(" + ");
+  b->setCallback([&planet] {
+    // Planet regeneration
+    uint8_t new_subdivisions = planet_subdivisions;
+    if (new_subdivisions < 10) {
+      UpdatePlanetDivisions(++new_subdivisions, planet);
+    }
+  });
+
+  // Create the file explorer for GRIB files.
+  new nanogui::Label(nanogui_window, "Import GRIB Data", "sans-bold");
+  nanogui::PopupButton
+      *import_grib_popup_button = new nanogui::PopupButton(nanogui_window, "Select Files", ENTYPO_ICON_EXPORT);
+  nanogui::Popup *import_grib_popup = import_grib_popup_button->popup();
+  import_grib_popup->setLayout(new nanogui::GroupLayout());
+  b = new nanogui::Button(import_grib_popup, "WRC");
+  b->setCallback([&] {
+    std::cout << "Current file dialog result: " << nanogui::file_dialog(
+        {{"grib2", "GRIB file"}}, false) << std::endl;
+  });
+  b = new nanogui::Button(import_grib_popup, "Swell");
+  b->setCallback([&] {
+    std::cout << "Weather file dialog result: " << nanogui::file_dialog(
+        {{"grib2", "GRIB file"}}, false) << std::endl;
+  });
+  b = new nanogui::Button(import_grib_popup, "Currents");
+  b->setCallback([&] {
+    std::cout << "Surf file dialog result: " << nanogui::file_dialog(
+        {{"grib2", "GRIB file"}}, false) << std::endl;
+  });
+
+  // Create a slider for the pathfinder time step
+  new nanogui::Label(nanogui_window, "Pathfinder Time Step", "sans-bold");
+
+  nanogui::Widget *timestep_panel = new nanogui::Widget(nanogui_window);
+  timestep_panel->setLayout(new nanogui::BoxLayout(nanogui::Orientation::Horizontal,
+                                                   nanogui::Alignment::Middle, 0, 20));
+
+  nanogui::Slider *timestep_slider = new nanogui::Slider(timestep_panel);
+  timestep_slider->setValue(.0f);
+  timestep_slider->setFixedWidth(80);
+  nanogui::TextBox *timestep_textbox = new nanogui::TextBox(timestep_panel);
+  timestep_textbox->setFixedSize(Eigen::Vector2i(60, 25));
+  timestep_textbox->setValue("1");
+  timestep_textbox->setUnits("sec");
+  timestep_slider->setCallback([timestep_textbox](float value) {
+    timestep_textbox->setValue(std::to_string(static_cast<int>(value * 20)));
+  });
+  timestep_slider->setFinalCallback([&](float value) {
+    std::cout << "Timestep value: " << static_cast<int>(value * 20) << " seconds" << std::endl;
+  });
+  timestep_textbox->setFixedSize(Eigen::Vector2i(60, 25));
+  timestep_textbox->setFontSize(20);
+  timestep_textbox->setAlignment(nanogui::TextBox::Alignment::Right);
+
+  // Create a box to select a new path by entering latitude/longitude
+  nanogui::PopupButton
+      *run_pathfinder_popup_button = new nanogui::PopupButton(nanogui_window, "Run Pathfinder", ENTYPO_ICON_EXPORT);
+  nanogui::Popup *run_pathfinder_popup = run_pathfinder_popup_button->popup();
+  run_pathfinder_popup->setLayout(new nanogui::GroupLayout());
+
+  new nanogui::Label(run_pathfinder_popup, "Start Latitude:");
+  nanogui::FloatBox<float> *source_latitude_floatbox = new nanogui::FloatBox<float>(run_pathfinder_popup);
+  source_latitude_floatbox->setMinMaxValues(-90.0f, 90.0f);
+  source_latitude_floatbox->setEditable(true);
+
+  new nanogui::Label(run_pathfinder_popup, "Start Longitude:");
+  nanogui::FloatBox<float> *source_longitude_floatbox = new nanogui::FloatBox<float>(run_pathfinder_popup);
+  source_longitude_floatbox->setMinMaxValues(-180.0f, 180.0f);
+  source_longitude_floatbox->setEditable(true);
+
+  new nanogui::Label(run_pathfinder_popup, "Destination Latitude:");
+  nanogui::FloatBox<float> *dest_latitude_floatbox = new nanogui::FloatBox<float>(run_pathfinder_popup);
+  dest_latitude_floatbox->setMinMaxValues(-90.0f, 90.0f);
+  dest_latitude_floatbox->setEditable(true);
+
+  new nanogui::Label(run_pathfinder_popup, "Destination Longitude:");
+  nanogui::FloatBox<float> *dest_longitude_floatbox = new nanogui::FloatBox<float>(run_pathfinder_popup);
+  dest_longitude_floatbox->setMinMaxValues(-180.0f, 180.0f);
+  dest_longitude_floatbox->setEditable(true);
+
+  b = new nanogui::Button(run_pathfinder_popup, "Run Pathfinder");
+  b->setCallback([&planet,
+                     source_latitude_floatbox,
+                     source_longitude_floatbox,
+                     dest_latitude_floatbox,
+                     dest_longitude_floatbox] {
+    GPSCoordinateFast sourceGPSCoord =
+        GPSCoordinateFast((int32_t) source_latitude_floatbox->value() * GPSCoordinate::kExactCoordinateScaleFactor,
+                          (int32_t) source_longitude_floatbox->value() * GPSCoordinate::kExactCoordinateScaleFactor);
+    GPSCoordinateFast destGPSCoord =
+        GPSCoordinateFast((int32_t) dest_latitude_floatbox->value() * GPSCoordinate::kExactCoordinateScaleFactor,
+                          (int32_t) dest_longitude_floatbox->value() * GPSCoordinate::kExactCoordinateScaleFactor);
+
+    Eigen::Vector3f sourcePoint;
+    Eigen::Vector3f destPoint;
+
+    standard_calc::CoordToPoint(sourceGPSCoord, &sourcePoint);
+    standard_calc::CoordToPoint(destGPSCoord, &destPoint);
+
+    source = planet->HexVertexFromPoint(sourcePoint);
+    target = planet->HexVertexFromPoint(destPoint);
+
+    find_render_path(planet);
+  });
+
+  nanogui_screen->setVisible(true);
+  nanogui_screen->performLayout();
+
+  // Make the panel clickable
+  glfwSetCursorPosCallback(window,
+                           [](GLFWwindow *, double x, double y) {
+                             nanogui_screen->cursorPosCallbackEvent(x, y);
+                           });
+
+  glfwSetMouseButtonCallback(window,
+                             [](GLFWwindow *, int button, int action, int modifiers) {
+                               nanogui_screen->mouseButtonCallbackEvent(button, action, modifiers);
+                             });
+
+  glfwSetKeyCallback(window,
+                     [](GLFWwindow *, int key, int scancode, int action, int mods) {
+                       nanogui_screen->keyCallbackEvent(key, scancode, action, mods);
+                     });
+
+  glfwSetCharCallback(window,
+                      [](GLFWwindow *, unsigned int codepoint) {
+                        nanogui_screen->charCallbackEvent(codepoint);
+                      });
+
+  glfwSetDropCallback(window,
+                      [](GLFWwindow *, int count, const char **filenames) {
+                        nanogui_screen->dropCallbackEvent(count, filenames);
+                      });
+
+  glfwSetScrollCallback(window,
+                        [](GLFWwindow *, double x, double y) {
+                          nanogui_screen->scrollCallbackEvent(x, y);
+                        });
+
+  glfwSetFramebufferSizeCallback(window,
+                                 [](GLFWwindow *, int width, int height) {
+                                   nanogui_screen->resizeCallbackEvent(width, height);
+                                 });
+}
+
+/**
  * The program starts here
  */
 void AppMain() {
@@ -359,7 +550,7 @@ void AppMain() {
 #endif
 
   // GLEW throws some errors, so discard all the errors so far
-  while (glGetError() != GL_NO_ERROR) { }
+  while (glGetError() != GL_NO_ERROR) {}
 
   // Print out some info about the graphics drivers
   std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
@@ -395,6 +586,8 @@ void AppMain() {
 
   // Generate planet
   std::unique_ptr<HexPlanet> planet = generate_planet(planet_subdivisions);
+
+  initialize_nanogui(planet);
 
   // Setup main_camera
   main_camera.setPosition(glm::vec3(0, 0, 2.5));
