@@ -8,4 +8,13 @@ pool:
 
 steps:
 - task: CMake@1
+  displayName: Generate Build Files
+  inputs:
+    workingDirectory: build
+    cmakeArgs: '../'
 
+- task: CMake@1
+  displayName: Build Solution
+  inputs:
+    workingDirectory: '$(Build.SourcesDirectory)'
+    cmakeArgs: '--build build --target ALL_BUILD --config Release'
