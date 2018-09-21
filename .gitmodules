@@ -4,7 +4,7 @@
 	branch = master
 [submodule "lib/protofiles"]
 	path = lib/protofiles
-	url = ssh://git@github.com:UBCSailbot/protofiles.git
+	url = https://github.com/UBCSailbot/protofiles.git
 [submodule "lib/nanogui"]
 	path = lib/nanogui
 	url = https://github.com/wjakob/nanogui.git
