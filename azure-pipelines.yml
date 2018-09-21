@@ -9,5 +9,5 @@ pool:
 steps:
 - task: CMake@1
   inputs:
-    #workingDirectory: 'build' # Optional
-    #cmakeArgs: # Optional
+    workingDirectory: 'build' # Optional
+
