@@ -45,8 +45,9 @@ else
     sudo chown $USER /usr/local/bin/protoc
     sudo chown -R $USER /usr/local/include/google
     sudo chmod -R 444 /usr/local/include/google/
-    sudo ln -s /usr/bin/google/ /usr/local/include/google
-
+    sudo ln -s /usr/bin/include/google/ /usr/local/include/google
+    rm -rf protoc3
+    rm protoc-3.6.1-linux-x86_64.zip
 fi
 
 
