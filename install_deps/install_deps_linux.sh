@@ -33,6 +33,7 @@ else
     curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protoc-3.6.1-linux-x86_64.zip
     # Unzip
     unzip -o protoc-3.6.1-linux-x86_64.zip -d /usr/local bin/protoc
+    sudo cp /usr/local/include/* /usr/local/include/
     rm -f protoc-3.6.1-linux-x86_64.zip
 fi
 
