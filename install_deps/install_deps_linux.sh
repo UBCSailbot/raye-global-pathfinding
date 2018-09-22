@@ -34,7 +34,7 @@ else
     sudo apt-get update
     apt-cache policy protobuf-compiler
     apt-cache policy libprotobuf-dev
-    sudo apt-get install protobuf-compiler=3.1.0-0ubuntu1~maarten0+xenial libprotobuf-dev=3.1.0-0ubuntu1~maarten0+xenial -y
+    sudo apt-get install protobuf-compiler=3.1.0-0ubuntu1~maarten0 libprotobuf-dev=3.1.0-0ubuntu1~maarten0 -y
 fi
 
 
