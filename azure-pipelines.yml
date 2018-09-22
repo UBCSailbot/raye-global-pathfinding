@@ -23,3 +23,9 @@ steps:
     cd build
     bin/run_basic_tests --gtest_output=xml
   displayName: 'Run tests'  
+  
+  # Publish Test Results to Azure Pipelines/TFS
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit' 
+    testResultsFiles: '**/*.xml' 
