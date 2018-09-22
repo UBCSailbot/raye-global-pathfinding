@@ -40,6 +40,7 @@ else
 
     # Move protoc3/include to /usr/local/include/
     sudo mv protoc3/include/* /usr/local/include/
+    sudo ln -s /protoc3/bin/protoc /usr/bin/protoc
 fi
 
 
