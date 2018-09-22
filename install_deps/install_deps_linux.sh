@@ -45,7 +45,7 @@ else
     sudo chown $USER /usr/local/bin/protoc
     sudo chown -R $USER /usr/local/include/google
     sudo chmod -R 444 /usr/local/include/google/
-    sudo ln -s /usr/bin/include/ /usr/local/include/
+    sudo ln -s /usr/bin/google/ /usr/local/include/google
 
 fi
 
