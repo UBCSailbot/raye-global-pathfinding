@@ -24,7 +24,7 @@ git submodule update --init --recursive
 # Update package manager indices to latest available.
 sudo apt-get update
 
-sudo apt-get install build-essential unzip clang libboost-dev libboost-program-options-dev libglew-dev libglm-dev libeigen3-dev cppcheck xorg-dev libglu1-mesa-dev -y
+sudo apt-get install cmake build-essential unzip clang libboost-dev libboost-program-options-dev libglew-dev libglm-dev libeigen3-dev cppcheck xorg-dev libglu1-mesa-dev -y
 
 if [  $(apt-cache show libprotobuf-dev | grep -Po '(?<=Version: )[0-9]') -gt 2 ]; then
     sudo apt install libprotobuf-dev protobuf-compiler -y
@@ -36,14 +36,12 @@ else
     unzip protoc-3.6.1-linux-x86_32.zip -d protoc3
 
     # Move protoc to /usr/local/bin/
-    sudo mv protoc3/bin/* /usr/local/bin/
+    sudo mvcp protoc3/bin/* /usr/bin/
 
     # Move protoc3/include to /usr/local/include/
     sudo mv protoc3/include/* /usr/local/include/
 fi
 
-# CMake is needed to actually build the system
-sudo apt-get install cmake -y
 
 INSTALL_DEPS_DIRECTORY=${BASH_SOURCE%/*}
 
