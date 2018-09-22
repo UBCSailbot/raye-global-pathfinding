@@ -24,7 +24,27 @@ git submodule update --init --recursive
 # Update package manager indices to latest available.
 sudo apt-get update
 
-sudo apt-get install build-essential clang libboost-dev libboost-program-options-dev libglew-dev libglm-dev libeigen3-dev cppcheck xorg-dev libglu1-mesa-dev libprotobuf-dev protobuf-compiler -y
+sudo apt-get install build-essential clang libboost-dev libboost-program-options-dev libglew-dev libglm-dev libeigen3-dev cppcheck xorg-dev libglu1-mesa-dev -y
+
+if [  $(apt-cache show libprotobuf-dev | grep -Po '(?<=Version: )[0-9]') -gt 2 ]; then
+    sudo apt install libprotobuf-dev protobuf-compiler -y
+else
+     # Make sure you grab the latest version
+    curl -OL https://github.com/google/protobuf/releases/download/v3.3.0/protoc-3.3.0-linux-x86_64.zip
+
+    # Unzip
+    unzip protoc-3.3.0-linux-x86_64.zip -d protoc3
+
+    # Move protoc to /usr/local/bin/
+    sudo mv protoc3/bin/* /usr/local/bin/
+
+    # Move protoc3/include to /usr/local/include/
+    sudo mv protoc3/include/* /usr/local/include/
+
+    # Optional: change owner
+    sudo chown $USER /usr/local/bin/protoc
+    sudo chown -R $USER /usr/local/include/google
+fi
 
 # CMake is needed to actually build the system
 sudo apt-get install cmake -y
