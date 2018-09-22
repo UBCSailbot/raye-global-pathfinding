@@ -32,7 +32,7 @@ else
     sudo apt-get remove libprotobuf-dev -y
     sudo add-apt-repository ppa:maarten-fonville/protobuf -y
     sudo apt-get update
-    sudo apt-get install protobuf-compiler=protobuf-compiler_3.1.0-0ubuntu1~maarten0 libprotobuf-dev=libprotobuf-dev_3.1.0-0ubuntu1~maarten0 -y
+    sudo apt-get install protobuf-compiler=3.1.0-0ubuntu1~maarten0+xenial libprotobuf-dev=3.1.0-0ubuntu1~maarten0+xenial -y
 fi
 
 
