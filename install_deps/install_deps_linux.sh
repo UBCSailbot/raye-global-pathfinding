@@ -31,7 +31,7 @@ if [  $(apt-cache show libprotobuf-dev | grep -Po '(?<=Version: )[0-9]') -gt 2 ]
 else
     sudo add-apt-repository ppa:maarten-fonville/protobuf -y
     sudo apt-get update
-    sudo apt-get install protobuf -y
+    sudo apt-get install protobuf-compiler
 fi
 
 
