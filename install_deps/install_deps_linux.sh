@@ -29,12 +29,9 @@ sudo apt-get install cmake build-essential unzip clang libboost-dev libboost-pro
 if [  $(apt-cache show libprotobuf-dev | grep -Po '(?<=Version: )[0-9]') -gt 2 ]; then
     sudo apt install libprotobuf-dev protobuf-compiler -y
 else
-     # Make sure you grab the latest version
-    curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protoc-3.6.1-linux-x86_64.zip
-    # Unzip
-    unzip -o protoc-3.6.1-linux-x86_64.zip -d /usr/local bin/protoc
-    sudo cp /usr/local/include/* /usr/local/include/
-    rm -f protoc-3.6.1-linux-x86_64.zip
+    sudo add-apt-repository ppa:maarten-fonville/protobuf -y
+    sudo apt-get update
+    sudo apt-get install protobuf -y
 fi
 
 
