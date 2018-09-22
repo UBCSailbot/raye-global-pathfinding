@@ -17,8 +17,7 @@ steps:
     workingDirectory: build
     cmakeArgs: '../'
 
-- task: CMake@1
-  displayName: Build Solution
-  inputs:
-    workingDirectory: '$(Build.SourcesDirectory)'
-    cmakeArgs: '--build build --target ALL_BUILD --config Release'
+- script: |
+    cd build
+    make
+  displayName: 'make'
