@@ -36,7 +36,7 @@ else
     unzip protoc-3.6.1-linux-x86_32.zip -d protoc3
 
     # Move protoc to /usr/local/bin/
-    sudo mvcp protoc3/bin/* /usr/bin/
+    sudo mv protoc3/bin/* /usr/bin/
 
     # Move protoc3/include to /usr/local/include/
     sudo mv protoc3/include/* /usr/local/include/
