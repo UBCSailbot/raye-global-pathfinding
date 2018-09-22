@@ -1,5 +1,4 @@
 # The main pipeline for UBC Sailbot projects
-
 pool:
   vmImage: 'Ubuntu 16.04'
 
