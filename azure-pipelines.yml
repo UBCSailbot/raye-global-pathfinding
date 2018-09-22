@@ -22,3 +22,4 @@ steps:
 - script: |
     cd build
     bin/run_basic_tests --gtest_output=xml
+  displayName: 'Run tests'  
