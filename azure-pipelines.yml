@@ -9,7 +9,14 @@ pool:
 steps:
 - script: |
     sudo ./install_deps/install_deps_linux.sh
-  displayName: "Install deps"
+    sudo apt remove libprotobuf -y
+    curl -OL https://github.com/google/protobuf/releases/download/v3.3.0/protoc-3.3.0-linux-x86_64.zip
+    unzip protoc-3.3.0-linux-x86_64.zip -d protoc3
+    sudo mv protoc3/bin/* /usr/local/bin/
+    sudo mv protoc3/include/* /usr/local/include/
+    sudo chown $USER /usr/local/bin/protoc
+    sudo chown -R $USER /usr/local/include/google
+    displayName: "Install deps    "
 
 - task: CMake@1
   displayName: Generate Build Files
