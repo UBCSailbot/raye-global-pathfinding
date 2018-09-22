@@ -24,12 +24,18 @@ git submodule update --init --recursive
 # Update package manager indices to latest available.
 sudo apt-get update
 
-sudo apt-get install build-essential clang libboost-dev libboost-program-options-dev libglew-dev libglm-dev libeigen3-dev cppcheck -y
+sudo apt-get install cmake build-essential unzip clang libboost-dev libboost-program-options-dev libglew-dev libglm-dev libeigen3-dev cppcheck xorg-dev libglu1-mesa-dev -y
 
-# CMake is needed to actually build the system
-sudo apt-get install cmake -y
+if [  $(apt-cache show libprotobuf-dev | grep -Po '(?<=Version: )[0-9]') -gt 2 ]; then
+    sudo apt install libprotobuf-dev protobuf-compiler -y
+else
+    sudo apt-get remove libprotobuf-dev -y
+    sudo add-apt-repository ppa:maarten-fonville/protobuf -y
+    sudo apt-get update
+    apt-cache policy protobuf-compiler
+    apt-cache policy libprotobuf-dev
+    sudo apt-get install protobuf-compiler=3.1.0-0ubuntu1~maarten0 libprotobuf-dev=3.1.0-0ubuntu1~maarten0 -y
+fi
+
 
 INSTALL_DEPS_DIRECTORY=${BASH_SOURCE%/*}
-LIB_DIRECTORY=${INSTALL_DEPS_DIRECTORY}/../lib
-
-${LIB_DIRECTORY}/protofiles/scripts/install_deps_debian.sh
