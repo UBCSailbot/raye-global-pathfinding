@@ -41,6 +41,9 @@ else
     # Move protoc3/include to /usr/local/include/
     sudo mv protoc3/include/* /usr/local/include/
     sudo ln -s /usr/local/bin/protoc /usr/bin/protoc
+    
+    sudo chown $USER /usr/local/bin/protoc
+    sudo chown -R $USER /usr/local/include/google
 fi
 
 
