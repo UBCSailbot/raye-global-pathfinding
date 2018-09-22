@@ -38,10 +38,9 @@ else
     # Move protoc to /usr/local/bin/
     sudo mv protoc3/bin/* /usr/local/bin/
 
-
     # Move protoc3/include to /usr/local/include/
     sudo mv protoc3/include/* /usr/local/include/
-    sudo ln -s /protoc3/bin/protoc /usr/bin/protoc
+    sudo ln -s /usr/local/bin/protoc /usr/bin/protoc
 fi
 
 
