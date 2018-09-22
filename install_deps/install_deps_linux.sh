@@ -24,12 +24,10 @@ git submodule update --init --recursive
 # Update package manager indices to latest available.
 sudo apt-get update
 
-sudo apt-get install build-essential clang libboost-dev libboost-program-options-dev libglew-dev libglm-dev libeigen3-dev cppcheck -y
+sudo apt-get install build-essential clang libboost-dev libboost-program-options-dev libglew-dev libglm-dev libeigen3-dev cppcheck xorg-dev libglu1-mesa-dev libprotobuf-dev protobuf-compiler -y
 
 # CMake is needed to actually build the system
 sudo apt-get install cmake -y
 
 INSTALL_DEPS_DIRECTORY=${BASH_SOURCE%/*}
-LIB_DIRECTORY=${INSTALL_DEPS_DIRECTORY}/../lib
 
-${LIB_DIRECTORY}/protofiles/scripts/install_deps_debian.sh
