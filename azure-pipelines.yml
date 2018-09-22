@@ -21,3 +21,7 @@ steps:
     cd build
     make
   displayName: 'make'
+  
+- script: |
+    cd build
+    bin/run_basic_tests --gtest_output=xml
