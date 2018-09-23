@@ -1,5 +1,4 @@
 # The main pipeline for UBC Sailbot projects
-
 pool:
   vmImage: 'Ubuntu 16.04'
 
@@ -13,6 +12,10 @@ steps:
   inputs:
     workingDirectory: build
     cmakeArgs: '../'
+
+- script: |
+    ./scripts/run_cpplint.sh
+  displayName: 'CPPLlint'  
 
 - script: |
     cd build
