@@ -25,7 +25,7 @@ git submodule update --init --recursive
 sudo apt-get update
 
 # Get the required packages for build
-sudo apt-get install build-essential clang libboost-dev libboost-program-options-dev libglew-dev libglm-dev libeigen3-dev cppcheck xorg-dev libglu1-mesa-dev cmake -y
+sudo apt-get install curl eccodes build-essential clang libboost-dev libboost-program-options-dev libglew-dev libglm-dev libeigen3-dev cppcheck xorg-dev libglu1-mesa-dev cmake -y
 
 
 INSTALL_DEPS_DIRECTORY=${BASH_SOURCE%/*}
