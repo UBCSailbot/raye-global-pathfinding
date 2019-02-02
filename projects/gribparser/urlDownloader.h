@@ -7,9 +7,9 @@
 
 #include <string>
 
-class urlDownloader {
-public:
-    static int downloader(std::string url);
+class UrlDownloader {
+    public:
+        static int Downloader(const std::string url);
 };
 
 

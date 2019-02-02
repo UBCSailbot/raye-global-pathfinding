@@ -6,16 +6,17 @@
 #include <iostream>
 #include "urlDownloader.h"
 
-int urlDownloader::downloader(std::string url){
+int UrlDownloader::Downloader(const std::string url){
     // cout << url << endl;
     CURL *curl;
     FILE *fp;
     CURLcode res;
-    char outfilename[FILENAME_MAX] = "data.grb";
+
+    char out_file_name[FILENAME_MAX] = "data.grb";
     curl = curl_easy_init();
     if (curl)
     {
-        fp = fopen(outfilename,"wb");
+        fp = fopen(out_file_name,"wb");
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);

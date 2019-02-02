@@ -8,9 +8,9 @@
 #include <string>
 using namespace std;
 
-class urlBuilder {
+class UrlBuilder {
 public:
-    static std::string buildURL(int argc , char **argv);
+    static std::string BuildURL(const int argc , char **argv);
 
 };
 

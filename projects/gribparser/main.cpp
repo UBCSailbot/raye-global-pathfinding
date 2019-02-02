@@ -26,24 +26,24 @@ using namespace std;
 
 int main (int argc, char **argv)
 {
-    char filename[] = "data.grb";
-    const double missing = 9999.0;
+    std::string file_name = "data.grb";
+
     if (argc == 5) {
-        string url = urlBuilder::buildURL(argc, argv);
-        urlDownloader::downloader(&url[0]);
+        string url = UrlBuilder::BuildURL(argc, argv);
+        UrlDownloader::Downloader(&url[0]);
     }
     else {
         cout << "Function requires 4 arguments" << endl;
         return 0;
     }
 
-    fileParse file = fileParse(filename);
+    FileParse file = FileParse(file_name);
 
-    long numberOfPoints = file.numberOfPoints;
+    // print out result from parsing file
 
-    for (int i = 0; i < numberOfPoints; ++i) {
-        if (file.values[i] != missing) {
-            cout << "Lat: " << file.lats[i] << "\t Long: " << file.lons[i] << "\tVal: " << file.values[i] << endl;
+    for (int i = 0; i < file.number_of_points_; ++i) {
+        if (file.values_[i] != file.kMissing) {
+            cout << "Lat: " << file.lats_[i] << "\t Long: " << file.lons_[i] << "\tVal: " << file.values_[i] << endl;
         }
     }
 

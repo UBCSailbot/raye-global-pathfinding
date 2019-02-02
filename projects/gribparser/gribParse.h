@@ -12,18 +12,18 @@
 #include "../src/logic/StandardCalc.h"
 using namespace std;
 
-class fileParse {
-public:
-    fileParse(std::string filename);
-    double *lats, *lons, *values;
-    long numberOfPoints;
+class FileParse {
+    public:
+        double *lats_, *lons_, *values_;
+        long number_of_points_;
+        const double kMissing = 9999.0;
 
-private:
-    int err;
-    FILE *in;
-    codes_handle *h;
-    const double missing = 9999.0;
+        FileParse(const std::string filename);
 
+    private:
+        int err;
+        FILE *in;
+        codes_handle *lib_handle;
 
 };
 
