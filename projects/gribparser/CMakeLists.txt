@@ -1,12 +1,9 @@
 cmake_minimum_required(VERSION 3.12)
-project(grib_parser)
+project(${PROJECT_NAME} CXX)
 
-set(CMAKE_CXX_STANDARD 14)
+set(PROJECT_NAME gribparser)
 
-include_directories()
-
-add_executable(grib_parser
-        CMakeLists.txt
+set(${PROJECT_NAME}_SRCS
         main.cpp
         urlBuilder.cpp
         urlBuilder.h
@@ -16,11 +13,11 @@ add_executable(grib_parser
         gribParse.h
         )
 
-target_link_libraries(grib_parser curl)
-
-
 find_package(eccodes REQUIRED)
 include_directories(${ECCODES_INCLUDE_DIRS})
 
-target_link_libraries(grib_parser
-        eccodes        )
+set(${PROJECT_NAME}_LIBS src_core ${Boost_LIBRARIES} eccodes curl)
+
+# Define the executable
+add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SRCS})
+target_link_libraries(${PROJECT_NAME} ${${PROJECT_NAME}_LIBS})

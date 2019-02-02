@@ -22,12 +22,10 @@ fileParse::fileParse(std::string filename) {
 
     CODES_CHECK (codes_grib_get_data (h, lats, lons, values), 0);
 
-    /*
     for (int i = 0; i < numberOfPoints; ++i) {
         lats[i] = standard_calc::BoundTo180(lats[i]);
         lons[i] = standard_calc::BoundTo180(lons[i]);
     }
-     */
 
     codes_handle_delete (h);
     fclose (in);

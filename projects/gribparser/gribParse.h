@@ -9,7 +9,7 @@
 #include <string>
 #include <iostream>
 #include <iostream>
-//#include "StandardCalc.h"
+#include "../src/logic/StandardCalc.h"
 using namespace std;
 
 class fileParse {
