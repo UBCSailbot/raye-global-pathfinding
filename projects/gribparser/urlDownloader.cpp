@@ -6,9 +6,7 @@
 #include <iostream>
 #include "urlDownloader.h"
 
-using namespace std;
-
-int urlDownloader::downloader(char *url){
+int urlDownloader::downloader(std::string url){
     // cout << url << endl;
     CURL *curl;
     FILE *fp;
@@ -18,7 +16,7 @@ int urlDownloader::downloader(char *url){
     if (curl)
     {
         fp = fopen(outfilename,"wb");
-        curl_easy_setopt(curl, CURLOPT_URL, url);
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
         res = curl_easy_perform(curl);
@@ -27,7 +25,7 @@ int urlDownloader::downloader(char *url){
                     curl_easy_strerror(res));
         curl_easy_cleanup(curl);
         fclose(fp);
-        cout << "Downloaded data.grb" << endl;
+        std::cout << "Downloaded data.grb" << std::endl;
 
     }
     return 0;

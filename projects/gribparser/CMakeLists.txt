@@ -3,7 +3,7 @@ project(grib_parser)
 
 set(CMAKE_CXX_STANDARD 14)
 
-include_directories(.)
+include_directories()
 
 add_executable(grib_parser
         CMakeLists.txt
@@ -12,11 +12,11 @@ add_executable(grib_parser
         urlBuilder.h
         urlDownloader.cpp
         urlDownloader.h
-        StandardCalc.cpp
-        StandardCalc.h fileParse.cpp fileParse.h)
+        gribParse.cpp
+        gribParse.h
+        )
 
 target_link_libraries(grib_parser curl)
-set ( CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ~/cpp-netlib-build )
 
 
 find_package(eccodes REQUIRED)

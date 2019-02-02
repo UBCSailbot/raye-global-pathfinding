@@ -6,10 +6,15 @@
 #define GRIB_PARSER_FILE_PARSE_H
 
 #include <eccodes.h>
+#include <string>
+#include <iostream>
+#include <iostream>
+//#include "StandardCalc.h"
+using namespace std;
 
 class fileParse {
 public:
-    fileParse(char * filename);
+    fileParse(std::string filename);
     double *lats, *lons, *values;
     long numberOfPoints;
 

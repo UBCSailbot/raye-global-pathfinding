@@ -6,13 +6,12 @@
 #define GRIB_DOWNLOADER_URLBUILDER_H
 
 #include <string>
-
+using namespace std;
 
 class urlBuilder {
-
 public:
-    static std::string buildURL(int , char **);
-};
+    static std::string buildURL(int argc , char **argv);
 
+};
 
 #endif //GRIB_DOWNLOADER_URLBUILDER_H

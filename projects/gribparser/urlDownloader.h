@@ -5,10 +5,11 @@
 #ifndef GRIB_DOWNLOADER_URLDOWNLOADER_H
 #define GRIB_DOWNLOADER_URLDOWNLOADER_H
 
+#include <string>
 
 class urlDownloader {
 public:
-    static int downloader(char *url);
+    static int downloader(std::string url);
 };
 
 
