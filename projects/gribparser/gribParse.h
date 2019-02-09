@@ -5,14 +5,17 @@
 #include <string>
 #include <iostream>
 #include <iostream>
+#include <vector>
 #include "../src/logic/StandardCalc.h"
 using namespace std;
 
 class FileParse {
     public:
-        double *lats_, *lons_, *values_;
         long number_of_points_;
         const double kMissing = 9999.0;
+        vector<double> lats;
+        vector<double> lons;
+        vector<double> vals;
 
         FileParse(const std::string filename);
 

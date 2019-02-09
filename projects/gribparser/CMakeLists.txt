@@ -5,10 +5,10 @@ set(PROJECT_NAME gribparser)
 
 set(${PROJECT_NAME}_SRCS
         main.cpp
-        urlBuilder.cpp
-        urlBuilder.h
-        urlDownloader.cpp
-        urlDownloader.h
+        ../../src/grib/urlBuilder.cpp
+        ../../src/grib/urlBuilder.h
+        ../../src/grib/urlDownloader.cpp
+        ../../src/grib/urlDownloader.h
         gribParse.cpp
         gribParse.h
         )

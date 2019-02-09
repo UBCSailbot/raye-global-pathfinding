@@ -1,3 +1,4 @@
+#include <vector>
 #include "gribParse.h"
 
 FileParse::FileParse(const std::string filename) {
@@ -19,15 +20,15 @@ FileParse::FileParse(const std::string filename) {
     // Sets the value for which the data is missing from the GRIB file
     CODES_CHECK(codes_set_double(lib_handle, "missingValue", kMissing), 0);
 
-    lats_ = new double[number_of_points_];
-    lons_ = new double[number_of_points_];
-    values_ = new double[number_of_points_];
+    lats.resize(number_of_points_);
+    lons.resize(number_of_points_);
+    vals.resize(number_of_points_);
 
-    CODES_CHECK(codes_grib_get_data(lib_handle, lats_, lons_, values_), 0);
+    CODES_CHECK(codes_grib_get_data(lib_handle, lats.data(), lons.data(), vals.data()), 0);
 
     for (int i = 0; i < number_of_points_; ++i) {
-        lats_[i] = standard_calc::BoundTo180(lats_[i]);
-        lons_[i] = standard_calc::BoundTo180(lons_[i]);
+        lats[i] = standard_calc::BoundTo180(lats[i]);
+        lons[i] = standard_calc::BoundTo180(lons[i]);
     }
 
     codes_handle_delete(lib_handle);

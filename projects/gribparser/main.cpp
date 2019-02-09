@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "eccodes.h"
-#include "urlDownloader.h"
-#include "urlBuilder.h"
+#include "grib/urlDownloader.h"
+#include "grib/urlBuilder.h"
 #include "gribParse.h"
 
 using namespace std;
@@ -33,8 +33,8 @@ int main (int argc, char **argv)
     // print out result from parsing file
 
     for (int i = 0; i < file.number_of_points_; ++i) {
-        if (file.values_[i] != file.kMissing) {
-            cout << "Lat: " << file.lats_[i] << "\t Long: " << file.lons_[i] << "\tVal: " << file.values_[i] << endl;
+        if (file.vals[i] != file.kMissing) {
+            cout << "Lat: " << file.lats[i] << "\t Long: " << file.lons[i] << "\tVal: " << file.vals[i] << endl;
         }
     }
 
