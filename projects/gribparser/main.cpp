@@ -1,19 +1,3 @@
-/*
- * Copyright 2005-2018 ECMWF.
- *
- * This software is licensed under the terms of the Apache Licence Version 2.0
- * which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
- *
- * In applying this licence, ECMWF does not waive the privileges and immunities granted to it by
- * virtue of its status as an intergovernmental organisation nor does it submit to any jurisdiction.
- */
-
-/*
- * C Implementation: grib_get_data
- *
- * Description: how to get lat/lon/values from a GRIB message
- *
- */
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,6 +7,13 @@
 #include "gribParse.h"
 
 using namespace std;
+
+/**
+ * Downloads and parses a GRIB data file based on the 4 input coordinates (North South East West)
+ * @param argc number of arguments
+ * @param argv 4 input coordinates (North, South, East, West)
+ * @return
+ */
 
 int main (int argc, char **argv)
 {

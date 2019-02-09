@@ -1,7 +1,3 @@
-//
-// Created by andrea on 12/01/19.
-//
-
 #ifndef GRIB_PARSER_FILE_PARSE_H
 #define GRIB_PARSER_FILE_PARSE_H
 

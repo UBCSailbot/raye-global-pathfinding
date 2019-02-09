@@ -1,13 +1,10 @@
-//
-// Created by Choy Ming Xuan on 2018-11-16.
-//
 #include <stdio.h>
 #include <curl/curl.h>
 #include <iostream>
 #include "urlDownloader.h"
 
+// Downloads the file based off the url given
 int UrlDownloader::Downloader(const std::string url){
-    // cout << url << endl;
     CURL *curl;
     FILE *fp;
     CURLcode res;

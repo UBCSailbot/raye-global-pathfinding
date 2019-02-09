@@ -14,7 +14,9 @@ FileParse::FileParse(const std::string filename) {
         cout << "ERROR: unable to create handle from file" << filename << endl;
     }
 
+    // Sets the number of points from the GRIB file
     CODES_CHECK(codes_get_long(lib_handle, "numberOfPoints", &number_of_points_), 0);
+    // Sets the value for which the data is missing from the GRIB file
     CODES_CHECK(codes_set_double(lib_handle, "missingValue", kMissing), 0);
 
     lats_ = new double[number_of_points_];

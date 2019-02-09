@@ -1,6 +1,12 @@
 #include "urlBuilder.h"
 #include <iostream>
 
+/**
+ * Builds the URL based on the 4 input coordinates given
+ * @param argc Number of Arguments
+ * @param argv 4 input coordinates (North, South, East, West)
+ * @return
+ */
 string UrlBuilder::BuildURL(const int argc, char **argv) {
     static const string kBaseGlobalUrlString= "http://forecast.predictwind.com/grib/custom?I=3&Z=100&V=a&L=1&M=g&compress=false";
     static const string kUsername = "captain%40ubcsailbot.org";
