@@ -5,8 +5,8 @@
 using namespace std;
 
 class UrlBuilder {
-public:
-    static std::string BuildURL(const int argc , char **argv);
+ public:
+  static std::string BuildURL(const int argc, char **argv);
 
 };
 

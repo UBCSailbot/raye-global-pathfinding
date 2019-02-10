@@ -15,28 +15,26 @@ using namespace std;
  * @return
  */
 
-int main (int argc, char **argv)
-{
-    std::string file_name = "data.grb";
+int main(int argc, char **argv) {
+  std::string file_name = "data.grb";
 
-    if (argc == 5) {
-        string url = UrlBuilder::BuildURL(argc, argv);
-        UrlDownloader::Downloader(&url[0]);
-    }
-    else {
-        cout << "Function requires 4 arguments" << endl;
-        return 0;
-    }
-
-    FileParse file = FileParse(file_name);
-
-    // print out result from parsing file
-
-    for (int i = 0; i < file.number_of_points_; ++i) {
-        if (file.vals[i] != file.kMissing) {
-            cout << "Lat: " << file.lats[i] << "\t Long: " << file.lons[i] << "\tVal: " << file.vals[i] << endl;
-        }
-    }
-
+  if (argc == 5) {
+    string url = UrlBuilder::BuildURL(argc, argv);
+    UrlDownloader::Downloader(&url[0]);
+  } else {
+    cout << "Function requires 4 arguments" << endl;
     return 0;
+  }
+
+  FileParse file = FileParse(file_name);
+
+  // print out result from parsing file
+
+  for (int i = 0; i < file.number_of_points_; ++i) {
+    if (file.vals[i] != file.kMissing) {
+      cout << "Lat: " << file.lats[i] << "\t Long: " << file.lons[i] << "\tVal: " << file.vals[i] << endl;
+    }
+  }
+
+  return 0;
 }

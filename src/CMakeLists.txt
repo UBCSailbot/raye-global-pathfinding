@@ -19,7 +19,9 @@ set(LIB_SRCS
         pathfinding/PathfinderResultPrinter.cpp
         pathfinding/WeatherCostCalculator.cpp
         pathfinding/WeatherHexMap.cpp
-        planet/HexPlanet.cpp)
+        planet/HexPlanet.cpp
+        grib/UrlBuilder.cpp
+        grib/UrlDownloader.cpp)
 
 set(LIB_HDRS
         common/GeneralDefs.h
@@ -45,7 +47,9 @@ set(LIB_HDRS
         pathfinding/PathfinderResultPrinter.h
         pathfinding/WeatherCostCalculator.h
         pathfinding/WeatherHexMap.h
-        planet/HexPlanet.h)
+        planet/HexPlanet.h
+        grib/UrlBuilder.h
+        grib/UrlDownloader.h)
 
 # Define the src_core library target
 add_library(src_core STATIC ${LIB_SRCS} ${LIB_HDRS})

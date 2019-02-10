@@ -1,14 +1,10 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 2.8)
 project(${PROJECT_NAME} CXX)
 
 set(PROJECT_NAME gribparser)
 
 set(${PROJECT_NAME}_SRCS
         main.cpp
-        ../../src/grib/urlBuilder.cpp
-        ../../src/grib/urlBuilder.h
-        ../../src/grib/urlDownloader.cpp
-        ../../src/grib/urlDownloader.h
         gribParse.cpp
         gribParse.h
         )

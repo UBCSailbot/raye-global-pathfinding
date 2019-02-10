@@ -4,9 +4,8 @@
 #include <string>
 
 class UrlDownloader {
-    public:
-        static int Downloader(const std::string url);
+ public:
+  static int Downloader(const std::string url);
 };
-
 
 #endif //GRIB_DOWNLOADER_URLDOWNLOADER_H
