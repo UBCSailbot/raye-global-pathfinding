@@ -18,6 +18,8 @@ set -e
 #   https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/
 #
 
+ubuntu_version=`lsb_release -rs | sed 's/\.//'`
+
 # Clone submodules
 git submodule update --init --recursive
 
@@ -25,7 +27,21 @@ git submodule update --init --recursive
 sudo apt-get update
 
 # Get the required packages for build
-sudo apt-get install curl libeccodes-dev build-essential clang libboost-dev libboost-program-options-dev libglew-dev libglm-dev libeigen3-dev cppcheck xorg-dev libglu1-mesa-dev cmake -y
+sudo apt-get install curl build-essential clang libboost-dev libboost-program-options-dev libglew-dev libglm-dev libeigen3-dev cppcheck xorg-dev libglu1-mesa-dev cmake -y
+
+if [[ $ubuntu_version > 1610 ]]; then
+    sudo apt-get -y install libeccodes-dev
+else
+    wget "https://confluence.ecmwf.int/download/attachments/45757960/eccodes-2.10.0-Source.tar.gz"
+    tar -xzf eccodes-2.10.0-Source.tar.gz
+    mkdir build2100
+    cd build2100
+    cmake -DENABLE_FORTRAN=OFF ../eccodes-2.10.0-Source
+    make -j 4
+    ctest
+    make install
+    cd ..
+fi
 
 
 INSTALL_DEPS_DIRECTORY=${BASH_SOURCE%/*}
