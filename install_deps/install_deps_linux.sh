@@ -32,11 +32,11 @@ sudo apt-get install curl build-essential clang libboost-dev libboost-program-op
 if [[ $ubuntu_version > 1610 ]]; then
     sudo apt-get -y install libeccodes-dev
 else
-    wget "https://software.ecmwf.int/wiki/download/attachments/45757960/eccodes-2.7.0-Source.tar.gz"
-    tar -xzf eccodes-2.7.0-Source.tar.gz
-    mkdir build270
-    cd build270
-    cmake -DENABLE_ECCODES_OMP_THREADS=ON -DENABLE_PNG=ON -DENABLE_JPG=ON -DENABLE_AEC=ON -DENABLE_MEMFS=ON ../eccodes-2.7.0-Source
+    wget "https://confluence.ecmwf.int/download/attachments/45757960/eccodes-2.10.0-Source.tar.gz"
+    tar -xzf eccodes-2.10.0-Source.tar.gz
+    mkdir build2100
+    cd build2100
+    cmake -DENABLE_ECCODES_OMP_THREADS=ON -DENABLE_PNG=ON -DENABLE_JPG=ON -DENABLE_MEMFS=ON ../eccodes-2.10.0-Source
     make -j 4
     ctest
     make install
