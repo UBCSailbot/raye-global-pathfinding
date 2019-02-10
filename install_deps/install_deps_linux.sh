@@ -27,7 +27,7 @@ git submodule update --init --recursive
 sudo apt-get update
 
 # Get the required packages for build
-sudo apt-get install curl build-essential clang libboost-dev libboost-program-options-dev libglew-dev libglm-dev libeigen3-dev cppcheck xorg-dev libglu1-mesa-dev cmake -y
+sudo apt-get install curl libcurl4-gnutls-dev build-essential clang libboost-dev libboost-program-options-dev libglew-dev libglm-dev libeigen3-dev cppcheck xorg-dev libglu1-mesa-dev cmake -y
 
 if [[ $ubuntu_version > 1610 ]]; then
     sudo apt-get -y install libeccodes-dev libeccodes-tools libopenjp2-7-dev
