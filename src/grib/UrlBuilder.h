@@ -2,7 +2,6 @@
 #define GRIB_DOWNLOADER_URLBUILDER_H
 
 #include <string>
-using namespace std;
 
 class UrlBuilder {
  public:

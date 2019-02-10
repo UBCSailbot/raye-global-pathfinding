@@ -1,9 +1,9 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <grib/UrlBuilder.h>
+#include <grib/UrlDownloader.h>
 #include "eccodes.h"
-#include "grib/urlDownloader.h"
-#include "grib/urlBuilder.h"
 #include "gribParse.h"
 
 using namespace std;

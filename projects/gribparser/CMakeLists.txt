@@ -9,10 +9,7 @@ set(${PROJECT_NAME}_SRCS
         gribParse.h
         )
 
-find_package(eccodes REQUIRED)
-include_directories(${ECCODES_INCLUDE_DIRS})
-
-set(${PROJECT_NAME}_LIBS src_core ${Boost_LIBRARIES} eccodes curl)
+set(${PROJECT_NAME}_LIBS src_core eccodes ${CURL_LIBRARIES})
 
 # Define the executable
 add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SRCS})

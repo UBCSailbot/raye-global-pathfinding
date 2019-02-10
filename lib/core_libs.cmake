@@ -19,6 +19,17 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 
 list(APPEND CORE_LIBS ${Boost_LIBRARIES})
 
+find_package(eccodes REQUIRED)
+include_directories(${ECCODES_INCLUDE_DIRS})
+
+list(APPEND CORE_LIBS ${ECCODES_LIBRARIES})
+
+find_package(CURL REQUIRED)
+include_directories(${CURL_INCLUDE_DIRS})
+
+list(APPEND CORE_LIBS ${CURL_LIBRARIES})
+
+
 # Disable building extras we won't need (pure C++ project)
 set(NANOGUI_BUILD_EXAMPLE OFF CACHE BOOL " " FORCE)
 set(NANOGUI_BUILD_PYTHON  OFF CACHE BOOL " " FORCE)
