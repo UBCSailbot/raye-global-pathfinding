@@ -36,7 +36,7 @@ else
     tar -xzf eccodes-2.10.0-Source.tar.gz
     mkdir build2100
     cd build2100
-    cmake -DENABLE_ECCODES_OMP_THREADS=ON -DENABLE_PNG=ON -DENABLE_JPG=ON -DENABLE_MEMFS=ON ../eccodes-2.10.0-Source
+    cmake ../eccodes-2.10.0-Source
     make -j 4
     ctest
     make install
