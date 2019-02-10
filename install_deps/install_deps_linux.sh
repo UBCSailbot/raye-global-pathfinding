@@ -40,6 +40,7 @@ else
     make -j 4
     ctest
     make install
+    cd ..
 fi
 
 
