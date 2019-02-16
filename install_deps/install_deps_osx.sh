@@ -34,7 +34,8 @@ brew install cmake
 brew install boost
 brew install glew
 brew install glm
-brew install eigen
+brew install curl
+brew install eccodes
 
 INSTALL_DEPS_DIRECTORY=${BASH_SOURCE%/*}
 LIB_DIRECTORY=${INSTALL_DEPS_DIRECTORY}/../lib
