@@ -7,15 +7,14 @@
 #include <iostream>
 #include <vector>
 #include "../src/logic/StandardCalc.h"
-using namespace std;
 
 class FileParse {
     public:
         long number_of_points_;
         const double kMissing = 9999.0;
-        vector<double> lats;
-        vector<double> lons;
-        vector<double> vals;
+        std::vector<double> lats;
+        std::vector<double> lons;
+        std::vector<double> vals;
 
         FileParse(const std::string filename);
 

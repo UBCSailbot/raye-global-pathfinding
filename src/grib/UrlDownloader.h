@@ -1,5 +1,6 @@
-#ifndef GRIB_DOWNLOADER_URLDOWNLOADER_H
-#define GRIB_DOWNLOADER_URLDOWNLOADER_H
+// Copyright 2017 UBC Sailbot
+#ifndef GRIB_URLDOWNLOADER_H_
+#define GRIB_URLDOWNLOADER_H_
 
 #include <string>
 
@@ -8,4 +9,4 @@ class UrlDownloader {
   static int Downloader(const std::string url);
 };
 
-#endif //GRIB_DOWNLOADER_URLDOWNLOADER_H
+#endif  // GRIB_URLDOWNLOADER_H_

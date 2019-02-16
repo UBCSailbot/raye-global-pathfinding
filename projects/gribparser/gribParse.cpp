@@ -1,5 +1,6 @@
 #include <vector>
 #include "gribParse.h"
+using namespace std;
 
 FileParse::FileParse(const std::string filename) {
   err = 0;

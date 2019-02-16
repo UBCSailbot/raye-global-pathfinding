@@ -1,7 +1,8 @@
+// Copyright 2017 UBC Sailbot
+#include "UrlDownloader.h"
 #include <stdio.h>
 #include <curl/curl.h>
 #include <iostream>
-#include "UrlDownloader.h"
 
 // Downloads the file based off the url given
 int UrlDownloader::Downloader(const std::string url) {
@@ -23,7 +24,6 @@ int UrlDownloader::Downloader(const std::string url) {
     curl_easy_cleanup(curl);
     fclose(fp);
     std::cout << "Downloaded data.grb" << std::endl;
-
   }
   return 0;
 }

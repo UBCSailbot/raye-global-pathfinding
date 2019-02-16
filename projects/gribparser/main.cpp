@@ -15,11 +15,15 @@ using namespace std;
  * @return
  */
 
-int main(int argc, char **argv) {
+int main(int argc, char *argv[]) {
   std::string file_name = "data.grb";
 
   if (argc == 5) {
-    string url = UrlBuilder::BuildURL(argc, argv);
+    std::string north = argv[1];
+    std::string south = argv[2];
+    std::string east = argv[3];
+    std::string west = argv[4];
+    string url = UrlBuilder::BuildURL(north, south, east, west);
     UrlDownloader::Downloader(&url[0]);
   } else {
     cout << "Function requires 4 arguments" << endl;
