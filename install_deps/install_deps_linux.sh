@@ -42,6 +42,7 @@ else
     make install
     cd ..
     sudo rm -rf build2100
+    sudo rm -rf eccodes-2.10.0-Source
 fi
 
 
