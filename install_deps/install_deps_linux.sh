@@ -38,7 +38,6 @@ else
     cd build2100
     cmake -DENABLE_FORTRAN=OFF ../eccodes-2.10.0-Source
     make -j 4
-    ctest
     make install
     cd ..
 fi
