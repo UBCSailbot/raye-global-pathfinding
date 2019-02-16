@@ -5,7 +5,7 @@
 #include <string>
 
 class UrlBuilder {
-public:
+ public:
     static std::string BuildURL(std::string north, std::string south, std::string east, std::string west);
 };
 

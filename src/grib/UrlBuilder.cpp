@@ -1,3 +1,4 @@
+// Copyright 2017 UBC Sailbot
 #include "UrlBuilder.h"
 #include <iostream>
 #include <vector>
@@ -15,7 +16,8 @@ std::string UrlBuilder::BuildURL(std::string north, std::string south, std::stri
   static const std::string kPassword = "QeUn6fUywUG5";
 
   std::string url(kBaseGlobalUrlString);
-  url.append("&N=" + north + "&S=" + south + "&E=" + east + "&W=" + west + "&username=" + kUsername + "&password=" +kPassword);
+  url.append("&N=" + north + "&S=" + south + "&E=" + east + "&W=" + west);
+  url.append("&username=" + kUsername + "&password=" +kPassword);
 
   return url;
 }
