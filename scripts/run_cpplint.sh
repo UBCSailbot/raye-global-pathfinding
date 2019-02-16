@@ -20,7 +20,7 @@ ${CPP_LINT} \
 --linelength=120 --counting=detailed \
 --root=src \
 $( find ${SRC_DIRECTORY} -name \*.h -or -name \*.cpp ) \
-&>> ${CPPLINT_FILE}
+>> ${CPPLINT_FILE} 2>&1
 
 # Common projects dir
 PROJECTS_DIRECTORY=${WORKSPACE_DIRECTORY}/projects
@@ -31,7 +31,7 @@ ${CPP_LINT} \
 --linelength=120 --counting=detailed \
 --root="projects/viewer" \
 $( find ${VIEWER_DIRECTORY} -name \*.h -or -name \*.cpp ) \
-&>> ${CPPLINT_FILE}
+>> ${CPPLINT_FILE} 2>&1
 
 # Common test dir
 TEST_DIRECTORY=${WORKSPACE_DIRECTORY}/test
@@ -42,7 +42,7 @@ ${CPP_LINT} \
 --linelength=120 --counting=detailed \
 --root="test/basic_tests" \
 $( find ${BASIC_TESTS_DIRECTORY} -name \*.h -or -name \*.cpp ) \
-&>> ${CPPLINT_FILE}
+>> ${CPPLINT_FILE} 2>&1
 
 filtered_output 1>&2
 
