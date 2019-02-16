@@ -1,3 +1,4 @@
+// Copyright 2017 UBC Sailbot
 #ifndef GRIB_PARSER_FILE_PARSE_H
 #define GRIB_PARSER_FILE_PARSE_H
 

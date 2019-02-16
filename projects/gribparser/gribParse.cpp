@@ -1,3 +1,4 @@
+// Copyright 2017 UBC Sailbot
 #include <vector>
 #include "gribParse.h"
 using namespace std;
