@@ -12,5 +12,5 @@ set(${PROJECT_NAME}_SRCS
 set(${PROJECT_NAME}_LIBS src_core eccodes ${CURL_LIBRARIES})
 
 # Define the executable
-add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SRCS})
+add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SRCS} windGribParse.cpp windGribParse.h)
 target_link_libraries(${PROJECT_NAME} ${${PROJECT_NAME}_LIBS})

@@ -18,12 +18,14 @@ using namespace std;
 int main(int argc, char *argv[]) {
   std::string file_name = "data.grb";
 
-  if (argc == 5) {
+  if (argc == 6) {
     std::string north = argv[1];
     std::string south = argv[2];
     std::string east = argv[3];
     std::string west = argv[4];
-    string url = UrlBuilder::BuildURL(north, south, east, west);
+    std::string weather_type = argv[5];
+
+    string url = UrlBuilder::BuildURL(north, south, east, west, stoi(weather_type));
     UrlDownloader::Downloader(&url[0]);
   } else {
     cout << "Function requires 4 arguments" << endl;
