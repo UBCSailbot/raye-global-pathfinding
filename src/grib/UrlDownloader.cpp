@@ -4,8 +4,13 @@
 #include <curl/curl.h>
 #include <iostream>
 
-// Downloads the file based off the url given
-int UrlDownloader::Downloader(const std::string url) {
+/**
+ * Downloads a file based off the URL given
+ * @param download URL
+ * @return
+ */
+
+void UrlDownloader::Downloader(const std::string url) {
   CURL *curl;
   FILE *fp;
   CURLcode res;
@@ -25,6 +30,5 @@ int UrlDownloader::Downloader(const std::string url) {
     fclose(fp);
     std::cout << "Downloaded data.grb" << std::endl;
   }
-  return 0;
 }
 

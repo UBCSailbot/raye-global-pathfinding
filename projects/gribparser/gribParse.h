@@ -12,10 +12,10 @@
 class FileParse {
     public:
         long number_of_points_;
-        const double kMissing = 9999.0;
         std::vector<double> lats;
         std::vector<double> lons;
         std::vector<double> vals;
+        std::vector<bool> missing;
 
         FileParse(const std::string filename);
 
@@ -23,6 +23,7 @@ class FileParse {
         int err;
         FILE *in;
         codes_handle *lib_handle;
+        const double kMissing = 9999.0;
 
 };
 

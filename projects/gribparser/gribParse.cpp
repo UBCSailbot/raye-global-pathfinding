@@ -3,6 +3,12 @@
 #include "gribParse.h"
 using namespace std;
 
+/**
+ * Translates GRIB file into array of lattitudes, longitudes, and corresponding values
+ * @param filename of target GRIB file
+ * @return
+ */
+
 FileParse::FileParse(const std::string filename) {
   err = 0;
   in = fopen(filename.c_str(), "r");
@@ -25,10 +31,16 @@ FileParse::FileParse(const std::string filename) {
   lats.resize(number_of_points_);
   lons.resize(number_of_points_);
   vals.resize(number_of_points_);
+  missing.resize(number_of_points_);
 
   CODES_CHECK(codes_grib_get_data(lib_handle, lats.data(), lons.data(), vals.data()), 0);
 
   for (int i = 0; i < number_of_points_; ++i) {
+    if(vals[i] == kMissing)
+      missing[i] = true;
+    else
+      missing[i] = false;
+
     lats[i] = standard_calc::BoundTo180(lats[i]);
     lons[i] = standard_calc::BoundTo180(lons[i]);
   }

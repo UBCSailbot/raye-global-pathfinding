@@ -6,7 +6,7 @@
 
 class UrlDownloader {
  public:
-  static int Downloader(const std::string url);
+  static void Downloader(const std::string url);
 };
 
 #endif  // GRIB_URLDOWNLOADER_H_

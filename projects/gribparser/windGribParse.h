@@ -18,13 +18,11 @@
 class WindFileParse {
 public:
     long number_of_points_;
-    const double kMissing = 9999.0;
     std::vector<double> lats;
     std::vector<double> lons;
-    std::vector<double> v_values;
-    std::vector<double> u_values;
     std::vector<double> angles;
     std::vector<double> magnitudes;
+    std::vector<bool> missing;
 
     WindFileParse(const std::string filename);
     double calcMagnitude(const double u_comp,const double v_comp);
@@ -35,5 +33,8 @@ private:
     FILE *in;
     codes_handle *lib_handle;
     int code_handle_iteration;
+    std::vector<double> v_values;
+    std::vector<double> u_values;
+    const double kMissing = 9999.0;
 
 };
