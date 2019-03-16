@@ -26,7 +26,7 @@ std::string UrlBuilder::BuildURL(std::string north, std::string south,
   if (weather_type == 0)
     weather_type_const = "a";
   else if (weather_type == 1)
-    weather_type_const = "w";
+    weather_type_const = "W";
 
   // construct URL
   std::string url(kBaseGlobalUrlString);
