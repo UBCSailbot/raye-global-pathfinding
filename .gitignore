@@ -37,5 +37,8 @@ extra
 *.out
 *.app
 
+#GRIB files
+*.grb
+
 # macOS
 .DS_Store
