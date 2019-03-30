@@ -1,17 +1,12 @@
-//
-// Created by andrea on 02/03/19.
-//
-
-#ifndef CXX_WINDGRIBPARSE_H
-#define CXX_WINDGRIBPARSE_H
+#ifndef CXX_WINDFILEPARSE_H_
+#define CXX_WINDFILEPARSE_H_
 #include <eccodes.h>
 #include <string>
 #include <iostream>
 #include <iostream>
 #include <vector>
-#include "../src/logic/StandardCalc.h"
+#include "logic/StandardCalc.h"
 
-#endif //CXX_WINDGRIBPARSE_H
 
 #define PI 3.14159265
 
@@ -25,8 +20,8 @@ public:
     std::vector<bool> missing;
 
     WindFileParse(const std::string filename);
-    double calcMagnitude(const double u_comp,const double v_comp);
-    double calcAngle(const double u_comp,const double v_comp);
+    double static calcMagnitude(const double u_comp,const double v_comp);
+    double static calcAngle(const double u_comp,const double v_comp);
 
 private:
     int err;
@@ -38,3 +33,6 @@ private:
     const double kMissing = 9999.0;
 
 };
+
+
+#endif //CXX_WINDFILEPARSE_H_

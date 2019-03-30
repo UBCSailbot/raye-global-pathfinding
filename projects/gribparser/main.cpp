@@ -4,8 +4,8 @@
 #include <grib/UrlBuilder.h>
 #include <grib/UrlDownloader.h>
 #include "eccodes.h"
-#include "gribParse.h"
-#include "windGribParse.h"
+#include "grib/gribParse.h"
+#include "grib/windFileParse.h"
 #include <iomanip>
 
 using namespace std;
