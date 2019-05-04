@@ -165,7 +165,7 @@ void Update(std::unique_ptr<HexPlanet> &planet, float seconds_elapsed) {
   }
 
   // Model matrix
-  glm::mat4 model = glm::rotate(glm::mat4(), glm::radians(models_degrees_rotated), glm::vec3(0, 1, 0));
+  glm::mat4 model = glm::rotate(glm::mat4(1), glm::radians(models_degrees_rotated), glm::vec3(0, 1, 0));
 
   // Save the transformation in the renderers
   planet_renderer->model_matrix(model);
