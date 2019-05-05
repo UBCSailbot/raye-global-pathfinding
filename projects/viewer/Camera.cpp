@@ -49,7 +49,7 @@ void Camera::setNearAndFarPlanes(float nearPlane, float farPlane) {
 }
 
 glm::mat4 Camera::orientation() const {
-  glm::mat4 orientation;
+  glm::mat4 orientation(1);
   orientation = glm::rotate(orientation, glm::radians(_verticalAngle), glm::vec3(1, 0, 0));
   orientation = glm::rotate(orientation, glm::radians(_horizontalAngle), glm::vec3(0, 1, 0));
   return orientation;
@@ -102,7 +102,7 @@ glm::mat4 Camera::projection() const {
 }
 
 glm::mat4 Camera::view() const {
-  return orientation() * glm::translate(glm::mat4(), -_position);
+  return orientation() * glm::translate(glm::mat4(1), -_position);
 }
 
 void Camera::normalizeAngles() {
