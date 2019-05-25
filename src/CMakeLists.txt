@@ -21,7 +21,9 @@ set(LIB_SRCS
         pathfinding/WeatherHexMap.cpp
         planet/HexPlanet.cpp
         grib/UrlBuilder.cpp
-        grib/UrlDownloader.cpp)
+        grib/UrlDownloader.cpp
+        grib/gribParse.cpp
+        grib/windFileParse.cpp)
 
 set(LIB_HDRS
         common/GeneralDefs.h
@@ -49,10 +51,14 @@ set(LIB_HDRS
         pathfinding/WeatherHexMap.h
         planet/HexPlanet.h
         grib/UrlBuilder.h
-        grib/UrlDownloader.h)
+        grib/UrlDownloader.h
+        grib/gribParse.h
+        grib/windFileParse.h)
 
 # Define the src_core library target
 add_library(src_core STATIC ${LIB_SRCS} ${LIB_HDRS})
 
 # Link dependencies
 add_dependencies(src_core protofiles)
+
+target_link_libraries(src_core ${CORE_LIBS})
