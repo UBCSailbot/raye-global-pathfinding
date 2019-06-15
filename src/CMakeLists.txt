@@ -23,7 +23,7 @@ set(LIB_SRCS
         grib/UrlBuilder.cpp
         grib/UrlDownloader.cpp
         grib/gribParse.cpp
-        grib/windFileParse.cpp)
+        )
 
 set(LIB_HDRS
         common/GeneralDefs.h
@@ -53,7 +53,7 @@ set(LIB_HDRS
         grib/UrlBuilder.h
         grib/UrlDownloader.h
         grib/gribParse.h
-        grib/windFileParse.h)
+        )
 
 # Define the src_core library target
 add_library(src_core STATIC ${LIB_SRCS} ${LIB_HDRS})
