@@ -109,8 +109,8 @@ int main(int argc, char const *argv[]) {
         ("n,neighbour", boost::program_options::value<HexVertexId>(), "Vertex to find neighbours")
         ("i,indirect", boost::program_options::value<int>(), "Indirect neighbour depth")
         ("c,coordinates",
-         boost::program_options::value<HexVertexId>()->multitoken(),
-         "Vertexes for which to find GPS Coordinates")
+         boost::program_options::value<std::vector<HexVertexId>>()->multitoken(),
+         "Vertices for which to find GPS Coordinates")
         ("f,find_path",
          boost::program_options::value<std::vector<HexVertexId>>()->multitoken(),
          "<start> <end> Vertex IDs")
