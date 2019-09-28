@@ -11,6 +11,8 @@
 #include <pathfinding/AStarPathfinder.h>
 #include <pathfinding/PathfinderResultPrinter.h>
 
+#include <logic/StandardCalc.h>
+
 constexpr uint8_t kInvalidIndirectNeighbourDepth = static_cast<uint8_t> (-1);
 
 enum class OutputFormat {
@@ -114,6 +116,9 @@ int main(int argc, char const *argv[]) {
         ("f,find_path",
          boost::program_options::value<std::vector<HexVertexId>>()->multitoken(),
          "<start> <end> Vertex IDs")
+	("navigate",
+	 boost::program_options::value<std::vector<double>>()->multitoken(),
+	 "<start_latitude> <start_longitude> <end_latitude> <end_longitude>")
         ("kml", "Output the a KML file for the pathfinding result");
 
     boost::program_options::variables_map vm;
@@ -169,6 +174,31 @@ int main(int argc, char const *argv[]) {
           std::cout << PathfinderResultPrinter::PrintKML(planet, result);
           break;
       }
+    } else if (vm.count("navigate")) {
+      // Find a path betweeen two GPS coordinates, print in KML format
+      auto points = vm["navigate"].as<std::vector<double>>();
+
+      int start_lat = int(points[0]*10000000);
+      int start_long = int(points[1]*10000000);
+      int end_lat = int(points[2]*10000000);
+      int end_long = int(points[3]*10000000);
+
+      const GPSCoordinateFast start_coord(start_lat, start_long);
+      const GPSCoordinateFast end_coord(end_lat, end_long);
+
+      Eigen::Vector3f start_point(0,0,0);
+      Eigen::Vector3f end_point(0,0,0);
+
+
+      standard_calc::CoordToPoint(start_coord, &start_point);
+      standard_calc::CoordToPoint(end_coord, &end_point);
+
+      HexVertexId start_vertex = planet.HexVertexFromPoint(start_point);
+      HexVertexId end_vertex = planet.HexVertexFromPoint(end_point);
+
+      auto result = run_pathfinder(planet, start_vertex, end_vertex, silent, verbose);
+      std::cout << PathfinderResultPrinter::PrintKML(planet, result);
+
     } else {
       std::cerr << "Invalid Program options." << std::endl
                 << desc;
