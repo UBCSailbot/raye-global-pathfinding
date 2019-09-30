@@ -176,19 +176,19 @@ int main(int argc, char const *argv[]) {
       }
     } else if (vm.count("navigate")) {
       // Find a path betweeen two GPS coordinates, print in KML format
+      //TODO() Enable Inputs to be in degrees West/South
       auto points = vm["navigate"].as<std::vector<double>>();
 
-      int start_lat = int(points[0]*10000000);
-      int start_long = int(points[1]*10000000);
-      int end_lat = int(points[2]*10000000);
-      int end_long = int(points[3]*10000000);
+      int start_lat = int(points[0]*1000000);
+      int start_long = int(points[1]*1000000);
+      int end_lat = int(points[2]*1000000);
+      int end_long = int(points[3]*1000000);
 
       const GPSCoordinateFast start_coord(start_lat, start_long);
       const GPSCoordinateFast end_coord(end_lat, end_long);
 
-      Eigen::Vector3f start_point(0,0,0);
-      Eigen::Vector3f end_point(0,0,0);
-
+      Eigen::Vector3f start_point;
+      Eigen::Vector3f end_point;
 
       standard_calc::CoordToPoint(start_coord, &start_point);
       standard_calc::CoordToPoint(end_coord, &end_point);
