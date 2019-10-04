@@ -1,6 +1,11 @@
 # Global Pathfinding
 
-A pathfinding solution that will find the fastest and safest way for a sailboat to get between two locations on earth.
+A pathfinding solution that will find the fastest and safest way for a sailboat to get between two locations on earth. When finished, this program will return a path based on the following parameters:
+
+- Wind angle and magnitude (Downloaded from PredictWind)
+- Current GPS position and goal coordinates
+- Land and other no-go zones
+- Waves? (Also PredictWind)
 
 ## Setup
 
