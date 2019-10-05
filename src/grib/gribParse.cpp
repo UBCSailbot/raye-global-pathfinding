@@ -1,7 +1,6 @@
 // Copyright 2017 UBC Sailbot
-#include <vector>
 #include "gribParse.h"
-using namespace std;
+#include <vector>
 
 /**
  * Translates GRIB file into array of lattitudes, longitudes, and corresponding values
@@ -13,14 +12,14 @@ FileParse::FileParse(const std::string filename) {
   err = 0;
   in = fopen(filename.c_str(), "r");
   if (!in) {
-    cout << "ERROR: unable to open input file" << filename << endl;
+    std::cout << "ERROR: unable to open input file" << filename << std::endl;
   }
 
   /* create new handle from a message in a file */
   lib_handle = codes_handle_new_from_file(nullptr, in, PRODUCT_GRIB, &err);
 
   if (lib_handle == nullptr) {
-    cout << "ERROR: unable to create handle from file" << filename << endl;
+    std::cout << "ERROR: unable to create handle from file" << filename << std::endl;
   }
 
   // Sets the number of points from the GRIB file
@@ -36,7 +35,7 @@ FileParse::FileParse(const std::string filename) {
   CODES_CHECK(codes_grib_get_data(lib_handle, lats.data(), lons.data(), vals.data()), 0);
 
   for (int i = 0; i < number_of_points_; ++i) {
-    if(vals[i] == kMissing)
+    if (vals[i] == kMissing)
       missing[i] = true;
     else
       missing[i] = false;
