@@ -8,10 +8,11 @@
 
 class GPSCoordinate {
  public:
-  static constexpr int32_t kExactCoordinateScaleFactor = 1000000;
+  static constexpr int32_t kExactCoordinateScaleFactor = 10000000;
   /// The number of decimal places the scaling factor allows for. Should be equal to log10(kExactCoordinateScaleFactor)
   static constexpr int32_t kExactCoordinateDecimalPlaces = 7;
-
+  static constexpr int32_t kExactCoordinateKMLScaleFactor = 1000000;
+  static constexpr int32_t kExactCoordinateKMLDecimalPlaces = 6;
   GPSCoordinate();
   /**
    * @param latitude_exact Latitude in degrees * kExactCoordinateScaleFactor

@@ -14,12 +14,12 @@ GPSCoordinateFast::GPSCoordinateFast(double latitude, double longitude) {
 
 void GPSCoordinateFast::set_lat_exact(int32_t latitude_exact) {
   latitude_exact_ = latitude_exact;
-  latitude_ = standard_calc::deg_to_rad(latitude_exact_ / static_cast<float>(kExactCoordinateScaleFactor));
+  latitude_ = standard_calc::deg_to_rad(latitude_exact_ / static_cast<float>(kExactCoordinateKMLScaleFactor));
 }
 
 void GPSCoordinateFast::set_lng_exact(int32_t longitude_exact) {
   longitude_exact_ = longitude_exact;
-  longitude_ = standard_calc::deg_to_rad(longitude_exact_ / static_cast<float>(kExactCoordinateScaleFactor));
+  longitude_ = standard_calc::deg_to_rad(longitude_exact_ / static_cast<float>(kExactCoordinateKMLScaleFactor));
 }
 
 void GPSCoordinateFast::set_lat_lng_exact(int32_t latitude_exact, int32_t longitude_exact) {
@@ -31,9 +31,9 @@ void GPSCoordinateFast::set_lat_lng(double lat, double lng) {
   latitude_ = lat;
   longitude_ = lng;
   longitude_exact_ =
-      static_cast<uint32_t >(standard_calc::rad_to_deg(longitude_) * (kExactCoordinateScaleFactor));
+      static_cast<uint32_t >(standard_calc::rad_to_deg(longitude_) * (kExactCoordinateKMLScaleFactor));
   latitude_exact_ =
-      static_cast<uint32_t >(standard_calc::rad_to_deg(latitude_) * (kExactCoordinateScaleFactor));
+      static_cast<uint32_t >(standard_calc::rad_to_deg(latitude_) * (kExactCoordinateKMLScaleFactor));
 }
 
 bool GPSCoordinateFast::almost_equal(const GPSCoordinateFast &other, const double tolerance) const {
