@@ -1,13 +1,13 @@
 // Copyright 2017 UBC Sailbot
 
-#ifndef GLOBAL_PATHFINDING_WINDGRIBPARSETEST_H
-#define GLOBAL_PATHFINDING_WINDGRIBPARSETEST_H
+#ifndef GRIB_WINDFILEPARSETEST_H_
+#define GRIB_WINDFILEPARSETEST_H_
 
 #include <gtest/gtest.h>
 
 class WindGribParseTest : public ::testing::Test {
-protected:
+ protected:
     WindGribParseTest();
 };
 
-#endif //GLOBAL_PATHFINDING_WINDGRIBPARSETEST_H
+#endif  // GRIB_WINDFILEPARSETEST_H_
