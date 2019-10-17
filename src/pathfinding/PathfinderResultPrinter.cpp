@@ -48,8 +48,8 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
 
   for (HexVertexId id : result.path) {
     const auto &coord = planet.vertex(id).coordinate;
-    handle << coord.to_string_longitude() << ", " << coord.to_string_latitude() << std::endl;
-    ss << coord.to_string_longitude() << ", " << coord.to_string_latitude() << std::endl;
+    handle << coord.to_string_longitude() << "," << coord.to_string_latitude() << std::endl;
+    ss << coord.to_string_longitude() << "," << coord.to_string_latitude() << std::endl;
   }
 
   handle << "</coordinates></LineString></Placemark></Document></kml>\n";
