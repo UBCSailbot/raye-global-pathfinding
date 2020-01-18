@@ -131,7 +131,7 @@ void gribParse::saveKML() {
 		      "<south>" << lats[i] - magnitudes[i]/80 << "</south>"
 		      "<east>" << lons[i] + magnitudes[i]/80 << "</east>"
 		      "<west>" << lons[i] - magnitudes[i]/80 << "</west>"
-		      "<rotation>" << angles[i] << "</rotation>"
+		      "<rotation>" << 360-angles[i] << "</rotation>"
 		      "</LatLonBox>"
 		      "</GroundOverlay>" << std::endl;
     }
