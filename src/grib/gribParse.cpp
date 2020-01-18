@@ -1,6 +1,10 @@
 // Copyright 2017 UBC Sailbot
 #include "gribParse.h"
 #include <vector>
+#include <grib/UrlBuilder.h>
+#include <grib/UrlDownloader.h>
+#include <iomanip>
+#include <fstream>
 
 /**
  * Translates GRIB file into array of lattitudes, longitudes, and corresponding values
@@ -18,7 +22,7 @@ gribParse::gribParse(const std::string filename) {
   std::vector<double> u_values;
   std::vector<double> v_values;
 
-  for (int code_handle_iteration = 1; ((lib_handle = codes_handle_new_from_file(0, in, PRODUCT_GRIB, &err)) != NULL) && code_handle_iteration <= 8; code_handle_iteration++) {
+  for (int code_handle_iteration = 1; ((lib_handle = codes_handle_new_from_file(0, in, PRODUCT_GRIB, &err)) != NULL) && code_handle_iteration <= 12; code_handle_iteration++) {
       CODES_CHECK(err, 0);
       CODES_CHECK (codes_get_long(lib_handle, "numberOfPoints", &number_of_points_), 0);
       CODES_CHECK(codes_set_double(lib_handle, "missingValue", kMissing), 0);
@@ -103,4 +107,35 @@ double gribParse::calcAngle(double u_comp, double v_comp) {
  */
 double gribParse::calcMagnitude(double u_comp, double v_comp) {
     return (sqrt(pow(u_comp,2) + pow(v_comp,2)))/0.514444;
+}
+
+void gribParse::saveKML() {
+    std::ofstream ss;
+    ss.open("wind.kml");
+    ss << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+          "<kml xmlns=\"http://earth.google.com/kml/2.0\">\n"
+          "<Document><name>Wind</name><Folder>\n";
+
+    for (int i = 0; i < angles.size(); i++) {
+        ss << "<GroundOverlay>"
+              "<color>ffffffff</color>"
+		      "<drawOrder>1</drawOrder>"
+		      "<Icon>"
+		      "<href>https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Red_Arrow_Down.svg/1024px-Red_Arrow_Down.svg.png</href>"
+		      "<refreshMode>onInterval</refreshMode>"
+		      "<refreshInterval>86400</refreshInterval>"
+		      "<viewBoundScale>0.75</viewBoundScale>"
+		      "</Icon>"
+		      "<LatLonBox>"
+		      "<north>" << lats[i] + magnitudes[i]/80 << "</north>"
+		      "<south>" << lats[i] - magnitudes[i]/80 << "</south>"
+		      "<east>" << lons[i] + magnitudes[i]/80 << "</east>"
+		      "<west>" << lons[i] - magnitudes[i]/80 << "</west>"
+		      "<rotation>" << angles[i] << "</rotation>"
+		      "</LatLonBox>"
+		      "</GroundOverlay>" << std::endl;
+    }
+    ss << "</Folder>\n</Document>\n</kml>" << std::endl;
+
+    ss.close();
 }

@@ -31,9 +31,10 @@ int main(int argc, char *argv[]) {
         UrlDownloader::Downloader(url);
 
         gribParse file = gribParse(file_name);
-        for (int i = 0; i < file.number_of_points_ && i < 10; ++i) {
+        file.saveKML();
+        for (int i = 0; i < file.number_of_points_ && i < 100; ++i) {
             if (!file.missing[i]) {
-                cout << "Lat: " << file.lats[i] << std::setw(10) << "\t Long: " << file.lons[i] << std::setw(10) << "\tVal: " << file.wind_gust[i] << endl;
+                cout << "Lat: " << file.lats[i] << std::setw(10) << "\t Long: " << file.lons[i] << std::setw(10) << "\tMag: " << file.magnitudes[i] << "\tDir: " << file.angles[i] << endl;
             }
         }
 

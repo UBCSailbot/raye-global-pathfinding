@@ -42,6 +42,14 @@ std::string GPSCoordinate::to_string_longitude() const {
   return to_string_helper(longitude_exact_);
 }
 
+int GPSCoordinate::round_to_int_latitude() const {
+  return round_to_helper(latitude_exact_);
+}
+
+int GPSCoordinate::round_to_int_longitude() const {
+  return round_to_helper(longitude_exact_);
+}
+
 std::string GPSCoordinate::to_string_helper(int32_t input) {
   std::stringstream coord_str;
 
@@ -52,4 +60,15 @@ std::string GPSCoordinate::to_string_helper(int32_t input) {
             << input_part_whole << "." << std::setw(kExactCoordinateDecimalPlaces) << input_part_fractional;
 
   return coord_str.str();
+}
+
+int GPSCoordinate::round_to_helper(int32_t input) {
+
+  int input_part_whole = input / kExactCoordinateScaleFactor;
+  int input_part_fractional = abs(input) % kExactCoordinateScaleFactor;
+
+  if ((input_part_fractional / (int)pow(10,kExactCoordinateDecimalPlaces-1)) < 5){
+    return input_part_whole;
+  }
+  return input_part_whole > 0 ? input_part_whole + 1 : input_part_whole - 1;
 }

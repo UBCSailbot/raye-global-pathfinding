@@ -23,11 +23,13 @@ class gribParse {
         std::vector<double> temperature;
         std::vector<double> angles;
         std::vector<double> magnitudes;
+        std::vector<double> hexes;
         std::vector<bool> missing;
 
         gribParse(const std::string filename);
         double static calcMagnitude(const double u_comp,const double v_comp);
         double static calcAngle(const double u_comp,const double v_comp);
+        void saveKML();
 
  private:
         int err;

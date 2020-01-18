@@ -27,6 +27,7 @@
 #include <pathfinding/Pathfinder.h>
 #include <pathfinding/HaversineHeuristic.h>
 #include <pathfinding/AStarPathfinder.h>
+#include <pathfinding/WeatherCostCalculator.h>
 
 #include "Controls.h"
 #include "Camera.h"
@@ -242,9 +243,6 @@ Pathfinder::Result run_pathfinder(std::unique_ptr<HexPlanet> &planet,
                                   bool verbose) {
   HaversineHeuristic heuristic = HaversineHeuristic(*planet);
   HaversineCostCalculator cost_calculator = HaversineCostCalculator(*planet);
-
-  // Only use indirect neighbours if the planet is of high enough resolution.
-  // This avoids the path edges from going through the planet, which looks ugly.
   bool use_indirect_neighbours = planet_subdivisions >= kIndirectNeighbourSubdivisionMin;
   AStarPathfinder pathfinder(*planet, heuristic, cost_calculator, source, target, use_indirect_neighbours);
 
