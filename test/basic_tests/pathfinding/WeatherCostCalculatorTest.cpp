@@ -19,7 +19,7 @@ WeatherCostCalculatorTest::WeatherCostCalculatorTest() : planet_(kSizeOfTestPlan
  * vertex IDs.
  */
 TEST_F(WeatherCostCalculatorTest, CalculateCostForValidVerticesTest) {
-  auto map = std::make_unique<WeatherHexMap>(planet_, kTimeSteps);
+  auto map = std::make_unique<WeatherHexMap>(planet_, kTimeSteps, 48, 235, 21, 203);
   WeatherCostCalculator calculator(planet_, map);
 
   std::srand(static_cast<uint>(std::time(0)));
@@ -43,7 +43,7 @@ TEST_F(WeatherCostCalculatorTest, CalculateCostForValidVerticesTest) {
  * given two vertex IDs of which at least one is invalid.
  */
 TEST_F(WeatherCostCalculatorTest, CalculateCostForInvalidVerticesTest) {
-  auto map = std::make_unique<WeatherHexMap>(planet_, kTimeSteps);
+  auto map = std::make_unique<WeatherHexMap>(planet_, kTimeSteps, 48, 235, 21, 203);
   WeatherCostCalculator calculator(planet_, map);
 
   HexVertexId num_vertices = static_cast<HexVertexId>(planet_.vertex_count());

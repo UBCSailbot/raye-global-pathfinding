@@ -21,6 +21,8 @@ enum class OutputFormat {
   kKML
 };
 
+int start_lat, start_lon, end_lat, end_lon;
+
 void find_neighbours(const HexPlanet &planet, HexVertexId id) {
   std::cout << "Finding neighbours for vertex ID: " << id << std::endl;
 
@@ -45,7 +47,7 @@ Pathfinder::Result run_pathfinder(HexPlanet &planet,
                                   bool verbose) {
   HaversineHeuristic heuristic = HaversineHeuristic(planet);
   HaversineCostCalculator h_cost_calculator = HaversineCostCalculator(planet);
-  WeatherHexMap weather_map = WeatherHexMap(planet, 3);
+  WeatherHexMap weather_map = WeatherHexMap(planet, 4, start_lat, start_lon, end_lat, end_lon);
   auto wmap_pointer = std::make_unique<WeatherHexMap>(weather_map);
   WeatherCostCalculator cost_calculator = WeatherCostCalculator(planet, wmap_pointer);
   AStarPathfinder pathfinder(planet, heuristic, cost_calculator, source, target, true);
@@ -184,13 +186,13 @@ int main(int argc, char const *argv[]) {
       //TODO() Enable Inputs to be in degrees West/South
       auto points = vm["navigate"].as<std::vector<double>>();
 
-      int start_lat = int(points[0]*10000000);
-      int start_long = int((points[1] < 180) ? points[1]*10000000 : (points[1]-360)*10000000);
-      int end_lat = int(points[2]*10000000);
-      int end_long = int((points[3] < 180) ? points[3]*10000000 : (points[3]-360)*10000000);
+      start_lat = int(points[0]);
+      start_lon = int((points[1] < 180) ? points[1] : (points[1]-360));
+      end_lat = int(points[2]);
+      end_lon = int((points[3] < 180) ? points[3] : (points[3]-360));
 
-      const GPSCoordinateFast start_coord(start_lat, start_long);
-      const GPSCoordinateFast end_coord(end_lat, end_long);
+      const GPSCoordinateFast start_coord(start_lat*10000000, start_lon*10000000);
+      const GPSCoordinateFast end_coord(end_lat*10000000, end_lon*10000000);
 
       Eigen::Vector3f start_point;
       Eigen::Vector3f end_point;

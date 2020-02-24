@@ -10,6 +10,7 @@
 #include <string>
 #include "eccodes.h"
 #include "grib/gribParse.h"
+#include <logic/StandardCalc.h>
 
 
 std::string PathfinderResultPrinter::PrintDefault(const Pathfinder::Result &result) {
@@ -42,14 +43,26 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
   std::ofstream handle;
   std::stringstream ss;
   int gribIndex,north=48, south=20, east=237, west=204;
-  int lat,lon;
+  int lat,lon,old_lat,old_lon;
   std::string file_name = "data.grb";
+
+  std::vector<std::pair<double,double>> pathResult;
+
+  //Only useful if there is any land in the path
+  std::string baseCommand = "python ./bin/netCDF.py --test";
+  std::string command;
+  std::string lon_str, lat_str;
 
   std::string url = UrlBuilder::BuildURL(std::to_string(north), std::to_string(south), std::to_string(east), std::to_string(west));
   UrlDownloader::Downloader(url);
 
   gribParse file = gribParse(file_name);
-  int count = 0, sum = 0;
+  double sum = 0, max = 0, current_wind;
+  int count = 0;
+  uint32_t totalDist = 0.0, avgDist = 0.0;
+
+  HexVertexId old_id;
+
 
 /*  WeatherHexMap disp_weather_map = WeatherHexMap(planet, 3);
   auto disp_wmap_pointer = std::make_unique<WeatherHexMap>(disp_weather_map);
@@ -67,18 +80,35 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
 
   for (HexVertexId id : result.path) {
     const auto &coord = planet.vertex(id).coordinate;
-    handle << coord.to_string_longitude() << "," << coord.to_string_latitude() << std::endl;
-    ss << coord.to_string_longitude() << "," << coord.to_string_latitude() << std::endl;
+
+    lon_str = coord.to_string_longitude();
+    lat_str = coord.to_string_latitude();
+
+    pathResult.push_back(std::make_pair(std::stod(lon_str),std::stod(lat_str)));
+
+    handle << lon_str << "," << lat_str << std::endl;
+    ss << pathResult.back().first << "," << pathResult.back().second << std::endl;
+
+    if (count > 0){
+        totalDist += planet.DistanceBetweenVertices(old_id, id);
+        const auto &old_coord = planet.vertex(old_id).coordinate;
+        old_lat = old_coord.round_to_int_latitude();
+        old_lon = old_coord.round_to_int_latitude();
+    //    command = baseCommand + " " + std::to_string(old_lat) + " " + std::to_string(lat) + " " + std::to_string(lon) + " " + std::to_string(old_lon);
+    //    system(command.c_str());  //Runs the python land script
+
+    }
 
     lat = coord.round_to_int_latitude();
     lon = coord.round_to_int_longitude();
     lon = lon < 0 ? lon+360 : lon;
     gribIndex = (lat-south) * (east-west+1) + (lon-west);
-    sum += file.magnitudes[gribIndex];
+    current_wind = file.magnitudes[0][gribIndex];
+    sum += current_wind;
+    if(current_wind>max) max = current_wind;
     count++;
 
-/*    sum += disp_wmap_pointer->get_weather(id, 0).wind_speed;
-    count++;*/
+    old_id = id;
   }
 
   handle << "</coordinates></LineString></Placemark></Document></kml>\n";
@@ -86,6 +116,10 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
   ss << "</coordinates></LineString></Placemark></Document></kml>\n" << std::endl;
 
   ss << "Avg wind speed is: " << std::to_string(sum/count) << std::endl;
+
+  ss << "Max wind speed is: " << std::to_string(max) << std::endl;
+
+  ss << "Avg distance is: " << std::to_string(totalDist/(count*1000)) << "." << std::to_string((totalDist/count) % 1000) << std::endl;
 
   handle.close();
 

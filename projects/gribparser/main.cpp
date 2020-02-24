@@ -21,25 +21,27 @@ int main(int argc, char *argv[]) {
     static const int kCAPEData = 0;
     static const int kWindData = 1;
 
-    if (argc == 5) {
+    if (argc == 6) {
         std::string north = argv[1];
         std::string south = argv[2];
         std::string east = argv[3];
         std::string west = argv[4];
+        int time_step = std::stoi(argv[5]);
 
         string url = UrlBuilder::BuildURL(north, south, east, west);
         UrlDownloader::Downloader(url);
+        std::cout << "here";
 
         gribParse file = gribParse(file_name);
         file.saveKML();
-        for (int i = 0; i < file.number_of_points_ && i < 100; ++i) {
-            if (!file.missing[i]) {
-                cout << "Lat: " << file.lats[i] << std::setw(10) << "\t Long: " << file.lons[i] << std::setw(10) << "\tMag: " << file.magnitudes[i] << "\tDir: " << file.angles[i] << endl;
+      /*  for (int i = 0; i < file.number_of_points_ && i < 100; ++i) {
+            if (!file.missing[0][i]) {
+                cout << "Lat: " << file.lats[i] << std::setw(10) << "\t Long: " << file.lons[i] << std::setw(10) <<  "\tCape: " << file.cape[i] <<  "\tTemp: " << file.temperature[i] << "\tMag: " << file.magnitudes[i] << "\tDir: " << file.angles[i] << endl;
             }
-        }
+        }*/
 
   } else {
-    cout << "Function requires 4 arguments" << endl;
+    cout << "Function requires 5 arguments" << endl;
 
   }
 

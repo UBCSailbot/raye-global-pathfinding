@@ -63,6 +63,29 @@ You can run the cpp lint script from our friends at Google with:
 ./scripts/run_cpplint.sh
 ```
 
+## Running Program
+To run the program from our launch site to Hawaii, simply run
+```bash
+./build/bin/pathfinder_cli -p 10 --navigate 48 235 20 206
+```
+This should generate a path based on current weather conditions and will produce 2 KML files:
+-`build/bin/Path.kml`, a visualization of the path generated, based on the GPS coordinates of the path
+-`build/bin/Wind.kml`, a visualization of wind data over time (each color represents a 3 hour increment, based on the estimated speed of the boat)
+
+To see these files, navigate to [Google Earth](https://earth.google.com) and from the menu on the side, select `Projects>New Project>Import KML file from computer`
+
+The program will also generate a string consisting of the [Longitude, Latitude] of each GPS waypoint. Additionally, there is an unused variable of type vector<pair<double,double>> in `./src/pathfinding/PathfinderResultPrinter.cpp` that contains the GPS data in the same format.
+
+### Adjusting Cost Function
+
+Finally, it is possible to adjust the weight given to wind measurements in the pathfinding cost function by navigating to `src/pathfinding/WeatherCostCalculator.cpp` and changing the value of WEATHER_FACTOR. Currently, 10000 seems to be fairly optimal in terms of optimal routing vs. compile time.
+
+When you are done, run
+```bash
+./build/make
+```
+and run the program again, as outlined above.
+
 ### Testing
 
 ##### Creating & Running Tests

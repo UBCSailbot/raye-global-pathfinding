@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-#define WEATHER_FACTOR 10000    //Produces the best path as of yet, needs more testing
+#define WEATHER_FACTOR 1000    //Produces the best path as of yet, needs more testing
 
 WeatherCostCalculator::WeatherCostCalculator(HexPlanet &planet,
                                            std::unique_ptr<WeatherHexMap> &map)

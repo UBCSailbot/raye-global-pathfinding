@@ -21,10 +21,10 @@ class gribParse {
         std::vector<double> pressure;
         std::vector<double> cape;
         std::vector<double> temperature;
-        std::vector<double> angles;
-        std::vector<double> magnitudes;
+        std::vector<std::vector<double>> angles;
+        std::vector<std::vector<double>> magnitudes;
         std::vector<double> hexes;
-        std::vector<bool> missing;
+        std::vector<std::vector<double>> missing;
 
         gribParse(const std::string filename);
         double static calcMagnitude(const double u_comp,const double v_comp);
