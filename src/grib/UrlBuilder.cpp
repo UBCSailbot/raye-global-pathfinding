@@ -13,8 +13,12 @@
  * @return constructed URL for downloading GRIB file
  */
 std::string UrlBuilder::BuildURL(std::string north, std::string south,
-                                 std::string east, std::string west,
-                                 int weather_type) {
+                                 std::string east, std::string west) {
+
+
+  east = std::to_string(std::stoi(east)>0 ? std::stoi(east) : std::stoi(east)+360);
+  west = std::to_string(std::stoi(west)>0 ? std::stoi(west) : std::stoi(west)+360);
+
   static const std::string
       kBaseGlobalUrlString = "http://forecast.predictwind.com/grib/custom?I=3&Z=100&L=1&M=g&compress=false";
   static const std::string kUsername = "captain%40ubcsailbot.org";
@@ -22,19 +26,12 @@ std::string UrlBuilder::BuildURL(std::string north, std::string south,
 
   std::string weather_type_const;
 
-  // determine weather type
-  if (weather_type == 0)
-    weather_type_const = "a";
-  else if (weather_type == 1)
-    weather_type_const = "W";
-
   // construct URL
   std::string url(kBaseGlobalUrlString);
   url.append("&N=" + north + "&S=" + south + "&E=" + east + "&W=" + west);
-  url.append("&V=" + weather_type_const);
+  url.append("&V=WRCTPaG");
   url.append("&username=" + kUsername + "&password=" + kPassword);
 
   std::cout << url << std::endl;
   return url;
 }
-

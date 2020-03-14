@@ -7,9 +7,11 @@
 
 #include "pathfinding/Pathfinder.h"
 #include "datatypes/HexDefs.h"
+#include <vector>
 
 class PathfinderResultPrinter {
  public:
+
   /**
    * Produces a verbose output string containing the cost, ending time step and then a space-separated list of vertex
    * ids.
@@ -34,6 +36,7 @@ class PathfinderResultPrinter {
    * @return Generated KML output string.
    */
   static std::string PrintKML(HexPlanet &planet, const Pathfinder::Result &result);
+
 };
 
 #endif  // PATHFINDING_PATHFINDERRESULTPRINTER_H_

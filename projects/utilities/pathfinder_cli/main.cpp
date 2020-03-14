@@ -8,6 +8,7 @@
 
 #include <pathfinding/HaversineHeuristic.h>
 #include <pathfinding/HaversineCostCalculator.h>
+#include <pathfinding/WeatherCostCalculator.h>
 #include <pathfinding/AStarPathfinder.h>
 #include <pathfinding/PathfinderResultPrinter.h>
 
@@ -19,6 +20,8 @@ enum class OutputFormat {
   kDefault,
   kKML
 };
+
+int start_lat, start_lon, end_lat, end_lon;
 
 void find_neighbours(const HexPlanet &planet, HexVertexId id) {
   std::cout << "Finding neighbours for vertex ID: " << id << std::endl;
@@ -43,7 +46,10 @@ Pathfinder::Result run_pathfinder(HexPlanet &planet,
                                   bool silent,
                                   bool verbose) {
   HaversineHeuristic heuristic = HaversineHeuristic(planet);
-  HaversineCostCalculator cost_calculator = HaversineCostCalculator(planet);
+  HaversineCostCalculator h_cost_calculator = HaversineCostCalculator(planet);
+  WeatherHexMap weather_map = WeatherHexMap(planet, 4, start_lat, start_lon, end_lat, end_lon);
+  auto wmap_pointer = std::make_unique<WeatherHexMap>(weather_map);
+  WeatherCostCalculator cost_calculator = WeatherCostCalculator(planet, wmap_pointer);
   AStarPathfinder pathfinder(planet, heuristic, cost_calculator, source, target, true);
 
   if (!silent) {
@@ -146,6 +152,7 @@ int main(int argc, char const *argv[]) {
                                                            : kInvalidIndirectNeighbourDepth;
     HexPlanet planet = generate_planet(planet_size, indirect_neighbour_depth, silent, verbose);
 
+
     if (vm.count("n")) {
       find_neighbours(planet, vm["n"].as<HexVertexId>());
     } else if (vm.count("c")) {
@@ -179,13 +186,16 @@ int main(int argc, char const *argv[]) {
       //TODO() Enable Inputs to be in degrees West/South
       auto points = vm["navigate"].as<std::vector<double>>();
 
-      int start_lat = int(points[0]*1000000);
-      int start_long = int(points[1]*1000000);
-      int end_lat = int(points[2]*1000000);
-      int end_long = int(points[3]*1000000);
+      start_lat = (points[0]);
+      start_lon = (points[1]);
+      end_lat = (points[2]);
+      end_lon = (points[3]);
 
-      const GPSCoordinateFast start_coord(start_lat, start_long);
-      const GPSCoordinateFast end_coord(end_lat, end_long);
+      auto adj_start_lon = start_lon < 0 ? start_lon : start_lon - 360;
+      auto adj_end_lon = end_lon < 0 ? end_lon : end_lon - 360;
+
+      const GPSCoordinateFast start_coord(start_lat*10000000, adj_start_lon*10000000);
+      const GPSCoordinateFast end_coord(end_lat*10000000, adj_end_lon*10000000);
 
       Eigen::Vector3f start_point;
       Eigen::Vector3f end_point;

@@ -129,4 +129,3 @@ std::vector<HexVertexId> AStarPathfinder::ConstructPath(AStarVertex::IdTimeIndex
 
   return {path.begin(), path.end()};
 }
-

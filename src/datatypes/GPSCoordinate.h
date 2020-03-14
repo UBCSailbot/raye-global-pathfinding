@@ -64,6 +64,12 @@ class GPSCoordinate {
    */
   std::string to_string_longitude() const;
 
+  int round_to_int_latitude() const;
+
+  int round_to_int_longitude() const;
+
+
+
   virtual void set_lat_exact(int32_t latitude_exact);
   virtual void set_lng_exact(int32_t longitude_exact);
   virtual void set_lat_lng_exact(int32_t latitude_exact, int32_t longitude_exact);
@@ -80,6 +86,9 @@ class GPSCoordinate {
    * @return Fixed point string.
    */
   static std::string to_string_helper(int32_t input);
+
+  static int round_to_helper(int32_t input);
+
 };
 
 #endif  // DATATYPES_GPSCOORDINATE_H_

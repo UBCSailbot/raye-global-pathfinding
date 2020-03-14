@@ -101,6 +101,11 @@ class HexPlanet {
    */
   void Read(std::istream &i);
 
+  /// Vertices
+  std::vector<HexVertex> vertices_;
+  /// Triangles (and thus the edges)
+  std::vector<HexTriangle> triangles_;
+
  protected:
   /// The default maximum depth for indirect neighbour calculation.
   static constexpr uint8_t kDefaultIndirectNeighbourDepth = 2;
@@ -110,10 +115,7 @@ class HexPlanet {
   /// Current subdivision level (0 is an icosahedron).
   uint8_t subdivision_level_ = 0;
 
-  /// Vertices
-  std::vector<HexVertex> vertices_;
-  /// Triangles (and thus the edges)
-  std::vector<HexTriangle> triangles_;
+
 
   /**
    * Distance cache.

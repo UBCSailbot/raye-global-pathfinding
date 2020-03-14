@@ -1,9 +1,10 @@
 // Copyright 2017 UBC Sailbot
 
-#include "WindFileParseTest.h"
+#include "FileParseWindTest.h"
+#include "grib/gribParse.h"
 #include <eccodes.h>
 #include <math.h>
-#include "grib/windFileParse.h"
+//#include "grib/windFileParse.h"
 
 WindGribParseTest::WindGribParseTest() {}
 
@@ -22,7 +23,7 @@ TEST_F(WindGribParseTest, TestMagnitude) {
 
     for (const auto &test : test_data) {
         double expected = test.knot_output;
-        double output = WindFileParse::calcMagnitude(test.u_comp, test.v_comp);
+        double output = gribParse::calcMagnitude(test.u_comp, test.v_comp);
         EXPECT_NEAR(expected, output, 0.1)
                             << "Test calcMagnitude(" << test.u_comp << ", " << test.v_comp << ") failed." << std::endl;
     }
@@ -42,10 +43,10 @@ TEST_F(WindGribParseTest, TestAngle) {
 
     for (const auto &test : test_data) {
         double expected = test.angle;
-        double output = WindFileParse::calcAngle(test.u_comp, test.v_comp);
+        double output = gribParse::calcAngle(test.u_comp, test.v_comp);
         EXPECT_NEAR(expected, output, 0.1)
                             << "Test calcMagnitude(" << test.u_comp << ", " << test.v_comp << ") failed." << std::endl;
     }
     // 0 division 0 case
-    EXPECT_EQ(true, isnan(WindFileParse::calcAngle(0, 0)));
+    EXPECT_EQ(true,isnan(gribParse::calcAngle(0,0)));
 }

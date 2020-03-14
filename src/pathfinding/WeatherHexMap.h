@@ -19,7 +19,11 @@ class WeatherHexMap {
    * @param time_steps How many |WeatherDatum|s to store for each vertex.
    */
   explicit WeatherHexMap(const HexPlanet &planet,
-                         const uint32_t time_steps);
+                         const uint32_t time_steps,
+                         int start_lat,
+                         int start_lon,
+                         int end_lat,
+                         int end_lon);
 
   /**
    * Gets the |WeatherDatum| associated with a specific vertex at a specified
