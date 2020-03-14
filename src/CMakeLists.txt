@@ -59,6 +59,6 @@ set(LIB_HDRS
 add_library(src_core STATIC ${LIB_SRCS} ${LIB_HDRS})
 
 # Link dependencies
-add_dependencies(src_core protofiles)
+#add_dependencies(src_core protofiles)
 
 target_link_libraries(src_core ${CORE_LIBS})
