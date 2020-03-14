@@ -48,11 +48,6 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
 
   std::vector<std::pair<double,double>> pathResult;
 
-  //Only useful if there is any land in the path
-  std::string baseCommand = "python ./bin/netCDF.py --test";
-  std::string command;
-  std::string lon_str, lat_str;
-
   std::string url = UrlBuilder::BuildURL(std::to_string(north), std::to_string(south), std::to_string(east), std::to_string(west));
   UrlDownloader::Downloader(url);
 
@@ -63,11 +58,6 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
 
   HexVertexId old_id;
 
-
-/*  WeatherHexMap disp_weather_map = WeatherHexMap(planet, 3);
-  auto disp_wmap_pointer = std::make_unique<WeatherHexMap>(disp_weather_map);
-*/
-  // Throw an exception on failure to open the file or on a write error.
   handle.exceptions(std::ofstream::failbit | std::ofstream::badbit);
 
   handle.open("Path.kml");
@@ -94,9 +84,6 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
         const auto &old_coord = planet.vertex(old_id).coordinate;
         old_lat = old_coord.round_to_int_latitude();
         old_lon = old_coord.round_to_int_latitude();
-    //    command = baseCommand + " " + std::to_string(old_lat) + " " + std::to_string(lat) + " " + std::to_string(lon) + " " + std::to_string(old_lon);
-    //    system(command.c_str());  //Runs the python land script
-
     }
 
     lat = coord.round_to_int_latitude();
