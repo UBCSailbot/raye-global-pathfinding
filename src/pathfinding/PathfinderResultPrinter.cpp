@@ -42,7 +42,7 @@ std::string PathfinderResultPrinter::PrintCoordinates(HexPlanet &planet, const P
 std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinder::Result &result) {
   std::ofstream handle;
   std::stringstream ss;
-  int gribIndex,north=48, south=20, east=237, west=204;
+  int gribIndex,north=49, south=21, east=235, west=203;
   int lat,lon,old_lat,old_lon;
   std::string file_name = "data.grb";
 
@@ -103,7 +103,15 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
     lon = coord.round_to_int_longitude();
     lon = lon < 0 ? lon+360 : lon;
     gribIndex = (lat-south) * (east-west+1) + (lon-west);
-    current_wind = file.magnitudes[0][gribIndex];
+
+    int time_step;
+    double dist = sqrt(pow(lat-north,2)+pow(lon-east,2));
+    if(dist < 2) time_step = 0;
+    else if(dist < 4) time_step = 1;
+    else if(dist < 6) time_step = 2;
+    else time_step = 3;
+    current_wind = file.magnitudes[time_step][gribIndex];
+
     sum += current_wind;
     if(current_wind>max) max = current_wind;
     count++;

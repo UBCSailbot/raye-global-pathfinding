@@ -53,6 +53,6 @@ const WeatherDatum& WeatherHexMap::get_weather(HexVertexId vertex_id,
   if (vertex_id >= planet_.vertex_count())// || time >= steps_)
     throw std::runtime_error("Invalid vertex ID or time.");
 
-  boost::array<WeatherMatrix::index, 2> ind = {{vertex_id, 0}};
+  boost::array<WeatherMatrix::index, 2> ind = {{0, vertex_id}};
   return weather_data_(ind);
 }

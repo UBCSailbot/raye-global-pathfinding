@@ -186,13 +186,16 @@ int main(int argc, char const *argv[]) {
       //TODO() Enable Inputs to be in degrees West/South
       auto points = vm["navigate"].as<std::vector<double>>();
 
-      start_lat = int(points[0]);
-      start_lon = int((points[1] < 180) ? points[1] : (points[1]-360));
-      end_lat = int(points[2]);
-      end_lon = int((points[3] < 180) ? points[3] : (points[3]-360));
+      start_lat = (points[0]);
+      start_lon = (points[1]);
+      end_lat = (points[2]);
+      end_lon = (points[3]);
 
-      const GPSCoordinateFast start_coord(start_lat*10000000, start_lon*10000000);
-      const GPSCoordinateFast end_coord(end_lat*10000000, end_lon*10000000);
+      auto adj_start_lon = start_lon < 0 ? start_lon : start_lon - 360;
+      auto adj_end_lon = end_lon < 0 ? end_lon : end_lon - 360;
+
+      const GPSCoordinateFast start_coord(start_lat*10000000, adj_start_lon*10000000);
+      const GPSCoordinateFast end_coord(end_lat*10000000, adj_end_lon*10000000);
 
       Eigen::Vector3f start_point;
       Eigen::Vector3f end_point;

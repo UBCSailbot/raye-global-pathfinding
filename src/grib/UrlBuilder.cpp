@@ -14,6 +14,11 @@
  */
 std::string UrlBuilder::BuildURL(std::string north, std::string south,
                                  std::string east, std::string west) {
+
+
+  east = std::to_string(std::stoi(east)>0 ? std::stoi(east) : std::stoi(east)+360);
+  west = std::to_string(std::stoi(west)>0 ? std::stoi(west) : std::stoi(west)+360);
+
   static const std::string
       kBaseGlobalUrlString = "http://forecast.predictwind.com/grib/custom?I=3&Z=100&L=1&M=g&compress=false";
   static const std::string kUsername = "captain%40ubcsailbot.org";
@@ -30,4 +35,3 @@ std::string UrlBuilder::BuildURL(std::string north, std::string south,
   std::cout << url << std::endl;
   return url;
 }
-
