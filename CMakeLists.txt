@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 2.8)
 
-set(CMAKE_C_COMPILER "clang")
-set(CMAKE_CXX_COMPILER "clang++")
-
-project(global_pathfinding CXX)
+# set(CMAKE_C_COMPILER "clang")
+# set(CMAKE_CXX_COMPILER "clang++")
+# 
+# project(global_pathfinding CXX)
+project(global_pathfinding)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall -Wextra")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
@@ -43,4 +44,4 @@ add_subdirectory(src)
 add_subdirectory(projects)
 
 # Add tests
-add_subdirectory(test)
+# add_subdirectory(test)

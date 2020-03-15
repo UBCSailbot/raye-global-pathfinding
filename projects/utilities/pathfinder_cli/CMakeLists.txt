@@ -2,7 +2,8 @@
 set(PROJECT_NAME pathfinder_cli)
 
 # Define your project and language
-project(${PROJECT_NAME} CXX)
+# project(${PROJECT_NAME} CXX)
+project(${PROJECT_NAME})
 
 # Define the source code
 set(${PROJECT_NAME}_SRCS main.cpp)
