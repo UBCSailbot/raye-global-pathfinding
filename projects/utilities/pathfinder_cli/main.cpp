@@ -5,8 +5,6 @@
 #include <iomanip>
 
 #include "ros/ros.h"
-#include "std_msgs/String.h"
-#include <sstream>
 #include "local_pathfinding/path.h"
 #include "local_pathfinding/latlon.h"
 #include <vector>
@@ -215,15 +213,17 @@ int main(int argc, char *argv[]) {
 
       auto result = run_pathfinder(planet, start_vertex, end_vertex, silent, verbose);
       std::cout << PathfinderResultPrinter::PrintKML(planet, result) << std::endl;
-      std::cout << "STARTING ROS STUFF" << std::endl;
-      ros::init(argc, argv, "talkerTEST");
+
+      // ROS init code
+      std::cout << "STARTING ROS LOOP" << std::endl;
+      ros::init(argc, argv, "global_pathfinding_node");
       ros::NodeHandle n;
-      // ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
-      ros::Publisher chatter_pub = n.advertise<local_pathfinding::path>("mypath", 200);
-      ros::Rate loop_rate(10);
+      ros::Publisher chatter_pub = n.advertise<local_pathfinding::path>("globalPath", 10);
+      double publish_period_seconds = 10;
+      ros::Rate loop_rate(1.0 / publish_period_seconds);
       int count = 0;
       while (ros::ok()) {
-        // Create vector of latlons
+        // Create dummy vector of latlons
         std::vector<local_pathfinding::latlon> mywaypoints;
         local_pathfinding::latlon mylatlon1;
         mylatlon1.lat = count;
@@ -238,14 +238,12 @@ int main(int argc, char *argv[]) {
         local_pathfinding::path msg;
         msg.waypoints = mywaypoints;
 
-        ROS_INFO("LOOOP");
+        ROS_INFO("global pathfinding node publishing");
         chatter_pub.publish(msg);
         ros::spinOnce();
         loop_rate.sleep();
         ++count;
       }
-
-
     } else {
       std::cerr << "Invalid Program options." << std::endl
                 << desc;
