@@ -7,6 +7,7 @@
 #include "ros/ros.h"
 #include "local_pathfinding/path.h"
 #include "local_pathfinding/latlon.h"
+#include "local_pathfinding/GPS.h"
 #include <vector>
 #include <stdlib.h>
 
@@ -112,8 +113,20 @@ HexPlanet generate_planet(uint8_t subdivision_level, uint8_t indirect_neighbour_
   return planet;
 }
 
+local_pathfinding::latlon sailbot_position;
+
+void gpsCallback(const local_pathfinding::GPS& msg)
+{
+  ROS_INFO("GPS message received");
+  sailbot_position.lat = msg.lat;
+  sailbot_position.lon = msg.lon;
+}
+
+
 int main(int argc, char *argv[]) {
   try {
+    sailbot_position.lat = 48.5;
+    sailbot_position.lon = -124.8;
     boost::program_options::options_description desc{"Options"};
     desc.add_options()
         ("help,h", "Help screen")
@@ -219,6 +232,7 @@ int main(int argc, char *argv[]) {
       std::cout << "STARTING ROS LOOP" << std::endl;
       ros::init(argc, argv, "global_pathfinding_node");
       ros::NodeHandle n;
+      ros::Subscriber sub = n.subscribe("GPS", 100, gpsCallback);
       ros::Publisher chatter_pub = n.advertise<local_pathfinding::path>("globalPath", 10);
       double publish_period_seconds = 10;
       ros::Rate loop_rate(1.0 / publish_period_seconds);
@@ -226,15 +240,21 @@ int main(int argc, char *argv[]) {
         // Create dummy vector of latlons
         std::vector<local_pathfinding::latlon> mywaypoints;
         local_pathfinding::latlon mylatlon1;
-        mylatlon1.lat = 48.5;
-        mylatlon1.lon = -124.8;
+        mylatlon1.lat = sailbot_position.lat;
+        mylatlon1.lon = sailbot_position.lon;
         local_pathfinding::latlon mylatlon2;
 
         // Add random noise to latlon to ensure we see an actual change
         double noise = rand() % 7 - 3;
         mylatlon2.lat = 20.0 + noise;
         mylatlon2.lon = -156.0 + noise;
+
+        local_pathfinding::latlon mylatlonmid;
+        mylatlonmid.lat = (mylatlon2.lat + mylatlon1.lat) / 2;
+        mylatlonmid.lon = (mylatlon2.lon + mylatlon1.lon) / 2;
+
         mywaypoints.push_back(mylatlon1);
+        mywaypoints.push_back(mylatlonmid);
         mywaypoints.push_back(mylatlon2);
 
         // Create path msg
