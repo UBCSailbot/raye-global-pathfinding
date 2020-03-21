@@ -8,6 +8,7 @@
 #include "local_pathfinding/path.h"
 #include "local_pathfinding/latlon.h"
 #include <vector>
+#include <stdlib.h>
 
 #include <boost/program_options.hpp>
 
@@ -221,16 +222,18 @@ int main(int argc, char *argv[]) {
       ros::Publisher chatter_pub = n.advertise<local_pathfinding::path>("globalPath", 10);
       double publish_period_seconds = 10;
       ros::Rate loop_rate(1.0 / publish_period_seconds);
-      int count = 0;
       while (ros::ok()) {
         // Create dummy vector of latlons
         std::vector<local_pathfinding::latlon> mywaypoints;
         local_pathfinding::latlon mylatlon1;
-        mylatlon1.lat = count;
-        mylatlon1.lon = count + 1;
+        mylatlon1.lat = 48.5;
+        mylatlon1.lon = -124.8;
         local_pathfinding::latlon mylatlon2;
-        mylatlon2.lat = count + 1;
-        mylatlon2.lon = count;
+
+        // Add random noise to latlon to ensure we see an actual change
+        double noise = rand() % 7 - 3;
+        mylatlon2.lat = 20.0 + noise;
+        mylatlon2.lon = -156.0 + noise;
         mywaypoints.push_back(mylatlon1);
         mywaypoints.push_back(mylatlon2);
 
@@ -242,7 +245,6 @@ int main(int argc, char *argv[]) {
         chatter_pub.publish(msg);
         ros::spinOnce();
         loop_rate.sleep();
-        ++count;
       }
     } else {
       std::cerr << "Invalid Program options." << std::endl
