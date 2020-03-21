@@ -7,6 +7,9 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include <sstream>
+#include "local_pathfinding/path.h"
+#include "local_pathfinding/latlon.h"
+#include <vector>
 
 #include <boost/program_options.hpp>
 
@@ -215,15 +218,27 @@ int main(int argc, char *argv[]) {
       std::cout << "STARTING ROS STUFF" << std::endl;
       ros::init(argc, argv, "talkerTEST");
       ros::NodeHandle n;
-      ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
+      // ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
+      ros::Publisher chatter_pub = n.advertise<local_pathfinding::path>("mypath", 200);
       ros::Rate loop_rate(10);
       int count = 0;
       while (ros::ok()) {
-        std_msgs::String msg;
-        std::stringstream ss;
-        ss << "hello world " << count;
-        msg.data = ss.str();
-        ROS_INFO("%s", msg.data.c_str());
+        // Create vector of latlons
+        std::vector<local_pathfinding::latlon> mywaypoints;
+        local_pathfinding::latlon mylatlon1;
+        mylatlon1.lat = count;
+        mylatlon1.lon = count + 1;
+        local_pathfinding::latlon mylatlon2;
+        mylatlon2.lat = count + 1;
+        mylatlon2.lon = count;
+        mywaypoints.push_back(mylatlon1);
+        mywaypoints.push_back(mylatlon2);
+
+        // Create path msg
+        local_pathfinding::path msg;
+        msg.waypoints = mywaypoints;
+
+        ROS_INFO("LOOOP");
         chatter_pub.publish(msg);
         ros::spinOnce();
         loop_rate.sleep();
