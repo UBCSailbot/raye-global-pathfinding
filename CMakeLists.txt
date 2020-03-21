@@ -61,12 +61,4 @@ add_subdirectory(src)
 add_subdirectory(projects)
 
 # Add tests
-# add_subdirectory(test)
-
-# add_executable(pathfinding_cli projects/utilities/pathfinder_cli/main.cpp)
-# target_link_libraries(pathfinding_cli ${catkin_LIBRARIES})
-# install(TARGETS pathfinding_cli
-# ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-# LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-# RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+add_subdirectory(test)
