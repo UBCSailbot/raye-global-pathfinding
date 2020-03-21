@@ -15,4 +15,4 @@ set(${PROJECT_NAME}_LIBS src_core ${Boost_LIBRARIES})
 
 # Define the executable
 add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SRCS})
-target_link_libraries(${PROJECT_NAME} ${${PROJECT_NAME}_LIBS})
+target_link_libraries(${PROJECT_NAME} ${${PROJECT_NAME}_LIBS} ${catkin_LIBRARIES})

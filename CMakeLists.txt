@@ -17,6 +17,23 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 # INCLUDES #
 ############
 
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  rospy
+  std_msgs
+  geometry_msgs
+  message_generation
+)
+
+catkin_package(
+  LIBRARIES
+  CATKIN_DEPENDS
+    roscpp
+    std_msgs
+)
+
+include_directories(${catkin_INCLUDE_DIRS})
+
 # Include libraries
 include(lib/core_libs.cmake)
 
@@ -45,3 +62,11 @@ add_subdirectory(projects)
 
 # Add tests
 # add_subdirectory(test)
+
+# add_executable(pathfinding_cli projects/utilities/pathfinder_cli/main.cpp)
+# target_link_libraries(pathfinding_cli ${catkin_LIBRARIES})
+# install(TARGETS pathfinding_cli
+# ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+# LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+# RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# )

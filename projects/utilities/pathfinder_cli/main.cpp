@@ -4,6 +4,10 @@
 #include <iostream>
 #include <iomanip>
 
+#include "ros/ros.h"
+#include "std_msgs/String.h"
+#include <sstream>
+
 #include <boost/program_options.hpp>
 
 #include <pathfinding/HaversineHeuristic.h>
@@ -106,7 +110,7 @@ HexPlanet generate_planet(uint8_t subdivision_level, uint8_t indirect_neighbour_
   return planet;
 }
 
-int main(int argc, char const *argv[]) {
+int main(int argc, char *argv[]) {
   try {
     boost::program_options::options_description desc{"Options"};
     desc.add_options()
@@ -207,7 +211,25 @@ int main(int argc, char const *argv[]) {
       HexVertexId end_vertex = planet.HexVertexFromPoint(end_point);
 
       auto result = run_pathfinder(planet, start_vertex, end_vertex, silent, verbose);
-      std::cout << PathfinderResultPrinter::PrintKML(planet, result);
+      std::cout << PathfinderResultPrinter::PrintKML(planet, result) << std::endl;
+      std::cout << "STARTING ROS STUFF" << std::endl;
+      ros::init(argc, argv, "talkerTEST");
+      ros::NodeHandle n;
+      ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
+      ros::Rate loop_rate(10);
+      int count = 0;
+      while (ros::ok()) {
+        std_msgs::String msg;
+        std::stringstream ss;
+        ss << "hello world " << count;
+        msg.data = ss.str();
+        ROS_INFO("%s", msg.data.c_str());
+        chatter_pub.publish(msg);
+        ros::spinOnce();
+        loop_rate.sleep();
+        ++count;
+      }
+
 
     } else {
       std::cerr << "Invalid Program options." << std::endl
