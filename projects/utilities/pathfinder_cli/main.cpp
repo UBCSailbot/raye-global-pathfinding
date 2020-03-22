@@ -4,13 +4,6 @@
 #include <iostream>
 #include <iomanip>
 
-#include "ros/ros.h"
-#include "local_pathfinding/path.h"
-#include "local_pathfinding/latlon.h"
-#include "local_pathfinding/GPS.h"
-#include <vector>
-#include <stdlib.h>
-
 #include <boost/program_options.hpp>
 
 #include <pathfinding/HaversineHeuristic.h>
@@ -113,29 +106,8 @@ HexPlanet generate_planet(uint8_t subdivision_level, uint8_t indirect_neighbour_
   return planet;
 }
 
-// Helper function to create latlons
-local_pathfinding::latlon createLatlon(double lat, double lon) {
-  local_pathfinding::latlon newlatlon;
-  newlatlon.lat = lat;
-  newlatlon.lon = lon;
-  return newlatlon;
-}
-
-// Global variable for tracking boat position
-local_pathfinding::latlon sailbot_position;
-
-void gpsCallback(const local_pathfinding::GPS& msg)
-{
-  sailbot_position.lat = msg.lat;
-  sailbot_position.lon = msg.lon;
-}
-
-
-int main(int argc, char *argv[]) {
+int main(int argc, char const *argv[]) {
   try {
-    // Initialize global variable values
-    sailbot_position.lat = 48.5;
-    sailbot_position.lon = -124.8;
     boost::program_options::options_description desc{"Options"};
     desc.add_options()
         ("help,h", "Help screen")
@@ -235,44 +207,8 @@ int main(int argc, char *argv[]) {
       HexVertexId end_vertex = planet.HexVertexFromPoint(end_point);
 
       auto result = run_pathfinder(planet, start_vertex, end_vertex, silent, verbose);
-      std::cout << PathfinderResultPrinter::PrintKML(planet, result) << std::endl;
+      std::cout << PathfinderResultPrinter::PrintKML(planet, result);
 
-      // ROS init code
-      std::cout << "STARTING ROS LOOP" << std::endl;
-      ros::init(argc, argv, "global_pathfinding_node");
-      ros::NodeHandle n;
-      double publish_period_seconds = 10;
-      ros::Rate loop_rate(1.0 / publish_period_seconds);
-
-      // Create subscriber
-      ros::Subscriber sub = n.subscribe("GPS", 100, gpsCallback);
-
-      // Create publisher
-      ros::Publisher chatter_pub = n.advertise<local_pathfinding::path>("globalPath", 10);
-
-      while (ros::ok()) {
-        // Create interpolated vector of latlons
-        int num_waypoints = 50;
-        std::vector<local_pathfinding::latlon> mywaypoints(num_waypoints + 1);
-        local_pathfinding::latlon first = createLatlon(sailbot_position.lat, sailbot_position.lon);
-        local_pathfinding::latlon last = createLatlon(20.0, -156.0);
-        for (int i = 0; i <= num_waypoints; i++) {
-          double coefficient = ((double)(i)) / num_waypoints;
-          double lat = (1 - coefficient) * first.lat + coefficient * last.lat;
-          double lon = (1 - coefficient) * first.lon + coefficient * last.lon;
-          local_pathfinding::latlon mylatlon = createLatlon(lat, lon);
-          mywaypoints[i] = mylatlon;
-        }
-
-        // Create path msg
-        local_pathfinding::path msg;
-        msg.waypoints = mywaypoints;
-
-        ROS_INFO("global pathfinding node publishing");
-        chatter_pub.publish(msg);
-        ros::spinOnce();
-        loop_rate.sleep();
-      }
     } else {
       std::cerr << "Invalid Program options." << std::endl
                 << desc;

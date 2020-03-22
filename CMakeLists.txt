@@ -26,12 +26,13 @@ find_package(catkin REQUIRED COMPONENTS
   local_pathfinding
 )
 
-catkin_package(
-  LIBRARIES
-  CATKIN_DEPENDS
-    roscpp
-    std_msgs
-)
+### Removed this catkin_package part. Not sure if needed for ROS. This made ./configure not work exactly as it did before, so I commented this out
+# catkin_package(
+#   LIBRARIES
+#   CATKIN_DEPENDS
+#     roscpp
+#     std_msgs
+# )
 
 include_directories(${catkin_INCLUDE_DIRS})
 
