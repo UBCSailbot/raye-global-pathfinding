@@ -113,6 +113,7 @@ HexPlanet generate_planet(uint8_t subdivision_level, uint8_t indirect_neighbour_
   return planet;
 }
 
+// Helper function to create latlons
 local_pathfinding::latlon createLatlon(double lat, double lon) {
   local_pathfinding::latlon newlatlon;
   newlatlon.lat = lat;
@@ -132,6 +133,7 @@ void gpsCallback(const local_pathfinding::GPS& msg)
 
 int main(int argc, char *argv[]) {
   try {
+    // Initialize global variable values
     sailbot_position.lat = 48.5;
     sailbot_position.lon = -124.8;
     boost::program_options::options_description desc{"Options"};
@@ -239,12 +241,17 @@ int main(int argc, char *argv[]) {
       std::cout << "STARTING ROS LOOP" << std::endl;
       ros::init(argc, argv, "global_pathfinding_node");
       ros::NodeHandle n;
-      ros::Subscriber sub = n.subscribe("GPS", 100, gpsCallback);
-      ros::Publisher chatter_pub = n.advertise<local_pathfinding::path>("globalPath", 10);
       double publish_period_seconds = 10;
       ros::Rate loop_rate(1.0 / publish_period_seconds);
+
+      // Create subscriber
+      ros::Subscriber sub = n.subscribe("GPS", 100, gpsCallback);
+
+      // Create publisher
+      ros::Publisher chatter_pub = n.advertise<local_pathfinding::path>("globalPath", 10);
+
       while (ros::ok()) {
-        // Create dummy vector of latlons
+        // Create interpolated vector of latlons
         int num_waypoints = 50;
         std::vector<local_pathfinding::latlon> mywaypoints(num_waypoints + 1);
         local_pathfinding::latlon first = createLatlon(sailbot_position.lat, sailbot_position.lon);
