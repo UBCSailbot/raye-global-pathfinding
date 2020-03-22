@@ -113,11 +113,18 @@ HexPlanet generate_planet(uint8_t subdivision_level, uint8_t indirect_neighbour_
   return planet;
 }
 
+local_pathfinding::latlon createLatlon(double lat, double lon) {
+  local_pathfinding::latlon newlatlon;
+  newlatlon.lat = lat;
+  newlatlon.lon = lon;
+  return newlatlon;
+}
+
+// Global variable for tracking boat position
 local_pathfinding::latlon sailbot_position;
 
 void gpsCallback(const local_pathfinding::GPS& msg)
 {
-  ROS_INFO("GPS message received");
   sailbot_position.lat = msg.lat;
   sailbot_position.lon = msg.lon;
 }
@@ -238,24 +245,17 @@ int main(int argc, char *argv[]) {
       ros::Rate loop_rate(1.0 / publish_period_seconds);
       while (ros::ok()) {
         // Create dummy vector of latlons
-        std::vector<local_pathfinding::latlon> mywaypoints;
-        local_pathfinding::latlon mylatlon1;
-        mylatlon1.lat = sailbot_position.lat;
-        mylatlon1.lon = sailbot_position.lon;
-        local_pathfinding::latlon mylatlon2;
-
-        // Add random noise to latlon to ensure we see an actual change
-        double noise = rand() % 7 - 3;
-        mylatlon2.lat = 20.0 + noise;
-        mylatlon2.lon = -156.0 + noise;
-
-        local_pathfinding::latlon mylatlonmid;
-        mylatlonmid.lat = (mylatlon2.lat + mylatlon1.lat) / 2;
-        mylatlonmid.lon = (mylatlon2.lon + mylatlon1.lon) / 2;
-
-        mywaypoints.push_back(mylatlon1);
-        mywaypoints.push_back(mylatlonmid);
-        mywaypoints.push_back(mylatlon2);
+        int num_waypoints = 50;
+        std::vector<local_pathfinding::latlon> mywaypoints(num_waypoints + 1);
+        local_pathfinding::latlon first = createLatlon(sailbot_position.lat, sailbot_position.lon);
+        local_pathfinding::latlon last = createLatlon(20.0, -156.0);
+        for (int i = 0; i <= num_waypoints; i++) {
+          double coefficient = ((double)(i)) / num_waypoints;
+          double lat = (1 - coefficient) * first.lat + coefficient * last.lat;
+          double lon = (1 - coefficient) * first.lon + coefficient * last.lon;
+          local_pathfinding::latlon mylatlon = createLatlon(lat, lon);
+          mywaypoints[i] = mylatlon;
+        }
 
         // Create path msg
         local_pathfinding::path msg;
