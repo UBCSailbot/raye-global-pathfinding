@@ -1,5 +1,5 @@
 # Set a variable for commands below
-set(PROJECT_NAME pathfinder_cli)
+set(PROJECT_NAME pathfinder_loop)
 
 # Define your project and language
 # project(${PROJECT_NAME} CXX)
@@ -15,4 +15,5 @@ set(${PROJECT_NAME}_LIBS src_core ${Boost_LIBRARIES})
 
 # Define the executable
 add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SRCS})
-target_link_libraries(${PROJECT_NAME} ${${PROJECT_NAME}_LIBS})
+target_link_libraries(${PROJECT_NAME} ${${PROJECT_NAME}_LIBS} ${catkin_LIBRARIES})
+add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})

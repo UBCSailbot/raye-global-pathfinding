@@ -1,1 +1,2 @@
 add_subdirectory(pathfinder_cli)
+add_subdirectory(pathfinder_loop)
