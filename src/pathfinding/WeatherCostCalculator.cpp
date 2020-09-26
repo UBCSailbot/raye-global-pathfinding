@@ -6,6 +6,7 @@
 
 #define WEATHER_FACTOR 3000    //Produces the best path as of yet, needs more testing
 
+
 WeatherCostCalculator::WeatherCostCalculator(HexPlanet &planet,
                                            std::unique_ptr<WeatherHexMap> &map)
     : HaversineCostCalculator(planet), map_(std::move(map)) {}
@@ -58,4 +59,5 @@ double WeatherCostCalculator::calculate_map_cost(HexVertexId target,
     return mag * 2 - 32;
   }
   return 1000; //Really big cost value if wind speed is greater than 30 kts
+
 }

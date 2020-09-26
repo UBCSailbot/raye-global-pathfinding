@@ -71,8 +71,8 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
   for (HexVertexId id : result.path) {
     const auto &coord = planet.vertex(id).coordinate;
 
-    lon_str = coord.to_string_longitude();
-    lat_str = coord.to_string_latitude();
+    auto lon_str = coord.to_string_longitude();
+    auto lat_str = coord.to_string_latitude();
 
     pathResult.push_back(std::make_pair(std::stod(lon_str),std::stod(lat_str)));
 

@@ -163,13 +163,13 @@ void gribParse::saveKML() {
           "<Document><name>Wind</name><Folder>\n";
     std::string color;
     int time_step;
+  
     int wind_speed;
     std::string yellowArrow = "<href>https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Arrow-180%28ff0%29.svg/200px-Arrow-180%28ff0%29.svg.png</href>";
     std::string redArrow = "<href>https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Arrow-180%28f00%29.svg/200px-Arrow-180%28f00%29.svg.png</href>";
     std::string greenArrow = "<href>https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Arrow-180%28080%29.svg/200px-Arrow-180%28080%29.svg.png</href>";
     std::string orangeArrow = "<href>https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Arrow-180%28f80%29.svg/200px-Arrow-180%28f80%29.svg.png</href>";
     std::string whiteArrow = "<href>https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Arrow-180%28fff%29.svg/200px-Arrow-180%28fff%29.svg.png</href>";
-
 
     for (int i = 0; i < angles[0].size(); i++) {
       double dist = sqrt(pow(lats[i]-lats[angles[0].size()-1],2)+pow(lons[i]-lons[angles[0].size()-1],2));
@@ -203,6 +203,7 @@ void gribParse::saveKML() {
       }
       else{
         color = redArrow;
+
       }
 
         ss << "<GroundOverlay>"
