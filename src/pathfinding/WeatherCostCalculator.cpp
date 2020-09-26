@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-#define WEATHER_FACTOR 10000    //Produces the best path as of yet, needs more testing
+#define WEATHER_FACTOR 3000    //Produces the best path as of yet, needs more testing
 
 WeatherCostCalculator::WeatherCostCalculator(HexPlanet &planet,
                                            std::unique_ptr<WeatherHexMap> &map)
@@ -42,12 +42,20 @@ double WeatherCostCalculator::calculate_map_cost(HexVertexId target,
                                                HexVertexId source,
                                                uint32_t time) const {
   double target_mag = map_->get_weather(target, time).wind_speed,
-         source_mag = map_->get_weather(source, time).wind_speed;
-  if(target_mag<=5){
-    return 50 - (source_mag + target_mag);
+         source_mag = map_->get_weather(source, time).wind_speed,
+         mag = (source_mag + target_mag)/2;   //Average of this node and the next
+
+  if(mag<=5){   //See https://www.desmos.com/calculator/md1byjfsl2
+    return 17 - mag;
   }
-  else if(target_mag<18){
-    return (source_mag + target_mag) * 2 - 50;
+  else if(mag<11){
+    return 22 - mag * 2;
   }
-  return 1000; //Really big cost value if wind speed is greater than 40 kts
+  else if (mag<16){
+    return 0;
+  }
+  else if (mag<30){
+    return mag * 2 - 32;
+  }
+  return 1000; //Really big cost value if wind speed is greater than 30 kts
 }
