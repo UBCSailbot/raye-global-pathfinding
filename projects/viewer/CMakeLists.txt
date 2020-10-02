@@ -2,8 +2,7 @@
 set(PROJECT_NAME viewer)
 
 # Define your project and language
-# project(${PROJECT_NAME} CXX)
-project(${PROJECT_NAME})
+project(${PROJECT_NAME} CXX)
 
 include_directories(${OPENGL_INCLUDE_DIR})
 

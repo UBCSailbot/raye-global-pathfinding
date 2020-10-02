@@ -1,3 +1,0 @@
-<launch>
-    <node pkg="global_pathfinding" type="pathfinder_loop" name="global_pathfinding_loop" />
-</launch>
