@@ -163,30 +163,47 @@ void gribParse::saveKML() {
           "<Document><name>Wind</name><Folder>\n";
     std::string color;
     int time_step;
-
-    std::string darkGreenArrow = "<href>https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Green_Arrow_Down_Darker.svg/1000px-Green_Arrow_Down_Darker.svg.png</href>";
-    std::string redArrow = "<href>https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Red_Arrow_Down.svg/1024px-Red_Arrow_Down.svg.png</href>";
-    std::string greenArrow = "<href>https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Green_Arrow_Down.svg/1000px-Green_Arrow_Down.svg.png</href>";
-    std::string whiteArrow = "<href>https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/White_Arrow_Down.svg/560px-White_Arrow_Down.svg.png</href>";
+  
+    int wind_speed;
+    std::string yellowArrow = "<href>https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Arrow-180%28ff0%29.svg/200px-Arrow-180%28ff0%29.svg.png</href>";
+    std::string redArrow = "<href>https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Arrow-180%28f00%29.svg/200px-Arrow-180%28f00%29.svg.png</href>";
+    std::string greenArrow = "<href>https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Arrow-180%28080%29.svg/200px-Arrow-180%28080%29.svg.png</href>";
+    std::string orangeArrow = "<href>https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Arrow-180%28f80%29.svg/200px-Arrow-180%28f80%29.svg.png</href>";
+    std::string whiteArrow = "<href>https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Arrow-180%28fff%29.svg/200px-Arrow-180%28fff%29.svg.png</href>";
 
     for (int i = 0; i < angles[0].size(); i++) {
       double dist = sqrt(pow(lats[i]-lats[angles[0].size()-1],2)+pow(lons[i]-lons[angles[0].size()-1],2));
 
       if(dist < 2){
-        color = darkGreenArrow;
         time_step = 0;
       }
       else if(dist < 4){
-        color = redArrow;
         time_step = 1;
       }
       else if(dist < 6){
-        color = greenArrow;
         time_step = 2;
       }
       else{
-        color = whiteArrow;
         time_step = 3;
+      }
+
+      wind_speed = magnitudes[time_step][i];
+
+      if(wind_speed < 6){
+        color = whiteArrow;
+      }
+      else if(wind_speed < 11){
+        color = yellowArrow;
+      }
+      else if(wind_speed < 16){
+        color = greenArrow;
+      }
+      else if(wind_speed < 21){
+        color = orangeArrow;
+      }
+      else{
+        color = redArrow;
+
       }
 
         ss << "<GroundOverlay>"
