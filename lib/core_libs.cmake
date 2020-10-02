@@ -7,7 +7,7 @@ set(CORE_LIBS)
 list(APPEND CORE_LIBS ${CMAKE_THREAD_LIBS_INIT})
 
 # Generates source for shared message data types using protobuf
-add_subdirectory(./lib/protofiles)
+add_subdirectory(${CMAKE_SOURCE_DIR}/lib/protofiles)
 include_directories(${ProtobufIncludePath})
 list(APPEND CORE_LIBS protofiles)
 
@@ -36,8 +36,8 @@ set(NANOGUI_BUILD_PYTHON  OFF CACHE BOOL " " FORCE)
 set(NANOGUI_INSTALL       OFF CACHE BOOL " " FORCE)
 
 # Add the configurations from nanogui
-add_subdirectory(./lib/nanogui)
-include_directories(./lib/nanogui/include)
+add_subdirectory(lib/nanogui)
+include_directories(lib/nanogui/include)
 
 # For reliability of parallel build, make the NanoGUI targets dependencies
 set_property(TARGET glfw glfw_objects nanogui PROPERTY FOLDER "dependencies")
