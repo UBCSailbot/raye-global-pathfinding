@@ -1,11 +1,9 @@
 // Copyright 2017 UBC Sailbot
 
 #include "pathfinding/WeatherCostCalculator.h"
+#include "pathfinding/WeatherHexMap.h"
 
 #include <iostream>
-
-#define WEATHER_FACTOR 3000    //Produces the best path as of yet, needs more testing
-
 
 WeatherCostCalculator::WeatherCostCalculator(HexPlanet &planet,
                                            std::unique_ptr<WeatherHexMap> &map)
@@ -20,7 +18,7 @@ CostCalculator::Result WeatherCostCalculator::calculate_neighbour(HexVertexId so
   // |neighbour| is valid, else an exception would have been thrown earlier
   HexVertexId target = planet_.vertex(source).neighbours[neighbour];
 
-  result.cost += WEATHER_FACTOR * calculate_map_cost(source, target, start_time);
+  result.cost += weather_factor * calculate_map_cost(source, target, start_time);
 
   return result;
 }
@@ -32,7 +30,7 @@ CostCalculator::Result WeatherCostCalculator::calculate_target(HexVertexId sourc
 
 //  std::cout << result.cost << " ";
 
-  result.cost += WEATHER_FACTOR * calculate_map_cost(source, target, start_time);
+  result.cost += weather_factor * calculate_map_cost(source, target, start_time);
 
   //std::cout << result.cost << std::endl;
 

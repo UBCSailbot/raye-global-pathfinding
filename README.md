@@ -66,27 +66,37 @@ You can run the cpp lint script from our friends at Google with:
 ## Running Program
 To run the program from our launch site to Hawaii, simply run
 ```bash
-./build/bin/pathfinder_cli -p 10 --navigate 48 235 20 206
+./build/bin/pathfinder_cli -p 10 --navigate 48 235 21 203
 ```
 This should generate a path based on current weather conditions and will produce 2 KML files:
 -`build/bin/Path.kml`, a visualization of the path generated, based on the GPS coordinates of the path
 -`build/bin/Wind.kml`, a visualization of wind data over time (each color represents a 3 hour increment, based on the estimated speed of the boat)
 
-To see these files, navigate to [Google Earth](https://earth.google.com) and from the menu on the side, select `Projects>New Project>Import KML file from computer`
+To see these files, do one of the following:
+  1. (Recommended) Follow the instructions at [this link](https://linuxconfig.org/how-to-install-google-earth-on-ubuntu-18-04-bionic-beaver-linux), then File->Open and open the files listed above.
+  2. Navigate to [Google Earth](https://earth.google.com) and from the menu on the side, select `Projects>New Project>Import KML file from computer`.
 
 The program will also generate a string consisting of the [Longitude, Latitude] of each GPS waypoint. Additionally, there is an unused variable of type vector<pair<double,double>> in `./src/pathfinding/PathfinderResultPrinter.cpp` that contains the GPS data in the same format.
 
 ### Adjusting Cost Function
 
-Finally, it is possible to adjust the weight given to wind measurements in the pathfinding cost function by navigating to `src/pathfinding/WeatherCostCalculator.cpp` and changing the value of WEATHER_FACTOR. Currently, 10000 seems to be fairly optimal in terms of optimal routing vs. compile time.
-
-When you are done, run
+Finally, it is possible to adjust the weight given to wind measurements in the pathfinding cost function by adding the argument `-w int` to the pathfinder_cli command. For example:
 ```bash
-./build/make
+./build/bin/pathfinder_cli -w 1000 -p 10 --navigate 48 235 21 203
 ```
-and run the program again, as outlined above.
+The default value for the weather factor is 3000.
 
 ### Testing
+
+To test global pathfinding with old weather data:
+  1. Make sure the GRIB file is in your /build/ folder and named `data.grb`
+  2. Add the option -g to the pathfinder_cli command above, eg.
+  ```bash
+  ./build/bin/pathfinder_cli -g -p 10 --navigate 48 235 21 203
+  ```
+
+To change the resolution of your path:
+  Change the argument after -p to 11 (takes about a minute) or 12 (takes about 5 minutes)
 
 ##### Creating & Running Tests
 Whenever you add new tests, you will need to add the required `.cpp` and `.h` files to the `TEST_FILES` parameter in `test/basic_tests/CMakelists.txt`.

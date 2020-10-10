@@ -44,3 +44,11 @@ class WeatherHexMap {
 };
 
 #endif  // PATHFINDING_WEATHERHEXMAP_H_
+
+#ifndef MY_GLOBALS_H
+#define MY_GLOBALS_H
+
+extern int weather_factor;
+extern bool generate_new_grib;
+
+#endif

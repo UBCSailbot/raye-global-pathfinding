@@ -11,7 +11,7 @@
 #include <pathfinding/WeatherCostCalculator.h>
 #include <pathfinding/AStarPathfinder.h>
 #include <pathfinding/PathfinderResultPrinter.h>
-
+#include "pathfinding/WeatherHexMap.h"
 #include <logic/StandardCalc.h>
 
 constexpr uint8_t kInvalidIndirectNeighbourDepth = static_cast<uint8_t> (-1);
@@ -113,7 +113,9 @@ int main(int argc, char const *argv[]) {
         ("help,h", "Help screen")
         ("v,verbose", "Verbose output")
         ("s,silent", "Silence useful output")
+        ("g,grib_toggle", "Disable new weather data downloads")
         ("p,planet_size", boost::program_options::value<int>()->default_value(1), "Planet Size")
+        ("w,weather_factor", boost::program_options::value<int>(), "Weather Factor")
         ("n,neighbour", boost::program_options::value<HexVertexId>(), "Vertex to find neighbours")
         ("i,indirect", boost::program_options::value<int>(), "Indirect neighbour depth")
         ("c,coordinates",
@@ -135,6 +137,14 @@ int main(int argc, char const *argv[]) {
       // Show help if no non-default args are passed (p is always defined).
       std::cout << desc;
       return EXIT_FAILURE;
+    }
+
+    if (vm.count("g")){
+      generate_new_grib = false;
+    }
+
+    if (vm.count("w") > 0){
+      weather_factor = (vm["w"].as<int>());
     }
 
     bool silent = vm.count("s") > 0;

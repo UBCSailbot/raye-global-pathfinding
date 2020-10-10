@@ -1,6 +1,7 @@
 // Copyright 2017 UBC Sailbot
 
 #include "pathfinding/PathfinderResultPrinter.h"
+#include "pathfinding/WeatherHexMap.h"
 
 #include <iomanip>
 #include <fstream>
@@ -47,9 +48,6 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
   std::string file_name = "data.grb";
 
   std::vector<std::pair<double,double>> pathResult;
-
-  std::string url = UrlBuilder::BuildURL(std::to_string(north), std::to_string(south), std::to_string(east), std::to_string(west));
-  UrlDownloader::Downloader(url);
 
   gribParse file = gribParse(file_name);
   double sum = 0, max = 0, current_wind;
@@ -109,6 +107,8 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
   handle << "</coordinates></LineString></Placemark></Document></kml>\n";
 
   ss << "</coordinates></LineString></Placemark></Document></kml>\n" << std::endl;
+
+  ss << "Weather factor: " << std::to_string(weather_factor) << std::endl;
 
   ss << "Avg wind speed is: " << std::to_string(sum/count) << std::endl;
 
