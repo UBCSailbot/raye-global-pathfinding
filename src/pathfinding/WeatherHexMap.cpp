@@ -15,6 +15,8 @@
 
 bool generate_new_grib = true;
 int weather_factor = 3000;
+std::string file_name = "data.grb";
+
 
 WeatherHexMap::WeatherHexMap(const HexPlanet &planet, const uint32_t time_steps, int start_lat, int start_lon, int end_lat, int end_lon)
     : planet_(planet), steps_(time_steps) {
@@ -22,7 +24,7 @@ WeatherHexMap::WeatherHexMap(const HexPlanet &planet, const uint32_t time_steps,
 
   int gribIndex,north=start_lat, south=end_lat, east=start_lon, west=end_lon;
   int lat,lon;
-  std::string file_name = "data.grb";
+ // std::string file_name = "data.grb";
 
   if(generate_new_grib){
     std::string url = UrlBuilder::BuildURL(std::to_string(north), std::to_string(south), std::to_string(east), std::to_string(west));

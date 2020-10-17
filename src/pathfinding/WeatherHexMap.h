@@ -50,5 +50,6 @@ class WeatherHexMap {
 
 extern int weather_factor;
 extern bool generate_new_grib;
+extern std::string file_name;
 
 #endif
