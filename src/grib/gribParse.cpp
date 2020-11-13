@@ -12,7 +12,7 @@
  * @return
  */
 
-gribParse::gribParse(const std::string filename) {
+gribParse::gribParse(const std::string & filename) {
   err = 0;
   in = fopen(filename.c_str(), "r");
   if (!in) {
@@ -164,7 +164,6 @@ void gribParse::saveKML() {
           "<Document><name>Wind</name><Folder>\n";
     std::string color;
     int time_step;
-    int wind_speed;
     std::string yellowArrow = "<href>https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/"
                               "Arrow-180%28ff0%29.svg/200px-Arrow-180%28ff0%29.svg.png</href>";
     std::string redArrow = "<href>https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/"
@@ -189,7 +188,7 @@ void gribParse::saveKML() {
         time_step = 3;
       }
 
-      wind_speed = magnitudes[time_step][i];
+      int wind_speed = magnitudes[time_step][i];
 
       if (wind_speed < 6) {
         color = whiteArrow;

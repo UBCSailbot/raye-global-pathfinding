@@ -5,7 +5,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 Program::Program(const std::vector<Shader> &shaders) : object_(0) {
-  if (shaders.size() <= 0) {
+  if (shaders.size() == 0) {
     throw std::runtime_error("No shaders were provided to create the program");
   }
 

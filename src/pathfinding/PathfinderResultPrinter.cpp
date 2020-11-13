@@ -43,16 +43,12 @@ std::string PathfinderResultPrinter::PrintCoordinates(HexPlanet &planet, const P
 std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinder::Result &result, int weather_factor) {
   std::ofstream handle;
   std::stringstream ss;
-  int gribIndex, north = 49, south = 21, east = 235, west = 203;
-  int lat, lon, old_lat, old_lon;
+  int north = 49, south = 21, east = 235, west = 203;
   std::string file_name = "data.grb";
 
   std::vector<std::pair<double, double>> pathResult;
 
   gribParse file = gribParse(file_name);
-  double sum = 0, max = 0, current_wind;
-  int count = 0;
-  uint32_t totalDist = 0.0, avgDist = 0.0;
 
   HexVertexId old_id;
 
@@ -66,6 +62,9 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
   ss << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
       "<kml xmlns=\"http://earth.google.com/kml/2.0\"><Document><Placemark><LineString><coordinates>\n";
 
+  int count = 0;
+  double sum = 0, max = 0;
+  uint32_t totalDist = 0.0;
   for (HexVertexId id : result.path) {
     const auto &coord = planet.vertex(id).coordinate;
 
@@ -79,15 +78,13 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
 
     if (count > 0) {
         totalDist += planet.DistanceBetweenVertices(old_id, id);
-        const auto &old_coord = planet.vertex(old_id).coordinate;
-        old_lat = old_coord.round_to_int_latitude();
-        old_lon = old_coord.round_to_int_latitude();
     }
 
+    int lat, lon;
     lat = coord.round_to_int_latitude();
     lon = coord.round_to_int_longitude();
     lon = lon < 0 ? lon+360 : lon;
-    gribIndex = (lat-south) * (east-west+1) + (lon-west);
+    int gribIndex = (lat-south) * (east-west+1) + (lon-west);
 
     int time_step;
     double dist = sqrt(pow(lat-north, 2) + pow(lon-east, 2));
@@ -99,7 +96,7 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
       time_step = 2;
     else
       time_step = 3;
-    current_wind = file.magnitudes[time_step][gribIndex];
+    double current_wind = file.magnitudes[time_step][gribIndex];
 
     sum += current_wind;
     if (current_wind > max) max = current_wind;

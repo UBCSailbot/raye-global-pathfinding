@@ -10,14 +10,14 @@
  * @return
  */
 
-void UrlDownloader::Downloader(const std::string url) {
+void UrlDownloader::Downloader(const std::string & url) {
   CURL *curl;
-  FILE *fp;
   CURLcode res;
 
-  char out_file_name[FILENAME_MAX] = "data.grb";
   curl = curl_easy_init();
   if (curl) {
+    char out_file_name[FILENAME_MAX] = "data.grb";
+    FILE *fp;
     fp = fopen(out_file_name, "wb");
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
