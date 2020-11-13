@@ -1,17 +1,17 @@
 // Copyright 2017 UBC Sailbot
 
 #include "pathfinding/PathfinderResultPrinter.h"
+#include "pathfinding/WeatherCostCalculator.h"
 #include "pathfinding/WeatherHexMap.h"
+#include "grib/gribParse.h"
+#include "grib/UrlBuilder.h"
+#include "grib/UrlDownloader.h"
+#include "logic/StandardCalc.h"
 
 #include <iomanip>
 #include <fstream>
-#include <pathfinding/WeatherCostCalculator.h>
-#include <grib/UrlBuilder.h>
-#include <grib/UrlDownloader.h>
 #include <string>
-#include "eccodes.h"
-#include "grib/gribParse.h"
-#include <logic/StandardCalc.h>
+#include <eccodes.h>
 
 
 std::string PathfinderResultPrinter::PrintDefault(const Pathfinder::Result &result) {
@@ -43,11 +43,11 @@ std::string PathfinderResultPrinter::PrintCoordinates(HexPlanet &planet, const P
 std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinder::Result &result) {
   std::ofstream handle;
   std::stringstream ss;
-  int gribIndex,north=49, south=21, east=235, west=203;
-  int lat,lon,old_lat,old_lon;
+  int gribIndex, north = 49, south = 21, east = 235, west = 203;
+  int lat, lon, old_lat, old_lon;
   std::string file_name = "data.grb";
 
-  std::vector<std::pair<double,double>> pathResult;
+  std::vector<std::pair<double, double>> pathResult;
 
   gribParse file = gribParse(file_name);
   double sum = 0, max = 0, current_wind;
@@ -72,12 +72,12 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
     auto lon_str = coord.to_string_longitude();
     auto lat_str = coord.to_string_latitude();
 
-    pathResult.push_back(std::make_pair(std::stod(lon_str),std::stod(lat_str)));
+    pathResult.push_back(std::make_pair(std::stod(lon_str), std::stod(lat_str)));
 
     handle << lon_str << "," << lat_str << std::endl;
     ss << pathResult.back().first << "," << pathResult.back().second << std::endl;
 
-    if (count > 0){
+    if (count > 0) {
         totalDist += planet.DistanceBetweenVertices(old_id, id);
         const auto &old_coord = planet.vertex(old_id).coordinate;
         old_lat = old_coord.round_to_int_latitude();
@@ -90,15 +90,19 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
     gribIndex = (lat-south) * (east-west+1) + (lon-west);
 
     int time_step;
-    double dist = sqrt(pow(lat-north,2)+pow(lon-east,2));
-    if(dist < 2) time_step = 0;
-    else if(dist < 4) time_step = 1;
-    else if(dist < 6) time_step = 2;
-    else time_step = 3;
+    double dist = sqrt(pow(lat-north, 2) + pow(lon-east, 2));
+    if (dist < 2)
+      time_step = 0;
+    else if (dist < 4)
+      time_step = 1;
+    else if (dist < 6)
+      time_step = 2;
+    else
+      time_step = 3;
     current_wind = file.magnitudes[time_step][gribIndex];
 
     sum += current_wind;
-    if(current_wind>max) max = current_wind;
+    if (current_wind > max) max = current_wind;
     count++;
 
     old_id = id;
@@ -114,7 +118,8 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
 
   ss << "Max wind speed is: " << std::to_string(max) << std::endl;
 
-  ss << "Avg distance is: " << std::to_string(totalDist/(count*1000)) << "." << std::to_string((totalDist/count) % 1000) << std::endl;
+  ss << "Avg distance is: " << std::to_string(totalDist/(count*1000))
+     << "." << std::to_string((totalDist/count) % 1000) << std::endl;
 
   handle.close();
 

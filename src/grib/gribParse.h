@@ -17,7 +17,7 @@ class gribParse {
         static double calcAngle(const double u_comp, const double v_comp);
         void saveKML();
 
-        int64 number_of_points_;
+        int64_t number_of_points_;
         std::vector<double> lats;
         std::vector<double> lons;
         std::vector<double> wind_gust;

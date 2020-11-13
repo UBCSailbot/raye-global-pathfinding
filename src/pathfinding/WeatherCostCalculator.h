@@ -44,16 +44,16 @@ class WeatherCostCalculator : public HaversineCostCalculator {
   Result calculate_target(HexVertexId source, HexVertexId target, uint32_t start_time) const override;
 
   // Class can't be copied
-  //WeatherCostCalculator(const WeatherCostCalculator &) = delete;
+  // WeatherCostCalculator(const WeatherCostCalculator &) = delete;
 
   // Class can't be moved
-  //WeatherCostCalculator(WeatherCostCalculator &&) = delete;
+  // WeatherCostCalculator(WeatherCostCalculator &&) = delete;
 
   // Class can't be copy assigned
-  //WeatherCostCalculator &operator=(const WeatherCostCalculator &) = delete;
+  // WeatherCostCalculator &operator=(const WeatherCostCalculator &) = delete;
 
   // Class can't be move assigned
-  //WeatherCostCalculator &operator=(WeatherCostCalculator &&) = delete;
+  // WeatherCostCalculator &operator=(WeatherCostCalculator &&) = delete;
 
  private:
   std::unique_ptr<WeatherHexMap> map_;
