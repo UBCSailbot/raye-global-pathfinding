@@ -6,7 +6,8 @@
 
 class UrlBuilder {
  public:
-    static std::string BuildURL(const std::string & north, const std::string & south, const std::string & east, const std::string & west);
+    static std::string BuildURL(const std::string & north, const std::string & south,
+                                const std::string & east, const std::string & west);
 };
 
 #endif  // GRIB_URLBUILDER_H_
