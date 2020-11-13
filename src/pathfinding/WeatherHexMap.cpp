@@ -13,13 +13,10 @@
 #include <stdlib.h>
 #include <math.h>
 
-bool generate_new_grib = true;
-int weather_factor = 3000;
-std::string file_name = "data.grb";
-
 
 WeatherHexMap::WeatherHexMap(const HexPlanet &planet, const uint32_t time_steps,
-                             int start_lat, int start_lon, int end_lat, int end_lon)
+                             int start_lat, int start_lon, int end_lat, int end_lon,
+                             bool generate_new_grib, const std::string & file_name)
     : planet_(planet), steps_(time_steps) {
   weather_data_.resize(boost::extents[planet_.vertex_count()][time_steps]);
 

@@ -40,7 +40,7 @@ std::string PathfinderResultPrinter::PrintCoordinates(HexPlanet &planet, const P
   return ss.str();
 }
 
-std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinder::Result &result) {
+std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinder::Result &result, int weather_factor) {
   std::ofstream handle;
   std::stringstream ss;
   int gribIndex, north = 49, south = 21, east = 235, west = 203;

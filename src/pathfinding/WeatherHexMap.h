@@ -18,12 +18,8 @@ class WeatherHexMap {
    * @param planet The planet.
    * @param time_steps How many |WeatherDatum|s to store for each vertex.
    */
-  explicit WeatherHexMap(const HexPlanet &planet,
-                         const uint32_t time_steps,
-                         int start_lat,
-                         int start_lon,
-                         int end_lat,
-                         int end_lon);
+  explicit WeatherHexMap(const HexPlanet &planet, const uint32_t time_steps, int start_lat, int start_lon,
+                         int end_lat, int end_lon, bool generate_new_grib=true, const std::string & file_name="data.grb");
 
   /**
    * Gets the |WeatherDatum| associated with a specific vertex at a specified
@@ -42,14 +38,5 @@ class WeatherHexMap {
   typedef boost::multi_array<WeatherDatum, 2> WeatherMatrix;
   WeatherMatrix weather_data_;
 };
-
-#endif  // PATHFINDING_WEATHERHEXMAP_H_
-
-#ifndef MY_GLOBALS_H
-#define MY_GLOBALS_H
-
-extern int weather_factor;
-extern bool generate_new_grib;
-extern std::string file_name;
 
 #endif  // PATHFINDING_WEATHERHEXMAP_H_

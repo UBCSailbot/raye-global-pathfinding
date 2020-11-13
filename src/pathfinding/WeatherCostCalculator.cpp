@@ -6,8 +6,8 @@
 #include <iostream>
 
 WeatherCostCalculator::WeatherCostCalculator(HexPlanet &planet,
-                                           std::unique_ptr<WeatherHexMap> &map)
-    : HaversineCostCalculator(planet), map_(std::move(map)) {}
+                                           std::unique_ptr<WeatherHexMap> &map, int weather_factor)
+    : HaversineCostCalculator(planet), map_(std::move(map)), weather_factor_(weather_factor) {}
 
 CostCalculator::Result WeatherCostCalculator::calculate_neighbour(HexVertexId source,
                                                                 size_t neighbour,
@@ -18,7 +18,7 @@ CostCalculator::Result WeatherCostCalculator::calculate_neighbour(HexVertexId so
   // |neighbour| is valid, else an exception would have been thrown earlier
   HexVertexId target = planet_.vertex(source).neighbours[neighbour];
 
-  result.cost += weather_factor * calculate_map_cost(source, target, start_time);
+  result.cost += weather_factor_ * calculate_map_cost(source, target, start_time);
 
   return result;
 }
@@ -30,7 +30,7 @@ CostCalculator::Result WeatherCostCalculator::calculate_target(HexVertexId sourc
 
   std::cout << result.cost << " ";
 
-  result.cost += weather_factor * calculate_map_cost(source, target, start_time);
+  result.cost += weather_factor_ * calculate_map_cost(source, target, start_time);
 
   std::cout << result.cost << std::endl;
 
