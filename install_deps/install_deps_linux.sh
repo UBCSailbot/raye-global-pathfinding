@@ -20,7 +20,8 @@ set -e
 echo "STARTING THE SCRIPT"
 pwd
 ls
-ls lib
+echo "=========="
+ls lib/nanogui
 
 ubuntu_version=`lsb_release -rs | sed 's/\.//'`
 echo "STARTING THE SCRIPT"
