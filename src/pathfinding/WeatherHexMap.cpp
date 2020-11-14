@@ -29,7 +29,7 @@ WeatherHexMap::WeatherHexMap(const HexPlanet &planet, const uint32_t time_steps,
     UrlDownloader::Downloader(url);
   }
 
-  gribParse file = gribParse(file_name);
+  gribParse file = gribParse(file_name, time_steps);
   file.saveKML();
 
   for (WeatherMatrix::index i = 0; i < planet_.vertex_count(); ++i) {

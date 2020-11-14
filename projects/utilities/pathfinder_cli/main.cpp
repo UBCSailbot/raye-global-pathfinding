@@ -46,11 +46,12 @@ Pathfinder::Result run_pathfinder(HexPlanet &planet,
                                   int weather_factor,
                                   bool generate_new_grib,
                                   const std::string & file_name,
+                                  int time_steps,
                                   bool silent,
                                   bool verbose) {
   HaversineHeuristic heuristic = HaversineHeuristic(planet);
   HaversineCostCalculator h_cost_calculator = HaversineCostCalculator(planet);
-  WeatherHexMap weather_map = WeatherHexMap(planet, 10, start_lat, start_lon, end_lat, end_lon, generate_new_grib, file_name);
+  WeatherHexMap weather_map = WeatherHexMap(planet, time_steps, start_lat, start_lon, end_lat, end_lon, generate_new_grib, file_name);
   auto wmap_pointer = std::make_unique<WeatherHexMap>(weather_map);
   WeatherCostCalculator cost_calculator = WeatherCostCalculator(planet, wmap_pointer, weather_factor);
   AStarPathfinder pathfinder(planet, heuristic, cost_calculator, source, target, true);
@@ -121,6 +122,7 @@ int main(int argc, char const *argv[]) {
         ("w,weather_factor", boost::program_options::value<int>()->default_value(3000), "Weather Factor")
         ("n,neighbour", boost::program_options::value<HexVertexId>(), "Vertex to find neighbours")
         ("i,indirect", boost::program_options::value<int>(), "Indirect neighbour depth")
+        ("t,time_steps", boost::program_options::value<int>()->default_value(10), "Max time steps for wind speed")
         ("c,coordinates",
          boost::program_options::value<std::vector<HexVertexId>>()->multitoken(),
          "Vertices for which to find GPS Coordinates")
@@ -166,6 +168,7 @@ int main(int argc, char const *argv[]) {
                                                            : kInvalidIndirectNeighbourDepth;
     HexPlanet planet = generate_planet(planet_size, indirect_neighbour_depth, silent, verbose);
 
+    int time_steps = vm["t"].as<int>();
 
     if (vm.count("n")) {
       find_neighbours(planet, vm["n"].as<HexVertexId>());
@@ -178,7 +181,8 @@ int main(int argc, char const *argv[]) {
         throw std::runtime_error("Pathfinding requires two hex IDs: <start> <end>");
       }
 
-      auto result = run_pathfinder(planet, points[0], points[1], weather_factor, generate_new_grib, file_name, silent, verbose);
+      auto result = run_pathfinder(planet, points[0], points[1], weather_factor, generate_new_grib, file_name,
+                                   time_steps, silent, verbose);
 
       switch (format) {
         case OutputFormat::kDefault:
@@ -220,7 +224,8 @@ int main(int argc, char const *argv[]) {
       HexVertexId start_vertex = planet.HexVertexFromPoint(start_point);
       HexVertexId end_vertex = planet.HexVertexFromPoint(end_point);
 
-      auto result = run_pathfinder(planet, start_vertex, end_vertex, weather_factor, generate_new_grib, file_name, silent, verbose);
+      auto result = run_pathfinder(planet, start_vertex, end_vertex, weather_factor, generate_new_grib, file_name,
+                                   time_steps, silent, verbose);
       std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor);
 
     } else {
