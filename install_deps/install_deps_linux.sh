@@ -18,6 +18,9 @@ set -e
 #   https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/
 #
 echo "STARTING THE SCRIPT"
+pwd
+ls
+ls lib
 
 ubuntu_version=`lsb_release -rs | sed 's/\.//'`
 echo "STARTING THE SCRIPT"
