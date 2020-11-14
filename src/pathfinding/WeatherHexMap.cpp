@@ -59,6 +59,7 @@ const WeatherDatum& WeatherHexMap::get_weather(HexVertexId vertex_id,
     throw std::runtime_error("Invalid vertex ID.");
   }
 
+  // Clamp time to be at max allowable value
   if (time >= steps_) {
     time = steps_ - 1;
   }
