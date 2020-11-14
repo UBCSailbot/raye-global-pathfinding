@@ -12,7 +12,7 @@
  * @return
  */
 
-gribParse::gribParse(const std::string & filename) {
+gribParse::gribParse(const std::string & filename, int time_steps) {
   err = 0;
   in = fopen(filename.c_str(), "r");
   if (!in) {
@@ -21,8 +21,6 @@ gribParse::gribParse(const std::string & filename) {
 
   std::vector<std::vector<double>> u_values;
   std::vector<std::vector<double>> v_values;
-
-  int time_steps_ = 10;
 
   for (int code_handle_iteration = 1;
           ((lib_handle = codes_handle_new_from_file(0, in, PRODUCT_GRIB, &err)) != NULL) && code_handle_iteration <= 31;
@@ -60,44 +58,44 @@ gribParse::gribParse(const std::string & filename) {
               CODES_CHECK(codes_grib_get_data(lib_handle, lats.data(), lons.data(), temperature.data()), 0);
               break;
           case 7:
-              u_values.resize(time_steps_);
+              u_values.resize(time_steps);
               u_values[0].resize(number_of_points_);
               CODES_CHECK(codes_grib_get_data(lib_handle, lats.data(), lons.data(), u_values[0].data()), 0);
               break;
           case 8:
-              v_values.resize(time_steps_);
+              v_values.resize(time_steps);
               v_values[0].resize(number_of_points_);
               CODES_CHECK(codes_grib_get_data(lib_handle, lats.data(), lons.data(), v_values[0].data()), 0);
               std::cout << "0";
               break;
           case 15:
-              u_values.resize(time_steps_);
+              u_values.resize(time_steps);
               u_values[1].resize(number_of_points_);
               CODES_CHECK(codes_grib_get_data(lib_handle, lats.data(), lons.data(), u_values[1].data()), 0);
               std::cout << "1";
               break;
           case 16:
-              v_values.resize(time_steps_);
+              v_values.resize(time_steps);
               v_values[1].resize(number_of_points_);
               CODES_CHECK(codes_grib_get_data(lib_handle, lats.data(), lons.data(), v_values[1].data()), 0);
               break;
           case 23:
-              u_values.resize(time_steps_);
+              u_values.resize(time_steps);
               u_values[2].resize(number_of_points_);
               CODES_CHECK(codes_grib_get_data(lib_handle, lats.data(), lons.data(), u_values[2].data()), 0);
               break;
           case 24:
-              v_values.resize(time_steps_);
+              v_values.resize(time_steps);
               v_values[2].resize(number_of_points_);
               CODES_CHECK(codes_grib_get_data(lib_handle, lats.data(), lons.data(), v_values[2].data()), 0);
               break;
           case 31:
-              u_values.resize(time_steps_);
+              u_values.resize(time_steps);
               u_values[3].resize(number_of_points_);
               CODES_CHECK(codes_grib_get_data(lib_handle, lats.data(), lons.data(), u_values[3].data()), 0);
               break;
           case 32:
-              v_values.resize(time_steps_);
+              v_values.resize(time_steps);
               v_values[3].resize(number_of_points_);
               CODES_CHECK(codes_grib_get_data(lib_handle, lats.data(), lons.data(), v_values[3].data()), 0);
               break;
@@ -106,18 +104,18 @@ gribParse::gribParse(const std::string & filename) {
       }
       codes_handle_delete(lib_handle);
   }
-  angles.resize(time_steps_);
-  magnitudes.resize(time_steps_);
-  missing.resize(time_steps_);
+  angles.resize(time_steps);
+  magnitudes.resize(time_steps);
+  missing.resize(time_steps);
 
-  u_values.resize(time_steps_);
-  v_values.resize(time_steps_);
+  u_values.resize(time_steps);
+  v_values.resize(time_steps);
 
 
   CODES_CHECK(codes_set_double(lib_handle, "missingValue", kMissing), 0);
 
   // adjust latitude and longitude, and generate resultant angles and magnitudes
-  for (int i = 0; i < time_steps_; i++) {
+  for (int i = 0; i < time_steps; i++) {
       angles[i].resize(number_of_points_);
       magnitudes[i].resize(number_of_points_);
       missing[i].resize(number_of_points_);

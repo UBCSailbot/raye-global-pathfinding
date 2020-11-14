@@ -12,7 +12,7 @@
 
 class gribParse {
  public:
-        explicit gribParse(const std::string & filename);
+        explicit gribParse(const std::string & filename, int time_steps = 10);
         static double calcMagnitude(const double u_comp, const double v_comp);
         static double calcAngle(const double u_comp, const double v_comp);
         void saveKML();
