@@ -28,11 +28,11 @@ CostCalculator::Result WeatherCostCalculator::calculate_target(HexVertexId sourc
                                                              uint32_t start_time) const {
   Result result = HaversineCostCalculator::calculate_target(source, target, start_time);
 
-  std::cout << result.cost << " ";
+  // std::cout << result.cost << " ";
 
   result.cost += weather_factor_ * calculate_map_cost(source, target, start_time);
 
-  std::cout << result.cost << std::endl;
+  // std::cout << result.cost << std::endl;
 
   return result;
 }

@@ -50,7 +50,7 @@ Pathfinder::Result run_pathfinder(HexPlanet &planet,
                                   bool verbose) {
   HaversineHeuristic heuristic = HaversineHeuristic(planet);
   HaversineCostCalculator h_cost_calculator = HaversineCostCalculator(planet);
-  WeatherHexMap weather_map = WeatherHexMap(planet, 4, start_lat, start_lon, end_lat, end_lon, generate_new_grib, file_name);
+  WeatherHexMap weather_map = WeatherHexMap(planet, 10, start_lat, start_lon, end_lat, end_lon, generate_new_grib, file_name);
   auto wmap_pointer = std::make_unique<WeatherHexMap>(weather_map);
   WeatherCostCalculator cost_calculator = WeatherCostCalculator(planet, wmap_pointer, weather_factor);
   AStarPathfinder pathfinder(planet, heuristic, cost_calculator, source, target, true);

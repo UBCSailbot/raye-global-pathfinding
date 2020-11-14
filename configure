@@ -22,7 +22,7 @@ mkdir -p ${BUILD_DIRECTORY}
 cd ${BUILD_DIRECTORY}
 
 # Build
-cmake ..
+cmake -DCMAKE_BUILD_TYPE=Debug ..
 make
 
 # Return to project root directory

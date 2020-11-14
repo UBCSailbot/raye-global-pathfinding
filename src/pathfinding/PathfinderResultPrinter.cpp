@@ -118,6 +118,9 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
   ss << "Avg distance is: " << std::to_string(totalDist/(count*1000))
      << "." << std::to_string((totalDist/count) % 1000) << std::endl;
 
+  ss << "Total distance is: " << std::to_string(totalDist/(1000))
+     << "." << std::to_string((totalDist) % 1000) << std::endl;
+
   handle.close();
 
   return ss.str();

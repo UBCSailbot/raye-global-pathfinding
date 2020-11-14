@@ -7,7 +7,7 @@
 static constexpr size_t kSizeOfTestPlanet = 4;
 
 /// Number of time steps used to create test WeatherHexMap
-static constexpr uint32_t kTimeSteps = 10;
+static constexpr uint32_t kTimeSteps = 4;
 
 /// Default travel time to use in cost calculations
 static constexpr uint32_t kTravelTime = 1;

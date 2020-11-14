@@ -22,7 +22,7 @@ gribParse::gribParse(const std::string & filename) {
   std::vector<std::vector<double>> u_values;
   std::vector<std::vector<double>> v_values;
 
-  int time_steps_ = 5;
+  int time_steps_ = 10;
 
   for (int code_handle_iteration = 1;
           ((lib_handle = codes_handle_new_from_file(0, in, PRODUCT_GRIB, &err)) != NULL) && code_handle_iteration <= 31;
