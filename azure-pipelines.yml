@@ -19,7 +19,7 @@ steps:
 
 - script: |
     cd build
-    make
+    make all -j 4
   displayName: 'make'
   
 - script: |
