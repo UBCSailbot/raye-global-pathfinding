@@ -12,6 +12,7 @@
 #include "eccodes.h"
 #include "grib/gribParse.h"
 #include <logic/StandardCalc.h>
+#include <vector>
 
 
 std::string PathfinderResultPrinter::PrintDefault(const Pathfinder::Result &result) {
@@ -38,6 +39,21 @@ std::string PathfinderResultPrinter::PrintCoordinates(HexPlanet &planet, const P
   }
 
   return ss.str();
+}
+
+
+std::vector<std::pair<double, double>> PathfinderResultPrinter::GetVector(HexPlanet &planet, const Pathfinder::Result &result) {
+  std::vector<std::pair<double,double>> pathResult;
+
+  for (HexVertexId id : result.path) {
+    const auto &coord = planet.vertex(id).coordinate;
+    auto lon_str = coord.to_string_longitude();
+    auto lat_str = coord.to_string_latitude();
+
+    pathResult.push_back(std::make_pair(std::stod(lon_str),std::stod(lat_str)));
+  }
+
+  return pathResult;
 }
 
 std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinder::Result &result) {

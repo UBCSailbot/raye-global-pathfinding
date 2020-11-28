@@ -14,6 +14,8 @@
 #include "pathfinding/WeatherHexMap.h"
 #include <logic/StandardCalc.h>
 
+#include "network_table_api/NonProtoConnection.h"
+
 constexpr uint8_t kInvalidIndirectNeighbourDepth = static_cast<uint8_t> (-1);
 
 enum class OutputFormat {
@@ -124,6 +126,7 @@ int main(int argc, char const *argv[]) {
         ("f,find_path",
          boost::program_options::value<std::vector<HexVertexId>>()->multitoken(),
          "<start> <end> Vertex IDs")
+		("t,table", "Connect to network tablke")
 	("navigate",
 	 boost::program_options::value<std::vector<double>>()->multitoken(),
 	 "<start_latitude> <start_longitude> <end_latitude> <end_longitude>")
@@ -197,10 +200,29 @@ int main(int argc, char const *argv[]) {
       //TODO() Enable Inputs to be in degrees West/South
       auto points = vm["navigate"].as<std::vector<double>>();
 
-      start_lat = (points[0]);
-      start_lon = (points[1]);
-      end_lat = (points[2]);
-      end_lon = (points[3]);
+      NetworkTable::NonProtoConnection connection;
+      if (vm.count("t")) {
+        // Connect to the network table
+        try {
+            std::cout << "Connecting to network table" <<std::endl;
+            connection.Connect(100);
+        } catch (NetworkTable::TimeoutException) {
+            std::cout << "Failed to connect" << std::endl;
+            return 0;
+        }
+
+        std::pair<double, double> gps_coords;
+        gps_coords = connection.GetCurrentGpsCoords();
+        start_lat = (int) gps_coords.first;	
+        start_lon = (int) gps_coords.second;	
+        end_lat = (points[2]);
+        end_lon = (points[2]);
+	  } else {
+        start_lat = (points[0]);
+        start_lon = (points[1]);
+        end_lat = (points[2]);
+        end_lon = (points[3]);
+      }
 
       auto adj_start_lon = start_lon < 0 ? start_lon : start_lon - 360;
       auto adj_end_lon = end_lon < 0 ? end_lon : end_lon - 360;
@@ -218,7 +240,20 @@ int main(int argc, char const *argv[]) {
       HexVertexId end_vertex = planet.HexVertexFromPoint(end_point);
 
       auto result = run_pathfinder(planet, start_vertex, end_vertex, silent, verbose);
-      std::cout << PathfinderResultPrinter::PrintKML(planet, result);
+
+      if (vm.count("t")) {
+	    std::vector<std::pair<double, double>> waypoints;
+        waypoints = PathfinderResultPrinter::GetVector(planet, result);
+        try {
+          connection.SetWaypointValues(waypoints);
+          connection.Disconnect();
+        }
+        catch(NetworkTable::TimeoutException){
+          std::cout << "Could not set waypoint values" << std::endl;
+        }
+      } else {
+        std::cout << PathfinderResultPrinter::PrintKML(planet, result);
+      }
 
     } else {
       std::cerr << "Invalid Program options." << std::endl
