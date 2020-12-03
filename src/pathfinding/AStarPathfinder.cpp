@@ -47,7 +47,8 @@ Pathfinder::Result AStarPathfinder::Run() {
     min_h_cost = std::min(min_h_cost, h_cost);
     const double progress = 1.0 - static_cast<double>(min_h_cost) / max_h_cost;
     progress_bar.update(progress);
-    progress_bar.print();
+    const std::string text_after_progress_bar = "| Path cost = " + std::to_string(current.cost());
+    progress_bar.print(text_after_progress_bar);
 
     if (current.hex_vertex_id() == target_) {
       // Flush progress bar
