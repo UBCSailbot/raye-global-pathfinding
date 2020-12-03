@@ -1,7 +1,7 @@
 // Copyright 2017 UBC Sailbot
 
-#ifndef GRIB_WINDFILEPARSETEST_H_
-#define GRIB_WINDFILEPARSETEST_H_
+#ifndef GRIB_FILEPARSEWINDTEST_H_
+#define GRIB_FILEPARSEWINDTEST_H_
 
 #include <gtest/gtest.h>
 
@@ -10,4 +10,4 @@ class WindGribParseTest : public ::testing::Test {
     WindGribParseTest();
 };
 
-#endif  // GRIB_WINDFILEPARSETEST_H_
+#endif  // GRIB_FILEPARSEWINDTEST_H_

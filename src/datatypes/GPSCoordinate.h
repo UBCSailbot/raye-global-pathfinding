@@ -88,7 +88,6 @@ class GPSCoordinate {
   static std::string to_string_helper(int32_t input);
 
   static int round_to_helper(int32_t input);
-
 };
 
 #endif  // DATATYPES_GPSCOORDINATE_H_

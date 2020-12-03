@@ -37,4 +37,4 @@ class TotalCostCalculator : public CostCalculator {
   bool is_indirect_neighbour_safe() const override { return true; }
 };
 
-#endif  // PATHFINDING_HAVERSINECOSTCALCULATOR_H_
+#endif  // PATHFINDING_TOTALCOSTCALCULATOR_H_
