@@ -48,10 +48,10 @@ std::vector<std::pair<double, double>> PathfinderResultPrinter::GetVector(HexPla
 
   for (HexVertexId id : result.path) {
     const auto &coord = planet.vertex(id).coordinate;
-    auto lon_str = coord.to_string_longitude();
     auto lat_str = coord.to_string_latitude();
+    auto lon_str = coord.to_string_longitude();
 
-    pathResult.push_back(std::make_pair(std::stod(lon_str), std::stod(lat_str)));
+    pathResult.push_back(std::make_pair(std::stod(lat_str), std::stod(lon_str)));
   }
 
   return pathResult;
