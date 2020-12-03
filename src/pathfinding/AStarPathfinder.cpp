@@ -1,6 +1,7 @@
 // Copyright 2017 UBC Sailbot
 
 #include "pathfinding/AStarPathfinder.h"
+#include "common/ProgressBar.h"
 
 #include <memory>
 #include <iostream>
@@ -28,16 +29,30 @@ Pathfinder::Result AStarPathfinder::Run() {
   open_set.emplace(start_, 0, heuristic_.calculate(start_, target_));
   visited[std::make_pair(start_, 0)] = VisitedStateData{0, std::make_pair(kInvalidHexVertexId, 0)};
 
+  const uint32_t max_h_cost = heuristic_.calculate(start_, target_);
+  uint32_t min_h_cost = max_h_cost;
+  ProgressBar progress_bar;
+
   // TODO(areksredzki): There is currently no check to see that the location is at all reachable.
   // Since there are no bounds on the time dimension, the pathfinder will run forever.
   while (!open_set.empty()) {
     AStarVertex current = open_set.top();
     open_set.pop();
 
-    // The best data for this IdTimeIndex up util now.
+    // The best data for this IdTimeIndex up until now.
     VisitedStateData current_data = visited[current.id_time_index()];
 
+    // Show on progress bar the closest we have gotten to goal
+    const uint32_t h_cost = heuristic_.calculate(current.hex_vertex_id(), target_);
+    min_h_cost = std::min(min_h_cost, h_cost);
+    const double progress = 1.0 - static_cast<double>(min_h_cost) / max_h_cost;
+    progress_bar.update(progress);
+    progress_bar.print();
+
     if (current.hex_vertex_id() == target_) {
+      // Flush progress bar
+      progress_bar.flush();
+
       stats_.closed_set_size = visited.size();
       stats_.open_set_size = open_set.size();
       return {ConstructPath(current.id_time_index(), visited), current_data.cost, current.time()};

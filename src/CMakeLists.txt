@@ -27,6 +27,7 @@ set(LIB_SRCS
 
 set(LIB_HDRS
         common/GeneralDefs.h
+        common/ProgressBar.h
         datatypes/GPSCoordinate.h
         datatypes/GPSCoordinateFast.h
         datatypes/HexDefs.h
