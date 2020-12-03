@@ -221,14 +221,13 @@ int main(int argc, char const *argv[]) {
         gps_coords = connection.GetCurrentGpsCoords();
         start_lat = (int) gps_coords.first;
         start_lon = (int) gps_coords.second;
-        end_lat = (points[2]);
-        end_lon = (points[2]);
       } else {
         start_lat = (points[0]);
         start_lon = (points[1]);
-        end_lat = (points[2]);
-        end_lon = (points[3]);
       }
+
+      end_lat = (points[2]);
+      end_lon = (points[3]);
 
       auto adj_start_lon = start_lon < 0 ? start_lon : start_lon - 360;
       auto adj_end_lon = end_lon < 0 ? end_lon : end_lon - 360;
