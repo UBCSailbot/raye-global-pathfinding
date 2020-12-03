@@ -52,7 +52,6 @@ Pathfinder::Result run_pathfinder(HexPlanet &planet,
                                   bool silent,
                                   bool verbose) {
   HaversineHeuristic heuristic = HaversineHeuristic(planet);
-  HaversineCostCalculator h_cost_calculator = HaversineCostCalculator(planet);
   WeatherHexMap weather_map = WeatherHexMap(planet, time_steps, start_lat, start_lon, end_lat, end_lon, generate_new_grib, file_name);
   auto wmap_pointer = std::make_unique<WeatherHexMap>(weather_map);
   WeatherCostCalculator cost_calculator = WeatherCostCalculator(planet, wmap_pointer, weather_factor);
@@ -132,9 +131,9 @@ int main(int argc, char const *argv[]) {
          boost::program_options::value<std::vector<HexVertexId>>()->multitoken(),
          "<start> <end> Vertex IDs")
         ("t,table", "Connect to network table")
-	("navigate",
-	 boost::program_options::value<std::vector<double>>()->multitoken(),
-	 "<start_latitude> <start_longitude> <end_latitude> <end_longitude>")
+        ("navigate",
+         boost::program_options::value<std::vector<double>>()->multitoken(),
+         "<start_latitude> <start_longitude> <end_latitude> <end_longitude>")
         ("kml", "Output the a KML file for the pathfinding result");
 
     boost::program_options::variables_map vm;
@@ -220,15 +219,10 @@ int main(int argc, char const *argv[]) {
 
         std::pair<double, double> gps_coords;
         gps_coords = connection.GetCurrentGpsCoords();
-        start_lat = (int) gps_coords.first;	
-        start_lon = (int) gps_coords.second;	
+        start_lat = (int) gps_coords.first;
+        start_lon = (int) gps_coords.second;
         end_lat = (points[2]);
         end_lon = (points[2]);
-	  } else {
-        start_lat = (points[0]);
-        start_lon = (points[1]);
-        end_lat = (points[2]);
-        end_lon = (points[3]);
       } else {
         start_lat = (points[0]);
         start_lon = (points[1]);
@@ -255,7 +249,7 @@ int main(int argc, char const *argv[]) {
                                    time_steps, silent, verbose);
 
       if (vm.count("t")) {
-	    std::vector<std::pair<double, double>> waypoints;
+        std::vector<std::pair<double, double>> waypoints;
         waypoints = PathfinderResultPrinter::GetVector(planet, result);
         try {
           connection.SetWaypointValues(waypoints);
