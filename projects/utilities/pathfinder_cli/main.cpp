@@ -130,7 +130,7 @@ int main(int argc, char const *argv[]) {
         ("f,find_path",
          boost::program_options::value<std::vector<HexVertexId>>()->multitoken(),
          "<start> <end> Vertex IDs")
-        ("t,table", "Connect to network table")
+        ("table", "Connect to network table")
         ("navigate",
          boost::program_options::value<std::vector<double>>()->multitoken(),
          "<start_latitude> <start_longitude> <end_latitude> <end_longitude>")
@@ -207,7 +207,7 @@ int main(int argc, char const *argv[]) {
       auto points = vm["navigate"].as<std::vector<double>>();
 
       NetworkTable::NonProtoConnection connection;
-      if (vm.count("t")) {
+      if (vm.count("table")) {
         // Connect to the network table
         try {
             std::cout << "Connecting to network table" <<std::endl;
@@ -248,7 +248,7 @@ int main(int argc, char const *argv[]) {
       auto result = run_pathfinder(planet, start_vertex, end_vertex, weather_factor, generate_new_grib, file_name,
                                    time_steps, silent, verbose);
 
-      if (vm.count("t")) {
+      if (vm.count("table")) {
         std::vector<std::pair<double, double>> waypoints;
         waypoints = PathfinderResultPrinter::GetVector(planet, result);
         try {
