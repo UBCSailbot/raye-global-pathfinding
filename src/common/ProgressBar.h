@@ -19,10 +19,9 @@ class ProgressBar {
   void update(double progress) { progress_ = progress; }
 
   /**
-   * Print progress bar and follow-up text
-   * @param text_after_progress_bar text to be displayed after the progress bar
+   * Print progress bar
    */
-  void print(const std::string & text_after_progress_bar = "") {
+  void print() {
     std::cout << "[";
     int pos = bar_width_ * progress_;
     for (int i = 0; i < bar_width_; ++i) {
@@ -34,8 +33,7 @@ class ProgressBar {
           std::cout << " ";
         }
     }
-    std::cout << "] " << int(progress_ * 100.0) << " %";
-    std::cout << text_after_progress_bar << "\r";
+    std::cout << "] " << int(progress_ * 100.0) << " %\r";
     std::cout.flush();
   }
 
