@@ -14,6 +14,8 @@
 #include "pathfinding/WeatherHexMap.h"
 #include <logic/StandardCalc.h>
 
+#include "network_table_api/NonProtoConnection.h"
+
 constexpr uint8_t kInvalidIndirectNeighbourDepth = static_cast<uint8_t> (-1);
 
 enum class OutputFormat {
@@ -50,7 +52,6 @@ Pathfinder::Result run_pathfinder(HexPlanet &planet,
                                   bool silent,
                                   bool verbose) {
   HaversineHeuristic heuristic = HaversineHeuristic(planet);
-  HaversineCostCalculator h_cost_calculator = HaversineCostCalculator(planet);
   WeatherHexMap weather_map = WeatherHexMap(planet, time_steps, start_lat, start_lon, end_lat, end_lon, generate_new_grib, file_name);
   auto wmap_pointer = std::make_unique<WeatherHexMap>(weather_map);
   WeatherCostCalculator cost_calculator = WeatherCostCalculator(planet, wmap_pointer, weather_factor);
@@ -129,6 +130,7 @@ int main(int argc, char const *argv[]) {
         ("f,find_path",
          boost::program_options::value<std::vector<HexVertexId>>()->multitoken(),
          "<start> <end> Vertex IDs")
+        ("table", "Connect to network table")
         ("navigate",
          boost::program_options::value<std::vector<double>>()->multitoken(),
          "<start_latitude> <start_longitude> <end_latitude> <end_longitude>")
@@ -204,8 +206,26 @@ int main(int argc, char const *argv[]) {
       //TODO() Enable Inputs to be in degrees West/South
       auto points = vm["navigate"].as<std::vector<double>>();
 
-      start_lat = (points[0]);
-      start_lon = (points[1]);
+      NetworkTable::NonProtoConnection connection;
+      if (vm.count("table")) {
+        // Connect to the network table
+        try {
+            std::cout << "Connecting to network table" <<std::endl;
+            connection.Connect(100);
+        } catch (NetworkTable::TimeoutException) {
+            std::cout << "Failed to connect" << std::endl;
+            return 0;
+        }
+
+        std::pair<double, double> gps_coords;
+        gps_coords = connection.GetCurrentGpsCoords();
+        start_lat = (int) gps_coords.first;
+        start_lon = (int) gps_coords.second;
+      } else {
+        start_lat = (points[0]);
+        start_lon = (points[1]);
+      }
+
       end_lat = (points[2]);
       end_lon = (points[3]);
 
@@ -226,7 +246,20 @@ int main(int argc, char const *argv[]) {
 
       auto result = run_pathfinder(planet, start_vertex, end_vertex, weather_factor, generate_new_grib, file_name,
                                    time_steps, silent, verbose);
-      std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor);
+
+      if (vm.count("table")) {
+        std::vector<std::pair<double, double>> waypoints;
+        waypoints = PathfinderResultPrinter::GetVector(planet, result);
+        try {
+          connection.SetWaypointValues(waypoints);
+          connection.Disconnect();
+        }
+        catch(NetworkTable::TimeoutException){
+          std::cout << "Could not set waypoint values" << std::endl;
+        }
+      } else {
+        std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor);
+      }
 
     } else {
       std::cerr << "Invalid Program options." << std::endl

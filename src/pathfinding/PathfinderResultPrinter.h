@@ -34,6 +34,8 @@ class PathfinderResultPrinter {
    * @return Generated KML output string.
    */
   static std::string PrintKML(HexPlanet &planet, const Pathfinder::Result &result, int weather_factor);
+
+  static std::vector<std::pair<double, double>> GetVector(HexPlanet &planet, const Pathfinder::Result &result);
 };
 
 #endif  // PATHFINDING_PATHFINDERRESULTPRINTER_H_
