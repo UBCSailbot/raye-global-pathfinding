@@ -1,6 +1,6 @@
 // Copyright 2017 UBC Sailbot
-#ifndef GRIB_PARSER_GRIB_PARSE_H
-#define GRIB_PARSER_GRIB_PARSE_H
+#ifndef GRIB_GRIBPARSE_H_
+#define GRIB_GRIBPARSE_H_
 
 #include <eccodes.h>
 #include <string>
@@ -11,8 +11,13 @@
 #define PI 3.14159265
 
 class gribParse {
-    public:
-        long number_of_points_;
+ public:
+        explicit gribParse(const std::string & filename, int time_steps = 10);
+        static double calcMagnitude(const double u_comp, const double v_comp);
+        static double calcAngle(const double u_comp, const double v_comp);
+        void saveKML();
+
+        int64_t number_of_points_;
         std::vector<double> lats;
         std::vector<double> lons;
         std::vector<double> wind_gust;
@@ -26,11 +31,6 @@ class gribParse {
         std::vector<double> hexes;
         std::vector<std::vector<double>> missing;
 
-        gribParse(const std::string filename);
-        double static calcMagnitude(const double u_comp,const double v_comp);
-        double static calcAngle(const double u_comp,const double v_comp);
-        void saveKML();
-
  private:
         int err;
         FILE *in;
@@ -38,4 +38,4 @@ class gribParse {
         const double kMissing = 9999.0;
 };
 
-#endif //GRIB_PARSER_GRIB_PARSE_H
+#endif  // GRIB_GRIBPARSE_H_

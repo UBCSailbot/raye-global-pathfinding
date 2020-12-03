@@ -63,11 +63,10 @@ std::string GPSCoordinate::to_string_helper(int32_t input) {
 }
 
 int GPSCoordinate::round_to_helper(int32_t input) {
-
   int input_part_whole = input / kExactCoordinateScaleFactor;
   int input_part_fractional = abs(input) % kExactCoordinateScaleFactor;
 
-  if ((input_part_fractional / (int)pow(10,kExactCoordinateDecimalPlaces-1)) < 5){
+  if ((input_part_fractional / static_cast<int>(pow(10, kExactCoordinateDecimalPlaces-1))) < 5) {
     return input_part_whole;
   }
   return input_part_whole > 0 ? input_part_whole + 1 : input_part_whole - 1;

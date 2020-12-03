@@ -45,13 +45,17 @@ void find_coordinates(HexPlanet &planet, const std::vector<HexVertexId> &ids) {
 Pathfinder::Result run_pathfinder(HexPlanet &planet,
                                   HexVertexId source,
                                   HexVertexId target,
+                                  int weather_factor,
+                                  bool generate_new_grib,
+                                  const std::string & file_name,
+                                  int time_steps,
                                   bool silent,
                                   bool verbose) {
   HaversineHeuristic heuristic = HaversineHeuristic(planet);
   HaversineCostCalculator h_cost_calculator = HaversineCostCalculator(planet);
-  WeatherHexMap weather_map = WeatherHexMap(planet, 4, start_lat, start_lon, end_lat, end_lon);
+  WeatherHexMap weather_map = WeatherHexMap(planet, time_steps, start_lat, start_lon, end_lat, end_lon, generate_new_grib, file_name);
   auto wmap_pointer = std::make_unique<WeatherHexMap>(weather_map);
-  WeatherCostCalculator cost_calculator = WeatherCostCalculator(planet, wmap_pointer);
+  WeatherCostCalculator cost_calculator = WeatherCostCalculator(planet, wmap_pointer, weather_factor);
   AStarPathfinder pathfinder(planet, heuristic, cost_calculator, source, target, true);
 
   if (!silent) {
@@ -117,16 +121,17 @@ int main(int argc, char const *argv[]) {
         ("s,silent", "Silence useful output")
         ("g,grib_toggle", boost::program_options::value<std::string>(), "Disable new weather data downloads")
         ("p,planet_size", boost::program_options::value<int>()->default_value(1), "Planet Size")
-        ("w,weather_factor", boost::program_options::value<int>(), "Weather Factor")
+        ("w,weather_factor", boost::program_options::value<int>()->default_value(3000), "Weather Factor")
         ("n,neighbour", boost::program_options::value<HexVertexId>(), "Vertex to find neighbours")
         ("i,indirect", boost::program_options::value<int>(), "Indirect neighbour depth")
+        ("t,time_steps", boost::program_options::value<int>()->default_value(10), "Max time steps for wind speed")
         ("c,coordinates",
          boost::program_options::value<std::vector<HexVertexId>>()->multitoken(),
          "Vertices for which to find GPS Coordinates")
         ("f,find_path",
          boost::program_options::value<std::vector<HexVertexId>>()->multitoken(),
          "<start> <end> Vertex IDs")
-		("t,table", "Connect to network tablke")
+        ("t,table", "Connect to network table")
 	("navigate",
 	 boost::program_options::value<std::vector<double>>()->multitoken(),
 	 "<start_latitude> <start_longitude> <end_latitude> <end_longitude>")
@@ -142,14 +147,14 @@ int main(int argc, char const *argv[]) {
       return EXIT_FAILURE;
     }
 
-    if (vm.count("g")){
+    bool generate_new_grib = true;
+    std::string file_name = "data.grb";
+    if (vm.count("g")) {
       generate_new_grib = false;
-      file_name=(vm["g"].as<std::string>());
+      file_name = vm["g"].as<std::string>();
     }
 
-    if (vm.count("w") > 0){
-      weather_factor = (vm["w"].as<int>());
-    }
+    int weather_factor = vm["w"].as<int>();
 
     bool silent = vm.count("s") > 0;
     OutputFormat format = OutputFormat::kDefault;
@@ -166,6 +171,7 @@ int main(int argc, char const *argv[]) {
                                                            : kInvalidIndirectNeighbourDepth;
     HexPlanet planet = generate_planet(planet_size, indirect_neighbour_depth, silent, verbose);
 
+    int time_steps = vm["t"].as<int>();
 
     if (vm.count("n")) {
       find_neighbours(planet, vm["n"].as<HexVertexId>());
@@ -178,7 +184,8 @@ int main(int argc, char const *argv[]) {
         throw std::runtime_error("Pathfinding requires two hex IDs: <start> <end>");
       }
 
-      auto result = run_pathfinder(planet, points[0], points[1], silent, verbose);
+      auto result = run_pathfinder(planet, points[0], points[1], weather_factor, generate_new_grib, file_name,
+                                   time_steps, silent, verbose);
 
       switch (format) {
         case OutputFormat::kDefault:
@@ -192,7 +199,7 @@ int main(int argc, char const *argv[]) {
           break;
         case OutputFormat::kKML:
           // Print KML
-          std::cout << PathfinderResultPrinter::PrintKML(planet, result);
+          std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor);
           break;
       }
     } else if (vm.count("navigate")) {
@@ -222,6 +229,11 @@ int main(int argc, char const *argv[]) {
         start_lon = (points[1]);
         end_lat = (points[2]);
         end_lon = (points[3]);
+      } else {
+        start_lat = (points[0]);
+        start_lon = (points[1]);
+        end_lat = (points[2]);
+        end_lon = (points[3]);
       }
 
       auto adj_start_lon = start_lon < 0 ? start_lon : start_lon - 360;
@@ -239,7 +251,8 @@ int main(int argc, char const *argv[]) {
       HexVertexId start_vertex = planet.HexVertexFromPoint(start_point);
       HexVertexId end_vertex = planet.HexVertexFromPoint(end_point);
 
-      auto result = run_pathfinder(planet, start_vertex, end_vertex, silent, verbose);
+      auto result = run_pathfinder(planet, start_vertex, end_vertex, weather_factor, generate_new_grib, file_name,
+                                   time_steps, silent, verbose);
 
       if (vm.count("t")) {
 	    std::vector<std::pair<double, double>> waypoints;
@@ -252,7 +265,7 @@ int main(int argc, char const *argv[]) {
           std::cout << "Could not set waypoint values" << std::endl;
         }
       } else {
-        std::cout << PathfinderResultPrinter::PrintKML(planet, result);
+        std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor);
       }
 
     } else {

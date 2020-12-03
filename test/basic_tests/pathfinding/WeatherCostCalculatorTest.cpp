@@ -7,7 +7,7 @@
 static constexpr size_t kSizeOfTestPlanet = 4;
 
 /// Number of time steps used to create test WeatherHexMap
-static constexpr uint32_t kTimeSteps = 10;
+static constexpr uint32_t kTimeSteps = 4;
 
 /// Default travel time to use in cost calculations
 static constexpr uint32_t kTravelTime = 1;
@@ -20,7 +20,7 @@ WeatherCostCalculatorTest::WeatherCostCalculatorTest() : planet_(kSizeOfTestPlan
  */
 TEST_F(WeatherCostCalculatorTest, CalculateCostForValidVerticesTest) {
   auto map = std::make_unique<WeatherHexMap>(planet_, kTimeSteps, 48, 235, 21, 203);
-  WeatherCostCalculator calculator(planet_, map);
+  WeatherCostCalculator calculator(planet_, map, 0);
 
   std::srand(static_cast<uint>(std::time(0)));
   HexVertexId num_vertices = static_cast<HexVertexId>(planet_.vertex_count());
@@ -44,7 +44,7 @@ TEST_F(WeatherCostCalculatorTest, CalculateCostForValidVerticesTest) {
  */
 TEST_F(WeatherCostCalculatorTest, CalculateCostForInvalidVerticesTest) {
   auto map = std::make_unique<WeatherHexMap>(planet_, kTimeSteps, 48, 235, 21, 203);
-  WeatherCostCalculator calculator(planet_, map);
+  WeatherCostCalculator calculator(planet_, map, 0);
 
   HexVertexId num_vertices = static_cast<HexVertexId>(planet_.vertex_count());
 
