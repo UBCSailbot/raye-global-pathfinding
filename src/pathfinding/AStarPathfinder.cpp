@@ -32,6 +32,7 @@ Pathfinder::Result AStarPathfinder::Run() {
   const uint32_t max_h_cost = heuristic_.calculate(start_, target_);
   uint32_t min_h_cost = max_h_cost;
   ProgressBar progress_bar;
+  int progressCount = 0;
 
   // TODO(areksredzki): There is currently no check to see that the location is at all reachable.
   // Since there are no bounds on the time dimension, the pathfinder will run forever.
@@ -45,10 +46,16 @@ Pathfinder::Result AStarPathfinder::Run() {
     // Show on progress bar the closest we have gotten to goal
     const uint32_t h_cost = heuristic_.calculate(current.hex_vertex_id(), target_);
     min_h_cost = std::min(min_h_cost, h_cost);
-    const double progress = 1.0 - static_cast<double>(min_h_cost) / max_h_cost;
-    progress_bar.update(progress);
-    const std::string text_after_progress_bar = "| Path cost = " + std::to_string(current.cost());
-    progress_bar.print(text_after_progress_bar);
+
+    if(progressCount > 10000){
+      const double progress = 1.0 - static_cast<double>(min_h_cost) / max_h_cost;
+      progress_bar.update(progress);
+      const std::string text_after_progress_bar = "| Path cost = " + std::to_string(current.cost());
+      progress_bar.print(text_after_progress_bar);
+      progressCount = 0;
+    }
+
+    progressCount++;
 
     if (current.hex_vertex_id() == target_) {
       // Flush progress bar
