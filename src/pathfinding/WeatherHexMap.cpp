@@ -20,7 +20,11 @@ WeatherHexMap::WeatherHexMap(const HexPlanet &planet, const uint32_t time_steps,
     : planet_(planet), steps_(time_steps) {
   weather_data_.resize(boost::extents[planet_.vertex_count()][time_steps]);
 
-  int gribIndex, north = start_lat, south = end_lat, east = start_lon, west = end_lon;
+  int gribIndex;
+  int north = std::max(start_lat, end_lat);
+  int south = std::min(start_lat, end_lat);
+  int east = std::max(start_lon, end_lon);
+  int west = std::min(start_lon, end_lon);
   int lat, lon;
 
   if (generate_new_grib) {

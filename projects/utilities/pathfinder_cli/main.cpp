@@ -15,6 +15,7 @@
 #include <logic/StandardCalc.h>
 
 #include "network_table_api/NonProtoConnection.h"
+#include "network_table_api/Help.h"
 
 constexpr uint8_t kInvalidIndirectNeighbourDepth = static_cast<uint8_t> (-1);
 
@@ -218,9 +219,17 @@ int main(int argc, char const *argv[]) {
         }
 
         std::pair<double, double> gps_coords;
-        gps_coords = connection.GetCurrentGpsCoords();
+        try {
+            gps_coords = connection.GetCurrentGpsCoords();
+        } catch (NetworkTable::NodeNotFoundException ex) {
+            connection.Disconnect(); 
+            std::cout << "Gps Coords Not Found in Network Table" << std::endl;
+            return EXIT_FAILURE;
+        }
+
         start_lat = (int) gps_coords.first;
         start_lon = (int) gps_coords.second;
+
       } else {
         start_lat = (points[0]);
         start_lon = (points[1]);
@@ -276,5 +285,5 @@ int main(int argc, char const *argv[]) {
     std::cerr << "Pathfinding Error:" << std::endl;
     std::cerr << ex.what() << std::endl;
     return EXIT_FAILURE;
-  }
+  } 
 }
