@@ -80,7 +80,7 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
       "<kml xmlns=\"http://earth.google.com/kml/2.0\"><Document><Placemark><LineString><coordinates>\n";
 
   int count = 0;
-  double sum = 0, max = 0;
+  double sum = 0, max = 0, totalWeatherCost = 0;
   uint32_t totalDist = 0.0;
   for (HexVertexId id : result.path) {
     const auto &coord = planet.vertex(id).coordinate;
@@ -115,6 +115,17 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
       time_step = 3;
     double current_wind = file.magnitudes[time_step][gribIndex];
 
+    if (current_wind <= 5) {  // See https://www.desmos.com/calculator/md1byjfsl2
+      totalWeatherCost += 17 - current_wind;
+    } else if (current_wind < 11) {
+      totalWeatherCost += 22 - current_wind * 2;
+    } else if (current_wind < 16) {
+      totalWeatherCost += 0;
+    } else if (current_wind < 30) {
+      totalWeatherCost += current_wind * 2 - 32;
+    }
+      else totalWeatherCost += 1000;
+
     sum += current_wind;
     if (current_wind > max) max = current_wind;
     count++;
@@ -132,11 +143,18 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
 
   ss << "Max wind speed is: " << std::to_string(max) << std::endl;
 
+  ss << "Raw weather cost is: " << std::to_string(totalWeatherCost) << std::endl;
+
   ss << "Avg distance is: " << std::to_string(totalDist/(count*1000))
      << "." << std::to_string((totalDist/count) % 1000) << std::endl;
 
   ss << "Total distance is: " << std::to_string(totalDist/(1000))
      << "." << std::to_string((totalDist) % 1000) << std::endl;
+
+  ss << "Total weather cost is: " << std::to_string(totalWeatherCost*weather_factor) << std::endl;
+
+  ss << "Total distance cost is: " << std::to_string(totalDist) << std::endl;
+
 
   handle.close();
 
