@@ -1,6 +1,7 @@
 // Copyright 2017 UBC Sailbot
 
 #include "planet/HexPlanet.h"
+#include "common/ProgressBar.h"
 
 #include <cmath>
 #include <iostream>
@@ -9,32 +10,54 @@
 #include "logic/StandardCalc.h"
 
 HexPlanet::HexPlanet(uint8_t subdivision_level, uint8_t indirect_neighbour_depth) {
+  // Setup for progress bar
+  ProgressBar progress_bar;
+  int total_num_steps = 8;  // Number of major steps in this function
+  int current_step = 0;
+  progress_bar.update((double)(current_step) / total_num_steps);
+  progress_bar.print(" | Building level 0...");
+
   // Build initial (level 0) mesh
   build_level_0();
+  progress_bar.update((double)(++current_step) / total_num_steps);
+  progress_bar.print(" | Subdividing...");
 
   // Subdivide until desired level
   while (subdivision_level_ < subdivision_level) {
     Subdivide();
   }
+  progress_bar.update((double)(++current_step) / total_num_steps);
+  progress_bar.print(" | Projecting to sphere...");
 
   // Planetize if we're at level 0
   if (subdivision_level == 0) {
     ProjectToSphere();
   }
+  progress_bar.update((double)(++current_step) / total_num_steps);
+  progress_bar.print(" | Repairing normals...");
 
   RepairNormals();
+  progress_bar.update((double)(++current_step) / total_num_steps);
+  progress_bar.print(" | Computing vertex coordinates...");
 
   // Initialize the coordinate for each vertex
   ComputeVertexCoordinates();
+  progress_bar.update((double)(++current_step) / total_num_steps);
+  progress_bar.print(" | Computing vertex neighbours...");
 
   // Initialize the neighbours for each vertex
   ComputeVertexNeighbours();
+  progress_bar.update((double)(++current_step) / total_num_steps);
+  progress_bar.print(" | Computing neighbour distances...");
 
   // Initialize the neighbour distances for each vertex
   ComputeVertexNeighbourDistances();
+  progress_bar.update((double)(++current_step) / total_num_steps);
+  progress_bar.print(" | Computing indirect vertex neighbours...");
 
   // Initialize the indirect (but close) neighbours for each vertex
   ComputeIndirectVertexNeighbours(indirect_neighbour_depth);
+  progress_bar.flush();
 }
 
 float round_epsilon(float a) {
