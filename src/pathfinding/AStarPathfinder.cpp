@@ -50,7 +50,7 @@ Pathfinder::Result AStarPathfinder::Run() {
     if (progressCount > 10000) {
       const double progress = 1.0 - static_cast<double>(min_h_cost) / max_h_cost;
       progress_bar.update(progress);
-      const std::string text_after_progress_bar = "| Path cost = " + std::to_string(current.cost());
+      const std::string text_after_progress_bar = " | Path cost = " + std::to_string(current.cost());
       progress_bar.print(text_after_progress_bar);
       progressCount = 0;
     }

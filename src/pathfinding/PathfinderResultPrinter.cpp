@@ -123,8 +123,9 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
       totalWeatherCost += 0;
     } else if (current_wind < 30) {
       totalWeatherCost += current_wind * 2 - 32;
+    } else {
+      totalWeatherCost += 1000;
     }
-      else totalWeatherCost += 1000;
 
     sum += current_wind;
     if (current_wind > max) max = current_wind;
