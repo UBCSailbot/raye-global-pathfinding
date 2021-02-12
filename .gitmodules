@@ -5,7 +5,3 @@
 [submodule "lib/protofiles"]
 	path = lib/protofiles
 	url = https://github.com/UBCSailbot/protofiles.git
-[submodule "lib/nanogui"]
-	path = lib/nanogui
-	url = https://github.com/wjakob/nanogui.git
-	
