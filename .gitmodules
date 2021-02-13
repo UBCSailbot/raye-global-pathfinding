@@ -1,11 +1,7 @@
 [submodule "lib/googletest"]
 	path = test/lib/googletest
-	url = https://github.com/google/googletest.git
+	url = git@github.com:google/googletest.git
 	branch = master
 [submodule "lib/protofiles"]
 	path = lib/protofiles
-	url = https://github.com/UBCSailbot/protofiles.git
-[submodule "lib/nanogui"]
-	path = lib/nanogui
-	url = https://github.com/wjakob/nanogui.git
-	
+	url = git@github.com:UBCSailbot/protofiles.git
