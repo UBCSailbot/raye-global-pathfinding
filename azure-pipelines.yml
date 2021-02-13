@@ -10,10 +10,10 @@ steps:
   # Install an SSH key prior to a build or deployment
 - task: InstallSSHKey@0
   inputs:
-    knownHostsEntry: 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ=='
-    sshPublicKey: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJgt4KSiAbWBk2n3gRqLdhb0F1mv2fOHgrgQjScVhPaa tylergwlum@gmail.com'  # Public key can be found on github deploy keys
+    knownHostsEntry: 'github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ=='
+    sshPublicKey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD6XJLGc4xNzKNAChRfB0/6S98wA+WCHEFnIVkO0xY+KZx/3XYSMwepD3boRj4+eqYZuYwrUaS3ky4R04PdMMDoA/SHUtAM1uzQ9x+IWjtdoQPpzT8qQ3okZh3htJWw4kEl7s7pMmu7Dd8fkW2QU7inOS3lcokffIMRj3voloou2Nx95exz0RLRxv/dCq+UUavIWchsnDufDYRrUzyJexp3y4132mofd98z/zs8ITtr7PVsTevKRU0jHKakc9xeaIWCnAJ/bcQ6j9tO8TreC+m6UcR6NIy5tXQkUgOD7UDe74H+ofGn/8HGjlcEmHpdulNdPwYQECmY3+12H09cN10t tylerlum@tylerlum-XPS-15-7590'  # Public key can be found on github deploy keys
     #sshPassphrase: # Optional
-    sshKeySecureFile: 'deployKey'  # Private key can be found on azure secure files
+    sshKeySecureFile: 'sailbotKey'  # Private key can be found on azure secure files
 
 - task: CMake@1
   displayName: Generate Build Files
