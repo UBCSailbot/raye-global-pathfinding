@@ -13,7 +13,7 @@ include_directories(${Boost_INCLUDE_DIR})
 include_directories(network_table_api)
 set(${PROJECT_NAME}_LIBS src_core ${Boost_LIBRARIES})
 
-target_compile_definitions(src_core PUBLIC WELCOME_DIRECTORY="/tmp/sailbot")
+target_compile_definitions(src_core PUBLIC WELCOME_DIRECTORY="/tmp/can_bbb_nuc_integration/")
 
 include(FindPkgConfig)
 pkg_search_module(ZMQ REQUIRED libzmq)
