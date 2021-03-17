@@ -99,7 +99,7 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
 
     if (pointToPrint == countPoints) {
       latToPrint = lat_str;
-      lonToPrint = lon_str;
+      lonToPrint = std::stod(lon_str) < 0 ? std::to_string(360 + std::stod(lon_str)) : lon_str;
     }
 
     if (count > 0) {
@@ -169,7 +169,7 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
   handle.close();
 
   if (pointToPrint > 0) {
-    ss << std::endl << lonToPrint << ", " << latToPrint << std::endl;
+    ss << std::endl << latToPrint << " " << lonToPrint << std::endl;
   }
 
   return ss.str();

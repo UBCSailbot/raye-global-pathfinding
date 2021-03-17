@@ -98,6 +98,15 @@ To test global pathfinding with old weather data:
 To change the resolution of your path:
   Change the argument after -p to 11 (takes about a minute) or 12 (takes about 5 minutes)
 
+### Continuous Pathfinding
+
+To create a more realistic pathfinding route, open runpathfinder.sh in the root folder and adjust the values as indicated by the comments. Then run in the root folder:
+```bash
+bash runpathfinder
+```
+You should see a list of coordinates, each calculated starting from the nth waypoint of the previous run.
+To-do: Add ability to read custom grib files here to simulate changing weather conditions
+
 ##### Creating & Running Tests
 Whenever you add new tests, you will need to add the required `.cpp` and `.h` files to the `TEST_FILES` parameter in `test/basic_tests/CMakelists.txt`.
 
