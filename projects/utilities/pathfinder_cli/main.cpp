@@ -24,7 +24,7 @@ enum class OutputFormat {
   kKML
 };
 
-int start_lat, start_lon, end_lat, end_lon;
+int start_lat, start_lon, end_lat, end_lon, pointToPrint;
 
 void find_neighbours(const HexPlanet &planet, HexVertexId id) {
   std::cout << "Finding neighbours for vertex ID: " << id << std::endl;
@@ -135,7 +135,8 @@ int main(int argc, char const *argv[]) {
         ("navigate",
          boost::program_options::value<std::vector<double>>()->multitoken(),
          "<start_latitude> <start_longitude> <end_latitude> <end_longitude>")
-        ("kml", "Output the a KML file for the pathfinding result");
+        ("kml", "Output the a KML file for the pathfinding result")
+        ("printn", boost::program_options::value<int>(), "Output the nth coordinate pair at the end of the program, starting with 1");
 
     boost::program_options::variables_map vm;
     store(parse_command_line(argc, argv, desc), vm);
@@ -162,6 +163,14 @@ int main(int argc, char const *argv[]) {
     if (vm.count("kml") > 0) {
       silent = true;
       format = OutputFormat::kKML;
+    }
+
+    if (vm.count("printn") > 0) {
+      pointToPrint = (vm["printn"].as<int>());
+    }
+
+    else {
+      pointToPrint = 0;
     }
 
     bool verbose = vm.count("v") > 0 && !silent;
@@ -199,7 +208,7 @@ int main(int argc, char const *argv[]) {
           break;
         case OutputFormat::kKML:
           // Print KML
-          std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor);
+          std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor, pointToPrint);
           break;
       }
     } else if (vm.count("navigate")) {
@@ -222,7 +231,7 @@ int main(int argc, char const *argv[]) {
         try {
             gps_coords = connection.GetCurrentGpsCoords();
         } catch (NetworkTable::NodeNotFoundException ex) {
-            connection.Disconnect(); 
+            connection.Disconnect();
             std::cout << "Gps Coords Not Found in Network Table" << std::endl;
             return EXIT_FAILURE;
         }
@@ -267,7 +276,7 @@ int main(int argc, char const *argv[]) {
           std::cout << "Could not set waypoint values" << std::endl;
         }
       } else {
-        std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor);
+        std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor, pointToPrint);
       }
 
     } else {
@@ -285,5 +294,5 @@ int main(int argc, char const *argv[]) {
     std::cerr << "Pathfinding Error:" << std::endl;
     std::cerr << ex.what() << std::endl;
     return EXIT_FAILURE;
-  } 
+  }
 }
