@@ -261,11 +261,8 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
     std::ofstream latfile;
     latfile.open("lats.csv");
 
-    for (int i = 0; i < time_steps; i++) {
-        for (int j = 0; j < number_of_points_; j++) {
-            latfile << lats[i][j] << ",";
-        }
-        latfile << "\n";
+    for (int j = 0; j < number_of_points_; j++) {
+        latfile << lats[j] << ",";
     }
     latfile.close();
 
@@ -273,11 +270,8 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
     std::ofstream lonfile;
     lonfile.open("lons.csv");
 
-    for (int i = 0; i < time_steps; i++) {
-        for (int j = 0; j < number_of_points_; j++) {
-            lonfile << lons[i][j] << ",";
-        }
-        lonfile << "\n";
+    for (int j = 0; j < number_of_points_; j++) {
+        lonfile << lons[j] << ",";
     }
     lonfile.close();
 
