@@ -19,94 +19,15 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
   std::cout << "extension = " << extension << std::endl;
 
   if (extension == "csv") {
-    std::ifstream anglefile("angles.csv");
-    std::string angleline;
-    std::vector<std::string> angledata;
-    while (std::getline(anglefile, angleline)) {
-      std::cout << angleline << std::endl;
-      angledata.push_back(angleline);
-    }
-    std::cout << "----------------------" << std::endl;
+    // angles and magnitudes should have shape (time_steps, number_of_points_)
+    angles = readCsv("angles.csv");
+    magnitudes = readCsv("magnitudes.csv");
 
-    std::ifstream magnitudefile("magnitudes.csv");
-    std::string magnitudeline;
-    std::vector<std::string> magnitudedata;
-    while (std::getline(magnitudefile, magnitudeline)) {
-      std::cout << magnitudeline << std::endl;
-      magnitudedata.push_back(magnitudeline);
-    }
+    // lats and lons should have shape (number_of_points_)
+    lats = readCsv("lats.csv")[0];
+    lons = readCsv("lons.csv")[0];
 
-    std::cout << "=====================" << std::endl;
-    angles.resize(time_steps);
-    std::cout << "time_steps = " << time_steps << std::endl;
-    std::cout << "angledata.size() = " << angledata.size() << std::endl;
-    std::cout << "Should be equal ^" << std::endl;
-    for (int i = 0; i < angledata.size(); i++) {
-      std::string remaining_line = angledata.at(i);
-      std::size_t pos = remaining_line.find(",");
-      int counter = 0;
-      while (pos != -1) {
-        counter++;
-
-        // std::cout << "remaining_line before = " << remaining_line << std::endl;
-        std::string next = remaining_line.substr(0, pos);
-        double nextangle = std::stod(next);
-        angles[i].push_back(nextangle);
-        if (remaining_line.size() <= pos + 1) {
-          break;
-        }
-        remaining_line = remaining_line.substr(pos+1);
-        // std::cout << "next = " << next << std::endl;
-        std::cout << "angles[i].size() = " << angles[i].size() << std::endl;
-        // std::cout << "remaining_line after = " << remaining_line << std::endl;
-        pos = remaining_line.find(",");
-        // std::cout << "0000000000000000000000000000" << std::endl;
-      }
-      std::cout << "counter = " << counter << std::endl;
-      std::cout << "------------------" << std::endl;
-    }
-    std::cout << "angles.size() = " << angles.size() << std::endl;
-    std::cout << "angles.at(0).size() = " << angles.at(0).size() << std::endl;
-    magnitudes.resize(time_steps);
-    std::cout << "time_steps = " << time_steps << std::endl;
-    std::cout << "magnitudedata.size() = " << magnitudedata.size() << std::endl;
-    std::cout << "Should be equal ^" << std::endl;
-    for (int i = 0; i < magnitudedata.size(); i++) {
-      std::string remaining_line = magnitudedata.at(i);
-      std::size_t pos = remaining_line.find(",");
-
-      int counter = 0;
-      while (pos != -1) {
-        counter++;
-
-        // std::cout << "remaining_line before = " << remaining_line << std::endl;
-        std::string next = remaining_line.substr(0, pos);
-        double nextmagnitude = std::stod(next);
-        magnitudes[i].push_back(nextmagnitude);
-        if (remaining_line.size() <= pos + 1) {
-          break;
-        }
-        remaining_line = remaining_line.substr(pos+1);
-        // std::cout << "next = " << next << std::endl;
-        // std::cout << "remaining_line after = " << remaining_line << std::endl;
-        pos = remaining_line.find(",");
-        // std::cout << "0000000000000000000000000000" << std::endl;
-      }
-      std::cout << "counter = " << counter << std::endl;
-      std::cout << "------------------" << std::endl;
-    }
-    for (int i = 0; i < angles.size(); i++) {
-      std::cout << "i " << i << std::endl;
-      std::cout << "angles.at(i).size() " << angles.at(i).size() << std::endl;
-      std::cout << "magnitudes.at(i).size() " << magnitudes.at(i).size() << std::endl;
-    }
-    std::cout << "angledata.size() " << angledata.size() << std::endl;
-    std::cout << "magnitudedata.size() " << magnitudedata.size() << std::endl;
-    std::cout << "angledata.at(0).size() " << angledata.at(0).size() << std::endl;
-    std::cout << "magnitudedata.at(0).size() " << magnitudedata.at(0).size() << std::endl;
-    std::cout << "Should be equal ^" << std::endl;
-
-
+    number_of_points_ = angles.at(0).size();
   }
 
   else if (extension == "grb") {
@@ -163,13 +84,11 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
                 v_values.resize(time_steps);
                 v_values[0].resize(number_of_points_);
                 CODES_CHECK(codes_grib_get_data(lib_handle, lats.data(), lons.data(), v_values[0].data()), 0);
-                std::cout << "0";
                 break;
             case 15:
                 u_values.resize(time_steps);
                 u_values[1].resize(number_of_points_);
                 CODES_CHECK(codes_grib_get_data(lib_handle, lats.data(), lons.data(), u_values[1].data()), 0);
-                std::cout << "1";
                 break;
             case 16:
                 v_values.resize(time_steps);
@@ -234,47 +153,10 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
 
 
     // Write to angle csv
-    std::ofstream anglefile;
-    anglefile.open("angles.csv");
-
-    for (int i = 0; i < time_steps; i++) {
-        for (int j = 0; j < number_of_points_; j++) {
-            anglefile << angles[i][j] << ",";
-        }
-        anglefile << "\n";
-    }
-    anglefile.close();
-
-    // Write to magnitude csv
-    std::ofstream magnitudefile;
-    magnitudefile.open("magnitudes.csv");
-
-    for (int i = 0; i < time_steps; i++) {
-        for (int j = 0; j < number_of_points_; j++) {
-            magnitudefile << magnitudes[i][j] << ",";
-        }
-        magnitudefile << "\n";
-    }
-    magnitudefile.close();
-
-    // Write to lat csv
-    std::ofstream latfile;
-    latfile.open("lats.csv");
-
-    for (int j = 0; j < number_of_points_; j++) {
-        latfile << lats[j] << ",";
-    }
-    latfile.close();
-
-    // Write to lon csv
-    std::ofstream lonfile;
-    lonfile.open("lons.csv");
-
-    for (int j = 0; j < number_of_points_; j++) {
-        lonfile << lons[j] << ",";
-    }
-    lonfile.close();
-
+    saveToCsv2D(angles, "angles.csv");
+    saveToCsv2D(magnitudes, "magnitudes.csv");
+    saveToCsv1D(lats, "lats.csv");
+    saveToCsv1D(lons, "lons.csv");
     fclose(in);
   }
 }
@@ -371,4 +253,63 @@ void gribParse::saveKML() {
 
     ss.close();
     std::cout << "saveKML()" << std::endl;
+}
+
+
+void gribParse::saveToCsv1D(const std::vector<double> & array1D, const std::string & csvfilename) {
+    std::ofstream outfile;
+    outfile.open(csvfilename);
+
+    for (int j = 0; j < array1D.size(); j++) {
+        outfile << array1D[j] << ",";
+    }
+    outfile.close();
+}
+
+void gribParse::saveToCsv2D(const std::vector<std::vector<double>> & array2D, const std::string & csvfilename) {
+    std::ofstream outfile;
+    outfile.open(csvfilename);
+
+    for (int i = 0; i < array2D.size(); i++) {
+        for (int j = 0; j < array2D.at(i).size(); j++) {
+            outfile << array2D[i][j] << ",";
+        }
+        outfile << "\n";
+    }
+    outfile.close();
+}
+
+std::vector<std::vector<double>> gribParse::readCsv(const std::string & csvfilename) {
+    // Read in raw csv
+    std::ifstream infile(csvfilename);
+    std::string line;
+    std::vector<std::string> data;
+    while (std::getline(infile, line)) {
+      std::cout << line << std::endl;
+      data.push_back(line);
+    }
+    std::cout << "----------------------" << std::endl;
+
+    std::vector<std::vector<double>> returnValue;
+    for (int i = 0; i < data.size(); i++) {
+      std::vector<double> row;
+      std::string remaining_line = data.at(i);
+      std::size_t pos = remaining_line.find(",");
+      while (pos != -1) {
+        std::string nextLine = remaining_line.substr(0, pos);
+        double next = std::stod(nextLine);
+        row.push_back(next);
+        if (remaining_line.size() <= pos + 1) {
+          break;
+        }
+        remaining_line = remaining_line.substr(pos+1);
+        // std::cout << "next = " << next << std::endl;
+        pos = remaining_line.find(",");
+      }
+      returnValue.push_back(row);
+      // std::cout << "------------------" << std::endl;
+    }
+    std::cout << "returnValue.size() = " << returnValue.size() << std::endl;
+    std::cout << "returnValue.at(0).size() = " << returnValue.at(0).size() << std::endl;
+    return returnValue;
 }
