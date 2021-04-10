@@ -233,7 +233,7 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
       }
 
 
-    // Write to csv
+    // Write to angle csv
     std::ofstream anglefile;
     anglefile.open("angles.csv");
 
@@ -245,6 +245,7 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
     }
     anglefile.close();
 
+    // Write to magnitude csv
     std::ofstream magnitudefile;
     magnitudefile.open("magnitudes.csv");
 
@@ -255,6 +256,30 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
         magnitudefile << "\n";
     }
     magnitudefile.close();
+
+    // Write to lat csv
+    std::ofstream latfile;
+    latfile.open("lats.csv");
+
+    for (int i = 0; i < time_steps; i++) {
+        for (int j = 0; j < number_of_points_; j++) {
+            latfile << lats[i][j] << ",";
+        }
+        latfile << "\n";
+    }
+    latfile.close();
+
+    // Write to lon csv
+    std::ofstream lonfile;
+    lonfile.open("lons.csv");
+
+    for (int i = 0; i < time_steps; i++) {
+        for (int j = 0; j < number_of_points_; j++) {
+            lonfile << lons[i][j] << ",";
+        }
+        lonfile << "\n";
+    }
+    lonfile.close();
 
     fclose(in);
   }
