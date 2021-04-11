@@ -120,7 +120,7 @@ int main(int argc, char const *argv[]) {
         ("v,verbose", "Verbose output")
         ("s,silent", "Silence useful output")
         ("g,grib_toggle", boost::program_options::value<std::string>(),
-         "Relative path to grb file for weather info OR the string 'csv' to read from default csv files." +
+         "Relative path to grb file for weather info OR the string 'csv' to read from default csv files. "
          "If not given, uses new weather data download.")
         ("p,planet_size", boost::program_options::value<int>()->default_value(1), "Planet Size")
         ("w,weather_factor", boost::program_options::value<int>()->default_value(3000), "Weather Factor")
