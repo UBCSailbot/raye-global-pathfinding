@@ -201,9 +201,7 @@ void gribParse::saveKML() {
 
     std::cout << "saveKML()" << std::endl;
     for (int i = 0; i < angles[0].size(); i++) {
-      std::cout << i << std::endl;
       double dist = sqrt(pow(lats[i]-lats[angles[0].size()-1], 2) + pow(lons[i]-lons[angles[0].size()-1], 2));
-      std::cout << i << std::endl;
 
       if (dist < 2) {
         time_step = 0;
@@ -214,7 +212,6 @@ void gribParse::saveKML() {
       } else {
         time_step = 3;
       }
-      std::cout << i << std::endl;
 
       int wind_speed = magnitudes[time_step][i];
 
@@ -247,12 +244,10 @@ void gribParse::saveKML() {
               "<rotation>" << 360-angles[time_step][i] << "</rotation>"
               "</LatLonBox>"
               "</GroundOverlay>" << std::endl;
-      std::cout << i << std::endl;
     }
     ss << "</Folder>\n</Document>\n</kml>" << std::endl;
 
     ss.close();
-    std::cout << "saveKML()" << std::endl;
 }
 
 
@@ -285,7 +280,6 @@ std::vector<std::vector<double>> gribParse::readCsv(const std::string & csvfilen
     std::string line;
     std::vector<std::string> data;
     while (std::getline(infile, line)) {
-      std::cout << line << std::endl;
       data.push_back(line);
     }
     std::cout << "----------------------" << std::endl;
