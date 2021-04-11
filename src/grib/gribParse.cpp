@@ -14,9 +14,7 @@
  */
 
 gribParse::gribParse(const std::string & filename, int time_steps) {
-  std::cout << "In gribParse with filename = " << filename << std::endl;
   std::string extension = filename.substr(filename.rfind(".") + 1);
-  std::cout << "extension = " << extension << std::endl;
 
   if (extension == "csv") {
     // angles and magnitudes should have shape (time_steps, number_of_points_)
@@ -35,7 +33,6 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
     if (!in) {
       std::cout << "ERROR: unable to open input file" << filename << std::endl;
     }
-    std::cout << "Made it to read file" << std::endl;
 
     std::vector<std::vector<double>> u_values;
     std::vector<std::vector<double>> v_values;
@@ -130,7 +127,6 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
 
     CODES_CHECK(codes_set_double(lib_handle, "missingValue", kMissing), 0);
 
-    std::cout << "number_of_points_ = " << number_of_points_ << std::endl;
     // adjust latitude and longitude, and generate resultant angles and magnitudes
     for (int i = 0; i < time_steps; i++) {
         angles[i].resize(number_of_points_);
@@ -180,7 +176,6 @@ double gribParse::calcMagnitude(double u_comp, double v_comp) {
 }
 
 void gribParse::saveKML() {
-    std::cout << "saveKML()" << std::endl;
     std::ofstream ss;
     ss.open("Wind.kml");
     ss << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -199,7 +194,6 @@ void gribParse::saveKML() {
     std::string whiteArrow = "<href>https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/"
                              "Arrow-180%28fff%29.svg/200px-Arrow-180%28fff%29.svg.png</href>";
 
-    std::cout << "saveKML()" << std::endl;
     for (int i = 0; i < angles[0].size(); i++) {
       double dist = sqrt(pow(lats[i]-lats[angles[0].size()-1], 2) + pow(lons[i]-lons[angles[0].size()-1], 2));
 
@@ -282,7 +276,6 @@ std::vector<std::vector<double>> gribParse::readCsv(const std::string & csvfilen
     while (std::getline(infile, line)) {
       data.push_back(line);
     }
-    std::cout << "----------------------" << std::endl;
 
     std::vector<std::vector<double>> returnValue;
     for (int i = 0; i < data.size(); i++) {
@@ -297,13 +290,9 @@ std::vector<std::vector<double>> gribParse::readCsv(const std::string & csvfilen
           break;
         }
         remaining_line = remaining_line.substr(pos+1);
-        // std::cout << "next = " << next << std::endl;
         pos = remaining_line.find(",");
       }
       returnValue.push_back(row);
-      // std::cout << "------------------" << std::endl;
     }
-    std::cout << "returnValue.size() = " << returnValue.size() << std::endl;
-    std::cout << "returnValue.at(0).size() = " << returnValue.at(0).size() << std::endl;
     return returnValue;
 }
