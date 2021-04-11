@@ -14,9 +14,7 @@
  */
 
 gribParse::gribParse(const std::string & filename, int time_steps) {
-  std::string extension = filename.substr(filename.rfind(".") + 1);
-
-  if (extension == "csv") {
+  if (filename == "csv") {
     // Read saved csv files to get weather information
 
     // angles and magnitudes should have shape (time_steps, number_of_points_)
@@ -28,7 +26,7 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
     lons = readCsv("lons.csv")[0];
 
     number_of_points_ = angles.at(0).size();
-  } else if (extension == "grb") {
+  } else {
     // Open stored grb file
     in = fopen(filename.c_str(), "r");
     if (!in) {
