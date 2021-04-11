@@ -26,9 +26,7 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
     lons = readCsv("lons.csv")[0];
 
     number_of_points_ = angles.at(0).size();
-  }
-
-  else if (extension == "grb") {
+  } else if (extension == "grb") {
     in = fopen(filename.c_str(), "r");
     if (!in) {
       std::cout << "ERROR: unable to open input file" << filename << std::endl;
@@ -38,8 +36,8 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
     std::vector<std::vector<double>> v_values;
     err = 0;
     for (int code_handle_iteration = 1;
-            ((lib_handle = codes_handle_new_from_file(0, in, PRODUCT_GRIB, &err)) != NULL) && code_handle_iteration <= 31;
-            code_handle_iteration++) {
+          ((lib_handle = codes_handle_new_from_file(0, in, PRODUCT_GRIB, &err)) != NULL) && code_handle_iteration <= 31;
+          code_handle_iteration++) {
         CODES_CHECK(err, 0);
         CODES_CHECK(codes_get_long(lib_handle, "numberOfPoints", &number_of_points_), 0);
         CODES_CHECK(codes_set_double(lib_handle, "missingValue", kMissing), 0);
