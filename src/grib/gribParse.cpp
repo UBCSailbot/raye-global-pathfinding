@@ -17,6 +17,8 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
   std::string extension = filename.substr(filename.rfind(".") + 1);
 
   if (extension == "csv") {
+    // Read saved csv files to get weather information
+
     // angles and magnitudes should have shape (time_steps, number_of_points_)
     angles = readCsv("angles.csv");
     magnitudes = readCsv("magnitudes.csv");
@@ -27,11 +29,13 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
 
     number_of_points_ = angles.at(0).size();
   } else if (extension == "grb") {
+    // Open stored grb file
     in = fopen(filename.c_str(), "r");
     if (!in) {
       std::cout << "ERROR: unable to open input file" << filename << std::endl;
     }
 
+    // Parse grb file
     std::vector<std::vector<double>> u_values;
     std::vector<std::vector<double>> v_values;
     err = 0;
@@ -115,38 +119,37 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
         }
         codes_handle_delete(lib_handle);
     }
+
+    // Setup storing vectors
     angles.resize(time_steps);
     magnitudes.resize(time_steps);
     missing.resize(time_steps);
-
     u_values.resize(time_steps);
     v_values.resize(time_steps);
-
 
     CODES_CHECK(codes_set_double(lib_handle, "missingValue", kMissing), 0);
 
     // adjust latitude and longitude, and generate resultant angles and magnitudes
     for (int i = 0; i < time_steps; i++) {
-        angles[i].resize(number_of_points_);
-        magnitudes[i].resize(number_of_points_);
-        missing[i].resize(number_of_points_);
-        u_values[i].resize(number_of_points_);
-        v_values[i].resize(number_of_points_);
-        for (int j = 0; j < number_of_points_; j++) {
-            if (u_values[i][j] == kMissing)
-                missing[i][j] = true;
-            else
-                missing[i][j] = false;
+      angles[i].resize(number_of_points_);
+      magnitudes[i].resize(number_of_points_);
+      missing[i].resize(number_of_points_);
+      u_values[i].resize(number_of_points_);
+      v_values[i].resize(number_of_points_);
+      for (int j = 0; j < number_of_points_; j++) {
+        if (u_values[i][j] == kMissing)
+          missing[i][j] = true;
+        else
+          missing[i][j] = false;
 
-            angles[i][j] = calcAngle(u_values[i][j], v_values[i][j]);
-            magnitudes[i][j] = calcMagnitude(u_values[i][j], v_values[i][j]);
-            lats[j] = standard_calc::BoundTo180(lats[j]);
-            lons[j] = standard_calc::BoundTo180(lons[j]);
-        }
+        angles[i][j] = calcAngle(u_values[i][j], v_values[i][j]);
+        magnitudes[i][j] = calcMagnitude(u_values[i][j], v_values[i][j]);
+        lats[j] = standard_calc::BoundTo180(lats[j]);
+        lons[j] = standard_calc::BoundTo180(lons[j]);
       }
+    }
 
-
-    // Write to angle csv
+    // Write to csv files
     saveToCsv2D(angles, "angles.csv");
     saveToCsv2D(magnitudes, "magnitudes.csv");
     saveToCsv1D(lats, "lats.csv");
@@ -275,9 +278,12 @@ std::vector<std::vector<double>> gribParse::readCsv(const std::string & csvfilen
       data.push_back(line);
     }
 
+    // Parse csv lines
     std::vector<std::vector<double>> returnValue;
     for (int i = 0; i < data.size(); i++) {
       std::vector<double> row;
+
+      // Continuously read data points until end of line reached
       std::string remaining_line = data.at(i);
       std::size_t pos = remaining_line.find(",");
       while (pos != -1) {
@@ -290,6 +296,7 @@ std::vector<std::vector<double>> gribParse::readCsv(const std::string & csvfilen
         remaining_line = remaining_line.substr(pos+1);
         pos = remaining_line.find(",");
       }
+
       returnValue.push_back(row);
     }
     return returnValue;
