@@ -32,9 +32,9 @@ class gribParse {
         std::vector<std::vector<double>> missing;
 
  private:
-        void saveToCsv1D(const std::vector<double> & array1D, const std::string & csvfilename);
         void saveToCsv2D(const std::vector<std::vector<double>> & array2D, const std::string & csvfilename);
         std::vector<std::vector<double>> convert1Dto2D(const std::vector<double> & array1D, int numRows, int numCols);
+        std::vector<double> convert2Dto1D(const std::vector<std::vector<double>> & array2D);
         std::vector<std::vector<double>> readCsv(const std::string & csvfilename);
 
         int err;

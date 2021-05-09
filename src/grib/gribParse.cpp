@@ -17,15 +17,26 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
   if (filename == "csv") {
     // Read saved csv files to get weather information
 
-    // angles and magnitudes should have shape (time_steps, number_of_points_)
-    angles = readCsv("angles1d.csv");
-    magnitudes = readCsv("magnitudes1d.csv");
-
     // lats and lons should have shape (number_of_points_)
-    lats = readCsv("lats1d.csv")[0];
-    lons = readCsv("lons1d.csv")[0];
+    lats = convert2Dto1D(readCsv("lats2d.csv"));
+    lons = convert2Dto1D(readCsv("lons2d.csv"));
 
-    number_of_points_ = angles.at(0).size();
+    number_of_points_ = lats.size();
+
+    // angles and magnitudes should have shape (time_steps, number_of_points_)
+    angles.resize(time_steps);
+    magnitudes.resize(time_steps);
+    for (int i = 0; i < time_steps; i++) {
+      std::string filename = std::string("angles2d-") + std::to_string(i) + std::string(".csv");
+      std::vector<double> angles_at_time = convert2Dto1D(readCsv(filename));
+      angles[i] = angles_at_time;
+    }
+    for (int i = 0; i < time_steps; i++) {
+      std::string filename = std::string("magnitudes2d-") + std::to_string(i) + std::string(".csv");
+      std::vector<double> magnitudes_at_time = convert2Dto1D(readCsv(filename));
+      magnitudes[i] = magnitudes_at_time;
+    }
+
   } else {
     // Open stored grb file
     in = fopen(filename.c_str(), "r");
@@ -147,20 +158,15 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
       }
     }
 
-    // Write to csv files
-    saveToCsv2D(angles, "angles1d.csv");
-    saveToCsv2D(magnitudes, "magnitudes1d.csv");
-    saveToCsv1D(lats, "lats1d.csv");
-    saveToCsv1D(lons, "lons1d.csv");
-
-
-    // NEW
+    // Calculate number of rows and columns
     double minLat = *std::min_element(lats.begin(), lats.end());
     double minLon = *std::min_element(lons.begin(), lons.end());
     double maxLat = *std::max_element(lats.begin(), lats.end());
     double maxLon = *std::max_element(lons.begin(), lons.end());
     int numRows = round(maxLat - minLat) + 1;
     int numCols = round(maxLon - minLon) + 1;
+
+    // Write to csv files
     std::vector<std::vector<double>> lats2d = convert1Dto2D(lats, numRows, numCols);
     std::vector<std::vector<double>> lons2d = convert1Dto2D(lons, numRows, numCols);
     saveToCsv2D(lats2d, "lats2d.csv");
@@ -174,9 +180,6 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
       std::vector<std::vector<double>> angles2d = convert1Dto2D(angles.at(i), numRows, numCols);
       saveToCsv2D(angles2d, std::string("angles2d-") + std::to_string(i) + std::string(".csv"));
     }
-
-    // END
-
 
     fclose(in);
   }
@@ -270,16 +273,6 @@ void gribParse::saveKML() {
 }
 
 
-void gribParse::saveToCsv1D(const std::vector<double> & array1D, const std::string & csvfilename) {
-    std::ofstream outfile;
-    outfile.open(csvfilename);
-
-    for (int j = 0; j < array1D.size(); j++) {
-        outfile << array1D[j] << ",";
-    }
-    outfile.close();
-}
-
 void gribParse::saveToCsv2D(const std::vector<std::vector<double>> & array2D, const std::string & csvfilename) {
     std::ofstream outfile;
     outfile.open(csvfilename);
@@ -303,6 +296,16 @@ std::vector<std::vector<double>> gribParse::convert1Dto2D(const std::vector<doub
       }
     }
     return array2D;
+}
+
+std::vector<double> gribParse::convert2Dto1D(const std::vector<std::vector<double>> & array2D) {
+  std::vector<double> array1D;
+  for (int i = 0; i < array2D.size(); i++) {
+    for (int j = 0; j < array2D.at(i).size(); j++) {
+      array1D.push_back(array2D.at(i).at(j));
+    }
+  }
+  return array1D;
 }
 
 std::vector<std::vector<double>> gribParse::readCsv(const std::string & csvfilename) {
