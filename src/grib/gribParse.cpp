@@ -161,16 +161,20 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
     double maxLon = *std::max_element(lons.begin(), lons.end());
     int numRows = round(maxLat - minLat) + 1;
     int numCols = round(maxLon - minLon) + 1;
-    std::cout << "minLat = " << minLat << std::endl;
-    std::cout << "maxLat = " << maxLat << std::endl;
-    std::cout << "minLon = " << minLon << std::endl;
-    std::cout << "maxLon = " << maxLon << std::endl;
-    std::cout << "numRows = " << numRows << std::endl;
-    std::cout << "numCols = " << numCols << std::endl;
-    std::cout << "============" << std::endl;
+    std::vector<std::vector<double>> lats2d = convert1Dto2D(lats, numRows, numCols);
+    std::vector<std::vector<double>> lons2d = convert1Dto2D(lons, numRows, numCols);
+    saveToCsv2D(lats2d, "lats2d.csv");
+    saveToCsv2D(lons2d, "lons2d.csv");
 
-    std::vector<std::vector<double>> lats2d;
-    std::vector<std::vector<double>> lons2d;
+    for (int i = 0; i < magnitudes.size(); i++) {
+      std::vector<std::vector<double>> magnitudes2d = convert1Dto2D(magnitudes.at(i), numRows, numCols);
+      saveToCsv2D(magnitudes2d, std::string("magnitudes2d-") + std::to_string(i) + std::string(".csv"));
+    }
+    for (int i = 0; i < angles.size(); i++) {
+      std::vector<std::vector<double>> angles2d = convert1Dto2D(angles.at(i), numRows, numCols);
+      saveToCsv2D(angles2d, std::string("angles2d-") + std::to_string(i) + std::string(".csv"));
+    }
+
     // END
 
 
@@ -287,6 +291,18 @@ void gribParse::saveToCsv2D(const std::vector<std::vector<double>> & array2D, co
         outfile << "\n";
     }
     outfile.close();
+}
+
+
+std::vector<std::vector<double>> gribParse::convert1Dto2D(const std::vector<double> & array1D, int numRows, int numCols) {
+    std::vector<std::vector<double>> array2D(numRows, std::vector<double>(numCols, 0));
+    for (int row = 0; row < numRows; row++) {
+      for (int col = 0; col < numCols; col++) {
+        int index = row * numCols + col;
+        array2D[row][col] = array1D.at(index);
+      }
+    }
+    return array2D;
 }
 
 std::vector<std::vector<double>> gribParse::readCsv(const std::string & csvfilename) {

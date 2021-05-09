@@ -46,7 +46,7 @@ WeatherHexMap::WeatherHexMap(const HexPlanet &planet, const uint32_t time_steps,
       lon = lon < 0 ? lon+360 : lon;  // convert negative longitudes to positive
 
       if (lat > north || lat < south || lon > east || lon < west) {
-        weather_data_(ind) = WeatherDatum{0.0, 0.0, 0.0, 0.0, 0.0};
+        weather_data_(ind) = WeatherDatum{1000.0, 0.0, 0.0, 0.0, 0.0};
         continue;
       }
 

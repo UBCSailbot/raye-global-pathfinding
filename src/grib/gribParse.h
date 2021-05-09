@@ -34,6 +34,7 @@ class gribParse {
  private:
         void saveToCsv1D(const std::vector<double> & array1D, const std::string & csvfilename);
         void saveToCsv2D(const std::vector<std::vector<double>> & array2D, const std::string & csvfilename);
+        std::vector<std::vector<double>> convert1Dto2D(const std::vector<double> & array1D, int numRows, int numCols);
         std::vector<std::vector<double>> readCsv(const std::string & csvfilename);
 
         int err;
