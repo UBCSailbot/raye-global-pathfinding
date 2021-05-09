@@ -36,6 +36,9 @@ WeatherHexMap::WeatherHexMap(const HexPlanet &planet, const uint32_t time_steps,
 
   gribParse file = gribParse(file_name, time_steps);
   file.saveKML();
+  for (WeatherMatrix::index vertex_id = 0; vertex_id < planet_.vertex_count(); ++vertex_id) {
+
+  }
 
   for (WeatherMatrix::index vertex_id = 0; vertex_id < planet_.vertex_count(); ++vertex_id) {
     for (WeatherMatrix::index time_step = 0; time_step < steps_; time_step++) {
@@ -43,6 +46,11 @@ WeatherHexMap::WeatherHexMap(const HexPlanet &planet, const uint32_t time_steps,
       const auto &coord = planet.vertex(vertex_id).coordinate;
       lat = coord.round_to_int_latitude();
       lon = coord.round_to_int_longitude();
+      /*
+      std::cout << "lat = " << lat << std::endl;
+      std::cout << "lon = " << lon << std::endl;
+      std::cout << "====================" << std::endl;
+      */
 
       lon = lon < 0 ? lon+360 : lon;  // convert negative longitudes to positive
 
@@ -52,7 +60,17 @@ WeatherHexMap::WeatherHexMap(const HexPlanet &planet, const uint32_t time_steps,
       }
 
       gribIndex = (lat-south) * (east-west+1) + (lon-west);
+      std::cout << "lat = " << lat << std::endl;
+      std::cout << "lon = " << lon << std::endl;
+      std::cout << "lat-south = " << lat-south << std::endl;
+      std::cout << "east-west+1 = " << east-west+1 << std::endl;
+      std::cout << "lon-west = " << lon-west << std::endl;
       if (gribIndex >= file.number_of_points_) gribIndex = file.number_of_points_-1;
+      std::cout << "gribIndex = " << gribIndex << std::endl;
+      std::cout << "time_step = " << time_step << std::endl;
+      std::cout << "file.magnitudes[time_step] = " << file.magnitudes[time_step][gribIndex] << std::endl;
+      std::cout << "file.angles[time_step][gribIndex] = " << file.angles[time_step][gribIndex] << std::endl;
+      std::cout << "--------------------" << std::endl;
       weather_data_(ind) = WeatherDatum{file.magnitudes[time_step][gribIndex], file.angles[time_step][gribIndex], 0.0, 0.0, 0.0};
     }
   }
