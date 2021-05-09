@@ -18,24 +18,40 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
     // Read saved csv files to get weather information
 
     // lats and lons should have shape (number_of_points_)
-    lats = convert2Dto1D(readCsv("lats2d.csv"));
-    lons = convert2Dto1D(readCsv("lons2d.csv"));
+    // Need to reverse columns because lats ordering described below
+    std::cout << "1" << std::endl;
+    lats = convert2Dto1D(reverseColumns(readCsv("lats2d.csv")));
+    std::cout << "1" << std::endl;
+    lons = convert2Dto1D(reverseColumns(readCsv("lons2d.csv")));
+    std::cout << "1" << std::endl;
 
     number_of_points_ = lats.size();
 
     // angles and magnitudes should have shape (time_steps, number_of_points_)
+    std::cout << "1" << std::endl;
     angles.resize(time_steps);
+    std::cout << "1" << std::endl;
     magnitudes.resize(time_steps);
+    std::cout << "1" << std::endl;
     for (int i = 0; i < time_steps; i++) {
+    std::cout << "2" << std::endl;
       std::string filename = std::string("angles2d-") + std::to_string(i) + std::string(".csv");
-      std::vector<double> angles_at_time = convert2Dto1D(readCsv(filename));
+    std::cout << "3" << std::endl;
+      std::vector<double> angles_at_time = convert2Dto1D(reverseColumns(readCsv(filename)));
+    std::cout << "4" << std::endl;
       angles[i] = angles_at_time;
     }
+    std::cout << "1" << std::endl;
     for (int i = 0; i < time_steps; i++) {
+    std::cout << "5" << std::endl;
       std::string filename = std::string("magnitudes2d-") + std::to_string(i) + std::string(".csv");
-      std::vector<double> magnitudes_at_time = convert2Dto1D(readCsv(filename));
+    std::cout << "6" << std::endl;
+      std::vector<double> magnitudes_at_time = convert2Dto1D(reverseColumns(readCsv(filename)));
+    std::cout << "7" << std::endl;
       magnitudes[i] = magnitudes_at_time;
+    std::cout << "8" << std::endl;
     }
+    std::cout << "9" << std::endl;
 
   } else {
     // Open stored grb file
@@ -167,17 +183,20 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
     int numCols = round(maxLon - minLon) + 1;
 
     // Write to csv files
-    std::vector<std::vector<double>> lats2d = convert1Dto2D(lats, numRows, numCols);
-    std::vector<std::vector<double>> lons2d = convert1Dto2D(lons, numRows, numCols);
+    // Must reverse lats for saving b/c goes in order 21, 22, ..., but want it to go 48, 47, ... so csv shape matches real
+    // Lats are like a y position, so larger numbers, start at top
+    // Do same for lons, don't need for lon b/c it is like a x position, small on left, but do for consistency
+    std::vector<std::vector<double>> lats2d = reverseColumns(convert1Dto2D(lats, numRows, numCols));
+    std::vector<std::vector<double>> lons2d = reverseColumns(convert1Dto2D(lons, numRows, numCols));
     saveToCsv2D(lats2d, "lats2d.csv");
     saveToCsv2D(lons2d, "lons2d.csv");
 
     for (int i = 0; i < magnitudes.size(); i++) {
-      std::vector<std::vector<double>> magnitudes2d = convert1Dto2D(magnitudes.at(i), numRows, numCols);
+      std::vector<std::vector<double>> magnitudes2d = reverseColumns(convert1Dto2D(magnitudes.at(i), numRows, numCols));
       saveToCsv2D(magnitudes2d, std::string("magnitudes2d-") + std::to_string(i) + std::string(".csv"));
     }
     for (int i = 0; i < angles.size(); i++) {
-      std::vector<std::vector<double>> angles2d = convert1Dto2D(angles.at(i), numRows, numCols);
+      std::vector<std::vector<double>> angles2d = reverseColumns(convert1Dto2D(angles.at(i), numRows, numCols));
       saveToCsv2D(angles2d, std::string("angles2d-") + std::to_string(i) + std::string(".csv"));
     }
 
@@ -339,4 +358,13 @@ std::vector<std::vector<double>> gribParse::readCsv(const std::string & csvfilen
       returnValue.push_back(row);
     }
     return returnValue;
+}
+
+std::vector<std::vector<double>> gribParse::reverseColumns(const std::vector<std::vector<double>> & array2D) {
+    // Reverse columns by changing the order of rows (each row content is same, but change order)
+    std::vector<std::vector<double>> reversed;
+    for (int row = array2D.size() - 1; row >= 0; row--) {
+      reversed.push_back(array2D.at(row));
+    }
+    return reversed;
 }
