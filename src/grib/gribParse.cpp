@@ -18,12 +18,12 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
     // Read saved csv files to get weather information
 
     // angles and magnitudes should have shape (time_steps, number_of_points_)
-    angles = readCsv("angles.csv");
-    magnitudes = readCsv("magnitudes.csv");
+    angles = readCsv("angles1d.csv");
+    magnitudes = readCsv("magnitudes1d.csv");
 
     // lats and lons should have shape (number_of_points_)
-    lats = readCsv("lats.csv")[0];
-    lons = readCsv("lons.csv")[0];
+    lats = readCsv("lats1d.csv")[0];
+    lons = readCsv("lons1d.csv")[0];
 
     number_of_points_ = angles.at(0).size();
   } else {
@@ -148,10 +148,32 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
     }
 
     // Write to csv files
-    saveToCsv2D(angles, "angles.csv");
-    saveToCsv2D(magnitudes, "magnitudes.csv");
-    saveToCsv1D(lats, "lats.csv");
-    saveToCsv1D(lons, "lons.csv");
+    saveToCsv2D(angles, "angles1d.csv");
+    saveToCsv2D(magnitudes, "magnitudes1d.csv");
+    saveToCsv1D(lats, "lats1d.csv");
+    saveToCsv1D(lons, "lons1d.csv");
+
+
+    // NEW
+    double minLat = *std::min_element(lats.begin(), lats.end());
+    double minLon = *std::min_element(lons.begin(), lons.end());
+    double maxLat = *std::max_element(lats.begin(), lats.end());
+    double maxLon = *std::max_element(lons.begin(), lons.end());
+    int numRows = round(maxLat - minLat) + 1;
+    int numCols = round(maxLon - minLon) + 1;
+    std::cout << "minLat = " << minLat << std::endl;
+    std::cout << "maxLat = " << maxLat << std::endl;
+    std::cout << "minLon = " << minLon << std::endl;
+    std::cout << "maxLon = " << maxLon << std::endl;
+    std::cout << "numRows = " << numRows << std::endl;
+    std::cout << "numCols = " << numCols << std::endl;
+    std::cout << "============" << std::endl;
+
+    std::vector<std::vector<double>> lats2d;
+    std::vector<std::vector<double>> lons2d;
+    // END
+
+
     fclose(in);
   }
 }
