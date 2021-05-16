@@ -18,6 +18,65 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
     // Read saved csv files to get weather information
     // Need to reverse columns because lats ordering issue described below
 
+    auto print_1D = [&](std::vector<double> array1D)
+    {
+        for (double x: array1D)
+        {
+            std::cout << x << ",";
+        }
+        std::cout << std::endl;
+    };
+
+    auto print_2D = [&](std::vector<std::vector<double>> array2D)
+    {
+        for (const std::vector<double> & array1D : array2D)
+        {
+            print_1D(array1D);
+        }
+    };
+
+    // 2D arrays in intuitive format
+    auto intuitiveLats = readCsv("lats2d.csv");
+    auto intuitiveLons = readCsv("lons2d.csv");
+    auto intuitiveMags3 = readCsv("magnitudes2d-3.csv");
+    auto intuitiveAngs3 = readCsv("angles2d-3.csv");
+    std::cout << "intuitiveLats" << std::endl;
+    print_2D(intuitiveLats);
+    std::cout << "intuitiveLons" << std::endl;
+    print_2D(intuitiveLons);
+    std::cout << "intuitiveMags3" << std::endl;
+    print_2D(intuitiveMags3);
+    std::cout << "intuitiveAngs3" << std::endl;
+    print_2D(intuitiveAngs3);
+
+    // 2D arrays in reversed ready for 1D conversion
+    auto reversedLats = reverseColumns(intuitiveLats);
+    auto reversedLons = reverseColumns(intuitiveLons);
+    auto reversedMags3 = reverseColumns(intuitiveMags3);
+    auto reversedAngs3 = reverseColumns(intuitiveAngs3);
+    std::cout << "reversedLats" << std::endl;
+    print_2D(reversedLats);
+    std::cout << "reversedLons" << std::endl;
+    print_2D(reversedLons);
+    std::cout << "reversedMags3" << std::endl;
+    print_2D(reversedMags3);
+    std::cout << "reversedAngs3" << std::endl;
+    print_2D(reversedAngs3);
+
+    // 1D arrays ready for use
+    auto readyLats = convert2Dto1D(reversedLats);
+    auto readyLons = convert2Dto1D(reversedLons);
+    auto readyMags3 = convert2Dto1D(reversedMags3);
+    auto readyAngs3 = convert2Dto1D(reversedAngs3);
+    std::cout << "readyLats" << std::endl;
+    print_1D(readyLats);
+    std::cout << "readyLons" << std::endl;
+    print_1D(readyLons);
+    std::cout << "readyMags3" << std::endl;
+    print_1D(readyMags3);
+    std::cout << "readyAngs3" << std::endl;
+    print_1D(readyAngs3);
+
     // lats and lons should have shape (number_of_points_)
     lats = convert2Dto1D(reverseColumns(readCsv("lats2d.csv")));
     lons = convert2Dto1D(reverseColumns(readCsv("lons2d.csv")));
@@ -281,9 +340,13 @@ void gribParse::saveToCsv2D(const std::vector<std::vector<double>> & array2D, co
 
     for (int i = 0; i < array2D.size(); i++) {
         for (int j = 0; j < array2D.at(i).size(); j++) {
-            outfile << array2D[i][j] << ",";
+            outfile << array2D[i][j];
+            if (j < array2D.at(i).size() - 1) {
+                outfile << ",";
+            } else {
+                outfile << "\n";
+            }
         }
-        outfile << "\n";
     }
     outfile.close();
 }
@@ -311,34 +374,41 @@ std::vector<double> gribParse::convert2Dto1D(const std::vector<std::vector<doubl
 }
 
 std::vector<std::vector<double>> gribParse::readCsv(const std::string & csvfilename) {
-    // Read in raw csv
+    // Read in raw csv lines
     std::ifstream infile(csvfilename);
     std::string line;
     std::vector<std::string> data;
     while (std::getline(infile, line)) {
-      data.push_back(line);
+        data.push_back(line);
     }
 
     // Parse csv lines
     std::vector<std::vector<double>> returnValue;
     for (int i = 0; i < data.size(); i++) {
-      std::vector<double> row;
+        std::vector<double> row;
 
-      // Continuously read data points until end of line reached
-      std::string remaining_line = data.at(i);
-      std::size_t pos = remaining_line.find(",");
-      while (pos != -1) {
-        std::string nextLine = remaining_line.substr(0, pos);
-        double next = std::stod(nextLine);
-        row.push_back(next);
-        if (remaining_line.size() <= pos + 1) {
-          break;
+        // Continuously read data points until end of line reached
+        std::string remaining_line = data.at(i);
+        std::size_t pos = remaining_line.find(",");
+        while (pos != -1) {
+            // Get string before comma and convert to double
+            std::string nextLine = remaining_line.substr(0, pos);
+            double next = std::stod(nextLine);
+            row.push_back(next);
+
+            // Move to next element in the line
+            remaining_line = remaining_line.substr(pos+1);  // Safe because 0 <= pos < remaining_line.size()
+                                                            // then 0 < pos <= remaining_line.size() all valid
+            pos = remaining_line.find(",");
         }
-        remaining_line = remaining_line.substr(pos+1);
-        pos = remaining_line.find(",");
-      }
 
-      returnValue.push_back(row);
+        // Handle last element. If last value is a ",", then will do nothing
+        // If last value is a number like "10,11", then will add 11 here
+        if (remaining_line.size() > 0) {
+            row.push_back(std::stod(remaining_line));
+        }
+
+        returnValue.push_back(row);
     }
     return returnValue;
 }
