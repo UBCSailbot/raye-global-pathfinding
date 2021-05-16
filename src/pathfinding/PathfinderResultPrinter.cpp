@@ -61,7 +61,7 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
   std::ofstream handle;
   std::stringstream ss;
   int north = 49, south = 21, east = 235, west = 203;
-  std::string file_name = "data.grb";
+  std::string file_name = "csv";
 
   std::vector<std::pair<double, double>> pathResult;
 

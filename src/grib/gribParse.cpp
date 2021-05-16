@@ -17,6 +17,7 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
   if (filename == "csv") {
     // Read saved csv files to get weather information
     // Need to reverse columns because lats ordering issue described below
+	std::cout << "Reading magnitudes2d.csv" << std::endl;
 
     // lats and lons should have shape (number_of_points_)
     lats = convert2Dto1D(reverseColumns(readCsv("lats2d.csv")));
@@ -173,7 +174,7 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
     std::vector<std::vector<double>> lons2d = reverseColumns(convert1Dto2D(lons, numRows, numCols));
     saveToCsv2D(lats2d, "lats2d.csv");
     saveToCsv2D(lons2d, "lons2d.csv");
-
+	std::cout << "Modifying magnitudes2d.csv" << std::endl;
     for (int i = 0; i < magnitudes.size(); i++) {
       std::vector<std::vector<double>> magnitudes2d = reverseColumns(convert1Dto2D(magnitudes.at(i), numRows, numCols));
       saveToCsv2D(magnitudes2d, std::string("magnitudes2d-") + std::to_string(i) + std::string(".csv"));
@@ -207,12 +208,16 @@ double gribParse::calcMagnitude(double u_comp, double v_comp) {
 
 void gribParse::saveKML() {
     std::ofstream ss;
+	std::ofstream windout;
+	
+	windout.open("Wind.csv");
+
     ss.open("Wind.kml");
     ss << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
           "<kml xmlns=\"http://earth.google.com/kml/2.0\">\n"
           "<Document><name>Wind</name><Folder>\n";
     std::string color;
-    int time_step;
+    int time_step = 3;
     std::string yellowArrow = "<href>https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/"
                               "Arrow-180%28ff0%29.svg/200px-Arrow-180%28ff0%29.svg.png</href>";
     std::string redArrow = "<href>https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/"
@@ -225,8 +230,9 @@ void gribParse::saveKML() {
                              "Arrow-180%28fff%29.svg/200px-Arrow-180%28fff%29.svg.png</href>";
 
     for (int i = 0; i < angles[0].size(); i++) {
+		
       double dist = sqrt(pow(lats[i]-lats[angles[0].size()-1], 2) + pow(lons[i]-lons[angles[0].size()-1], 2));
-
+/*
       if (dist < 2) {
         time_step = 0;
       } else if (dist < 4) {
@@ -236,6 +242,9 @@ void gribParse::saveKML() {
       } else {
         time_step = 3;
       }
+*/
+	  windout << magnitudes[time_step][i] << " " << lons[i] << ",";
+	  if (lons[i] == -125) windout << "\n";
 
       int wind_speed = magnitudes[time_step][i];
 
@@ -272,6 +281,7 @@ void gribParse::saveKML() {
     ss << "</Folder>\n</Document>\n</kml>" << std::endl;
 
     ss.close();
+	windout.close();
 }
 
 
