@@ -181,11 +181,11 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
     std::vector<std::vector<double>> lons2d = reverseColumns(convert1Dto2D(lons, numRows, numCols));
     saveToCsv2D(lats2d, output_csvs_directory + "lats2d.csv");
     saveToCsv2D(lons2d, output_csvs_directory + "lons2d.csv");
-    for (int i = 0; i < magnitudes.size(); i++) {
+    for (size_t i = 0; i < magnitudes.size(); i++) {
       std::vector<std::vector<double>> magnitudes2d = reverseColumns(convert1Dto2D(magnitudes.at(i), numRows, numCols));
       saveToCsv2D(magnitudes2d, output_csvs_directory + "magnitudes2d-" + std::to_string(i) + ".csv");
     }
-    for (int i = 0; i < angles.size(); i++) {
+    for (size_t i = 0; i < angles.size(); i++) {
       std::vector<std::vector<double>> angles2d = reverseColumns(convert1Dto2D(angles.at(i), numRows, numCols));
       saveToCsv2D(angles2d, output_csvs_directory + "angles2d-" + std::to_string(i) + ".csv");
     }
@@ -220,7 +220,6 @@ void gribParse::saveKML() {
           "<kml xmlns=\"http://earth.google.com/kml/2.0\">\n"
           "<Document><name>Wind</name><Folder>\n";
     std::string color;
-    int time_step = 3;
     std::string yellowArrow = "<href>https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/"
                               "Arrow-180%28ff0%29.svg/200px-Arrow-180%28ff0%29.svg.png</href>";
     std::string redArrow = "<href>https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/"
@@ -232,8 +231,9 @@ void gribParse::saveKML() {
     std::string whiteArrow = "<href>https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/"
                              "Arrow-180%28fff%29.svg/200px-Arrow-180%28fff%29.svg.png</href>";
 
-    for (int i = 0; i < angles[0].size(); i++) {
+    for (size_t i = 0; i < angles[0].size(); i++) {
       double dist = sqrt(pow(lats[i]-lats[angles[0].size()-1], 2) + pow(lons[i]-lons[angles[0].size()-1], 2));
+      int time_step;
       if (dist < 2) {
         time_step = 0;
       } else if (dist < 4) {
@@ -258,23 +258,23 @@ void gribParse::saveKML() {
         color = redArrow;
       }
 
-        ss << "<GroundOverlay>"
-              "<color>ffffffff</color>"
-              "<drawOrder>1</drawOrder>"
-              "<Icon>"
-              << color <<
-              "<refreshMode>onInterval</refreshMode>"
-              "<refreshInterval>86400</refreshInterval>"
-              "<viewBoundScale>0.75</viewBoundScale>"
-              "</Icon>"
-              "<LatLonBox>"
-              "<north>" << lats[i] + magnitudes[time_step][i]/80 << "</north>"
-              "<south>" << lats[i] - magnitudes[time_step][i]/80 << "</south>"
-              "<east>" << lons[i] + magnitudes[time_step][i]/80 << "</east>"
-              "<west>" << lons[i] - magnitudes[time_step][i]/80 << "</west>"
-              "<rotation>" << 360-angles[time_step][i] << "</rotation>"
-              "</LatLonBox>"
-              "</GroundOverlay>" << std::endl;
+      ss << "<GroundOverlay>"
+            "<color>ffffffff</color>"
+            "<drawOrder>1</drawOrder>"
+            "<Icon>"
+            << color <<
+            "<refreshMode>onInterval</refreshMode>"
+            "<refreshInterval>86400</refreshInterval>"
+            "<viewBoundScale>0.75</viewBoundScale>"
+            "</Icon>"
+            "<LatLonBox>"
+            "<north>" << lats[i] + magnitudes[time_step][i]/80 << "</north>"
+            "<south>" << lats[i] - magnitudes[time_step][i]/80 << "</south>"
+            "<east>" << lons[i] + magnitudes[time_step][i]/80 << "</east>"
+            "<west>" << lons[i] - magnitudes[time_step][i]/80 << "</west>"
+            "<rotation>" << 360-angles[time_step][i] << "</rotation>"
+            "</LatLonBox>"
+            "</GroundOverlay>" << std::endl;
     }
     ss << "</Folder>\n</Document>\n</kml>" << std::endl;
 
@@ -286,10 +286,10 @@ void gribParse::saveToCsv2D(const std::vector<std::vector<double>> & array2D, co
     std::ofstream outfile;
     outfile.open(csvfilename);
 
-    for (int i = 0; i < array2D.size(); i++) {
-        for (int j = 0; j < array2D.at(i).size(); j++) {
+    for (int i = 0; i < (int)array2D.size(); i++) {
+        for (int j = 0; j < (int)array2D.at(i).size(); j++) {
             outfile << array2D[i][j];
-            if (j < array2D.at(i).size() - 1) {
+            if (j < (int)(array2D.at(i).size() - 1)) {
                 outfile << ",";
             } else {
                 outfile << "\n";
@@ -298,7 +298,6 @@ void gribParse::saveToCsv2D(const std::vector<std::vector<double>> & array2D, co
     }
     outfile.close();
 }
-
 
 std::vector<std::vector<double>> gribParse::convert1Dto2D(const std::vector<double> & array1D,
                                                           int numRows, int numCols) {
@@ -314,8 +313,8 @@ std::vector<std::vector<double>> gribParse::convert1Dto2D(const std::vector<doub
 
 std::vector<double> gribParse::convert2Dto1D(const std::vector<std::vector<double>> & array2D) {
   std::vector<double> array1D;
-  for (int i = 0; i < array2D.size(); i++) {
-    for (int j = 0; j < array2D.at(i).size(); j++) {
+  for (size_t i = 0; i < array2D.size(); i++) {
+    for (size_t j = 0; j < array2D.at(i).size(); j++) {
       array1D.push_back(array2D.at(i).at(j));
     }
   }
@@ -333,13 +332,13 @@ std::vector<std::vector<double>> gribParse::readCsv(const std::string & csvfilen
 
     // Parse csv lines
     std::vector<std::vector<double>> returnValue;
-    for (int i = 0; i < data.size(); i++) {
+    for (size_t i = 0; i < data.size(); i++) {
         std::vector<double> row;
 
         // Continuously read data points until end of line reached
         std::string remaining_line = data.at(i);
         std::size_t pos = remaining_line.find(",");
-        while (pos != -1) {
+        while (pos != std::string::npos) {
             // Get string before comma and convert to double
             std::string nextLine = remaining_line.substr(0, pos);
             double next = std::stod(nextLine);
