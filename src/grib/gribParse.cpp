@@ -21,6 +21,8 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
 
     // lats and lons should have shape (number_of_points_)
     std::string input_csvs_directory = "input_csvs/";
+    std::cout << "Reading in csvs from the following directory: " << input_csvs_directory << std::endl;
+    std::cout << "Will segfault if csvs are missing" << std::endl;
     lats = convert2Dto1D(reverseColumns(readCsv(input_csvs_directory + "lats2d.csv")));
     lons = convert2Dto1D(reverseColumns(readCsv(input_csvs_directory + "lons2d.csv")));
     number_of_points_ = lats.size();
@@ -174,6 +176,7 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
     std::vector<std::vector<double>> lats2d = reverseColumns(convert1Dto2D(lats, numRows, numCols));
     std::vector<std::vector<double>> lons2d = reverseColumns(convert1Dto2D(lons, numRows, numCols));
     std::string output_csvs_directory = "output_csvs/";
+    std::cout << "Writing csvs to directory: " << output_csvs_directory << std::endl;
     saveToCsv2D(lats2d, output_csvs_directory + "lats2d.csv");
     saveToCsv2D(lons2d, output_csvs_directory + "lons2d.csv");
     for (int i = 0; i < magnitudes.size(); i++) {
@@ -209,9 +212,6 @@ double gribParse::calcMagnitude(double u_comp, double v_comp) {
 
 void gribParse::saveKML() {
     std::ofstream ss;
-	std::ofstream windout;
-	
-	windout.open("Wind.csv");
 
     ss.open("Wind.kml");
     ss << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -231,9 +231,8 @@ void gribParse::saveKML() {
                              "Arrow-180%28fff%29.svg/200px-Arrow-180%28fff%29.svg.png</href>";
 
     for (int i = 0; i < angles[0].size(); i++) {
-		
+
       double dist = sqrt(pow(lats[i]-lats[angles[0].size()-1], 2) + pow(lons[i]-lons[angles[0].size()-1], 2));
-/*
       if (dist < 2) {
         time_step = 0;
       } else if (dist < 4) {
@@ -243,9 +242,6 @@ void gribParse::saveKML() {
       } else {
         time_step = 3;
       }
-*/
-	  windout << magnitudes[time_step][i] << " " << lons[i] << ",";
-	  if (lons[i] == -125) windout << "\n";
 
       int wind_speed = magnitudes[time_step][i];
 
@@ -282,7 +278,6 @@ void gribParse::saveKML() {
     ss << "</Folder>\n</Document>\n</kml>" << std::endl;
 
     ss.close();
-	windout.close();
 }
 
 

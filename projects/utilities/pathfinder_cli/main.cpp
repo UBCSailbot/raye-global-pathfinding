@@ -126,7 +126,7 @@ int main(int argc, char const *argv[]) {
         ("w,weather_factor", boost::program_options::value<int>()->default_value(3000), "Weather Factor")
         ("n,neighbour", boost::program_options::value<HexVertexId>(), "Vertex to find neighbours")
         ("i,indirect", boost::program_options::value<int>(), "Indirect neighbour depth")
-        ("t,time_steps", boost::program_options::value<int>()->default_value(10), "Max time steps for wind speed")
+        ("t,time_steps", boost::program_options::value<int>()->default_value(4), "Max time steps for wind speed")
         ("c,coordinates",
          boost::program_options::value<std::vector<HexVertexId>>()->multitoken(),
          "Vertices for which to find GPS Coordinates")
@@ -201,7 +201,7 @@ int main(int argc, char const *argv[]) {
           break;
         case OutputFormat::kKML:
           // Print KML
-          std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor);
+          std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor, file_name, time_steps);
           break;
       }
     } else if (vm.count("navigate")) {
@@ -269,7 +269,7 @@ int main(int argc, char const *argv[]) {
           std::cout << "Could not set waypoint values" << std::endl;
         }
       } else {
-        std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor);
+        std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor, file_name, time_steps);
       }
 
     } else {
