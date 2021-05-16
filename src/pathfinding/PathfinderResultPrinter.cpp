@@ -57,7 +57,8 @@ std::vector<std::pair<double, double>> PathfinderResultPrinter::GetVector(HexPla
   return pathResult;
 }
 
-std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinder::Result &result, int weather_factor, const std::string & file_name, int time_steps) {
+std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinder::Result &result, int weather_factor,
+                                              const std::string & file_name, int time_steps) {
   std::ofstream handle;
   std::stringstream ss;
   int north = 49, south = 21, east = 235, west = 203;

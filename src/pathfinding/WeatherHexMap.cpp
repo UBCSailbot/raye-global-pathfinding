@@ -35,9 +35,6 @@ WeatherHexMap::WeatherHexMap(const HexPlanet &planet, const uint32_t time_steps,
 
   gribParse file = gribParse(file_name, time_steps);
   file.saveKML();
-  for (WeatherMatrix::index vertex_id = 0; vertex_id < planet_.vertex_count(); ++vertex_id) {
-
-  }
 
   for (WeatherMatrix::index vertex_id = 0; vertex_id < planet_.vertex_count(); ++vertex_id) {
     for (WeatherMatrix::index time_step = 0; time_step < steps_; time_step++) {
@@ -54,7 +51,8 @@ WeatherHexMap::WeatherHexMap(const HexPlanet &planet, const uint32_t time_steps,
 
       gribIndex = (lat-south) * (east-west+1) + (lon-west);
       if (gribIndex >= file.number_of_points_) gribIndex = file.number_of_points_-1;
-      weather_data_(ind) = WeatherDatum{file.magnitudes[time_step][gribIndex], file.angles[time_step][gribIndex], 0.0, 0.0, 0.0};
+      weather_data_(ind) = WeatherDatum{file.magnitudes[time_step][gribIndex],
+                                        file.angles[time_step][gribIndex], 0.0, 0.0, 0.0};
     }
   }
 }

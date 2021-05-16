@@ -18,11 +18,11 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
     // Read saved csv files to get weather information
     // Need to reverse columns because lats ordering issue described below
     // Refer to issue https://github.com/UBCSailbot/global-pathfinding/pull/40 for detailed example
-
-    // lats and lons should have shape (number_of_points_)
     std::string input_csvs_directory = "input_csvs/";
     std::cout << "Reading in csvs from the following directory: " << input_csvs_directory << std::endl;
     std::cout << "Will segfault if csvs are missing" << std::endl;
+
+    // lats and lons should have shape (number_of_points_)
     lats = convert2Dto1D(reverseColumns(readCsv(input_csvs_directory + "lats2d.csv")));
     lons = convert2Dto1D(reverseColumns(readCsv(input_csvs_directory + "lons2d.csv")));
     number_of_points_ = lats.size();
@@ -170,13 +170,15 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
     int numCols = round(maxLon - minLon) + 1;
 
     // Write to csv files
-    // Must reverse columns for saving because b/c lats go in order 21, 22, ..., but want it 48, 47, ... so csv shape matches real
-    // Lats are like a y position, so larger numbers start at top
-    // Don't need for lon b/c like a x position, so smaller numbers start at left
-    std::vector<std::vector<double>> lats2d = reverseColumns(convert1Dto2D(lats, numRows, numCols));
-    std::vector<std::vector<double>> lons2d = reverseColumns(convert1Dto2D(lons, numRows, numCols));
     std::string output_csvs_directory = "output_csvs/";
     std::cout << "Writing csvs to directory: " << output_csvs_directory << std::endl;
+
+    // Must reverse columns for saving because b/c lats go in order 21, 22, ..., but want it 48, 47, ...
+    // so csv shape matches real shape
+    // Lats are like a y position, so larger numbers start at top
+    // Don't need for lon b/c like a x position, so smaller numbers start at left, but do for consistency
+    std::vector<std::vector<double>> lats2d = reverseColumns(convert1Dto2D(lats, numRows, numCols));
+    std::vector<std::vector<double>> lons2d = reverseColumns(convert1Dto2D(lons, numRows, numCols));
     saveToCsv2D(lats2d, output_csvs_directory + "lats2d.csv");
     saveToCsv2D(lons2d, output_csvs_directory + "lons2d.csv");
     for (int i = 0; i < magnitudes.size(); i++) {
@@ -231,7 +233,6 @@ void gribParse::saveKML() {
                              "Arrow-180%28fff%29.svg/200px-Arrow-180%28fff%29.svg.png</href>";
 
     for (int i = 0; i < angles[0].size(); i++) {
-
       double dist = sqrt(pow(lats[i]-lats[angles[0].size()-1], 2) + pow(lons[i]-lons[angles[0].size()-1], 2));
       if (dist < 2) {
         time_step = 0;
@@ -299,7 +300,8 @@ void gribParse::saveToCsv2D(const std::vector<std::vector<double>> & array2D, co
 }
 
 
-std::vector<std::vector<double>> gribParse::convert1Dto2D(const std::vector<double> & array1D, int numRows, int numCols) {
+std::vector<std::vector<double>> gribParse::convert1Dto2D(const std::vector<double> & array1D,
+                                                          int numRows, int numCols) {
     std::vector<std::vector<double>> array2D(numRows, std::vector<double>(numCols, 0));
     for (int row = 0; row < numRows; row++) {
       for (int col = 0; col < numCols; col++) {
