@@ -286,10 +286,10 @@ void gribParse::saveToCsv2D(const std::vector<std::vector<double>> & array2D, co
     std::ofstream outfile;
     outfile.open(csvfilename);
 
-    for (int i = 0; i < (int)array2D.size(); i++) {
-        for (int j = 0; j < (int)array2D.at(i).size(); j++) {
+    for (size_t i = 0; i < array2D.size(); i++) {
+        for (size_t j = 0; j < array2D.at(i).size(); j++) {
             outfile << array2D[i][j];
-            if (j < (int)(array2D.at(i).size() - 1)) {
+            if (static_cast<int>(j) < static_cast<int>(array2D.at(i).size()) - 1) {
                 outfile << ",";
             } else {
                 outfile << "\n";
