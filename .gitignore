@@ -37,8 +37,20 @@ extra
 *.out
 *.app
 
-#GRIB files
+# GRIB files
 *.grb
 
 # macOS
 .DS_Store
+
+# vim .swp
+*.swp
+
+# csv files
+*.csv
+
+# kml files
+*.kml
+
+# xml
+*.xml
