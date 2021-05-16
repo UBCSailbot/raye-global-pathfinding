@@ -18,65 +18,6 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
     // Read saved csv files to get weather information
     // Need to reverse columns because lats ordering issue described below
 
-    auto print_1D = [&](std::vector<double> array1D)
-    {
-        for (double x: array1D)
-        {
-            std::cout << x << ",";
-        }
-        std::cout << std::endl;
-    };
-
-    auto print_2D = [&](std::vector<std::vector<double>> array2D)
-    {
-        for (const std::vector<double> & array1D : array2D)
-        {
-            print_1D(array1D);
-        }
-    };
-
-    // 2D arrays in intuitive format
-    auto intuitiveLats = readCsv("lats2d.csv");
-    auto intuitiveLons = readCsv("lons2d.csv");
-    auto intuitiveMags3 = readCsv("magnitudes2d-3.csv");
-    auto intuitiveAngs3 = readCsv("angles2d-3.csv");
-    std::cout << "intuitiveLats" << std::endl;
-    print_2D(intuitiveLats);
-    std::cout << "intuitiveLons" << std::endl;
-    print_2D(intuitiveLons);
-    std::cout << "intuitiveMags3" << std::endl;
-    print_2D(intuitiveMags3);
-    std::cout << "intuitiveAngs3" << std::endl;
-    print_2D(intuitiveAngs3);
-
-    // 2D arrays in reversed ready for 1D conversion
-    auto reversedLats = reverseColumns(intuitiveLats);
-    auto reversedLons = reverseColumns(intuitiveLons);
-    auto reversedMags3 = reverseColumns(intuitiveMags3);
-    auto reversedAngs3 = reverseColumns(intuitiveAngs3);
-    std::cout << "reversedLats" << std::endl;
-    print_2D(reversedLats);
-    std::cout << "reversedLons" << std::endl;
-    print_2D(reversedLons);
-    std::cout << "reversedMags3" << std::endl;
-    print_2D(reversedMags3);
-    std::cout << "reversedAngs3" << std::endl;
-    print_2D(reversedAngs3);
-
-    // 1D arrays ready for use
-    auto readyLats = convert2Dto1D(reversedLats);
-    auto readyLons = convert2Dto1D(reversedLons);
-    auto readyMags3 = convert2Dto1D(reversedMags3);
-    auto readyAngs3 = convert2Dto1D(reversedAngs3);
-    std::cout << "readyLats" << std::endl;
-    print_1D(readyLats);
-    std::cout << "readyLons" << std::endl;
-    print_1D(readyLons);
-    std::cout << "readyMags3" << std::endl;
-    print_1D(readyMags3);
-    std::cout << "readyAngs3" << std::endl;
-    print_1D(readyAngs3);
-
     // lats and lons should have shape (number_of_points_)
     lats = convert2Dto1D(reverseColumns(readCsv("lats2d.csv")));
     lons = convert2Dto1D(reverseColumns(readCsv("lons2d.csv")));
