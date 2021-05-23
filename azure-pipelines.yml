@@ -16,27 +16,31 @@ steps:
     sshKeySecureFile: 'sailbotKey'  # Private key can be found on azure secure files
 
 - task: CMake@1
-  displayName: Generate Build Files
+  displayName: 'Generate Build Files'
   inputs:
     workingDirectory: build
     cmakeArgs: '../'
 
 - script: |
     ./scripts/run_cpplint.sh
-  displayName: 'CPPLlint'  
+  displayName: 'CPPLint'
+
+- script: |
+    ./scripts/run_cppcheck.sh
+  displayName: 'CPPCheck'
 
 - script: |
     cd build
     make all -j 4
   displayName: 'make'
-  
+
 - script: |
     cd build
     bin/run_basic_tests --gtest_output=xml
-  displayName: 'Run tests'  
-  
+  displayName: 'Run tests'
+
   # Publish Test Results to Azure Pipelines/TFS
 - task: PublishTestResults@2
   inputs:
-    testResultsFormat: 'JUnit' 
-    testResultsFiles: '**/*.xml' 
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/*.xml'

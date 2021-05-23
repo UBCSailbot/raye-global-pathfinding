@@ -36,23 +36,24 @@ WeatherHexMap::WeatherHexMap(const HexPlanet &planet, const uint32_t time_steps,
   gribParse file = gribParse(file_name, time_steps);
   file.saveKML();
 
-  for (WeatherMatrix::index i = 0; i < planet_.vertex_count(); ++i) {
-    for (WeatherMatrix::index j = 0; j < steps_; j++) {
-      boost::array<WeatherMatrix::index, 2> ind = {{i, j}};
-      const auto &coord = planet.vertex(i).coordinate;
+  for (WeatherMatrix::index vertex_id = 0; vertex_id < (WeatherMatrix::index)planet_.vertex_count(); ++vertex_id) {
+    for (WeatherMatrix::index time_step = 0; time_step < steps_; time_step++) {
+      boost::array<WeatherMatrix::index, 2> ind = {{vertex_id, time_step}};
+      const auto &coord = planet.vertex(vertex_id).coordinate;
       lat = coord.round_to_int_latitude();
       lon = coord.round_to_int_longitude();
-
       lon = lon < 0 ? lon+360 : lon;  // convert negative longitudes to positive
 
       if (lat > north || lat < south || lon > east || lon < west) {
-        weather_data_(ind) = WeatherDatum{0.0, 0.0, 0.0, 0.0, 0.0};
+        // If out of bounds, put a high wind there to avoid going there
+        weather_data_(ind) = WeatherDatum{1000.0, 0.0, 0.0, 0.0, 0.0};
         continue;
       }
 
       gribIndex = (lat-south) * (east-west+1) + (lon-west);
       if (gribIndex >= file.number_of_points_) gribIndex = file.number_of_points_-1;
-      weather_data_(ind) = WeatherDatum{file.magnitudes[j][gribIndex], file.angles[j][gribIndex], 0.0, 0.0, 0.0};
+      weather_data_(ind) = WeatherDatum{file.magnitudes[time_step][gribIndex],
+                                        file.angles[time_step][gribIndex], 0.0, 0.0, 0.0};
     }
   }
 }
