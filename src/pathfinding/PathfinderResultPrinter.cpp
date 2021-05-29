@@ -60,6 +60,8 @@ std::vector<std::pair<double, double>> PathfinderResultPrinter::GetVector(HexPla
 std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet,
                                               const Pathfinder::Result &result,
                                               int weather_factor,
+                                              const std::string & file_name,
+                                              int time_steps,
                                               int pointToPrint) {
   std::ofstream handle;
   std::stringstream ss;
