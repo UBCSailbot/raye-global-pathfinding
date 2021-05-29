@@ -208,7 +208,7 @@ int main(int argc, char const *argv[]) {
           break;
         case OutputFormat::kKML:
           // Print KML
-          std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor, pointToPrint);
+          std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor, file_name, time_steps, pointToPrint);
           break;
       }
     } else if (vm.count("navigate")) {
