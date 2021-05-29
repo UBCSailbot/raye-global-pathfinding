@@ -68,11 +68,10 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet,
   int north = 49, south = 21, east = 235, west = 203;
   int countPoints = 0;
   std::string latToPrint, lonToPrint;
-  std::string file_name = "data.grb";
 
   std::vector<std::pair<double, double>> pathResult;
 
-  gribParse file = gribParse(file_name);
+  gribParse file = gribParse(file_name, time_steps);
 
   HexVertexId old_id;
 

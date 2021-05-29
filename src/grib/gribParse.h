@@ -12,7 +12,7 @@
 
 class gribParse {
  public:
-        explicit gribParse(const std::string & filename, int time_steps = 10);
+        explicit gribParse(const std::string & filename, int time_steps = 4);
         static double calcMagnitude(const double u_comp, const double v_comp);
         static double calcAngle(const double u_comp, const double v_comp);
         void saveKML();
@@ -32,6 +32,12 @@ class gribParse {
         std::vector<std::vector<double>> missing;
 
  private:
+        void saveToCsv2D(const std::vector<std::vector<double>> & array2D, const std::string & csvfilename);
+        std::vector<std::vector<double>> convert1Dto2D(const std::vector<double> & array1D, int numRows, int numCols);
+        std::vector<double> convert2Dto1D(const std::vector<std::vector<double>> & array2D);
+        std::vector<std::vector<double>> readCsv(const std::string & csvfilename);
+        std::vector<std::vector<double>> reverseColumns(const std::vector<std::vector<double>> & array2D);
+
         int err;
         FILE *in;
         codes_handle *lib_handle;

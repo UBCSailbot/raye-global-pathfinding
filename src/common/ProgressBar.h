@@ -34,7 +34,7 @@ class ProgressBar {
           std::cout << " ";
         }
     }
-    std::cout << "] " << int(progress_ * 100.0) << " %";
+    std::cout << "] " << int(progress_ * 100.0) << "%";
     std::cout << text_after_progress_bar << "\r";
     std::cout.flush();
   }
