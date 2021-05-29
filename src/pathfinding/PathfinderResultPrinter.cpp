@@ -57,11 +57,17 @@ std::vector<std::pair<double, double>> PathfinderResultPrinter::GetVector(HexPla
   return pathResult;
 }
 
-std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinder::Result &result, int weather_factor,
-                                              const std::string & file_name, int time_steps) {
+std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet,
+                                              const Pathfinder::Result &result,
+                                              int weather_factor,
+                                              const std::string & file_name,
+                                              int time_steps,
+                                              int pointToPrint) {
   std::ofstream handle;
   std::stringstream ss;
   int north = 49, south = 21, east = 235, west = 203;
+  int countPoints = 0;
+  std::string latToPrint, lonToPrint;
 
   std::vector<std::pair<double, double>> pathResult;
 
@@ -92,6 +98,13 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
 
     handle << lon_str << "," << lat_str << std::endl;
     ss << pathResult.back().first << "," << pathResult.back().second << std::endl;
+
+    countPoints++;
+
+    if (pointToPrint == countPoints) {
+      latToPrint = lat_str;
+      lonToPrint = std::stod(lon_str) < 0 ? std::to_string(360 + std::stod(lon_str)) : lon_str;
+    }
 
     if (count > 0) {
         totalDist += planet.DistanceBetweenVertices(old_id, id);
@@ -158,6 +171,10 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet, const Pathfinde
 
 
   handle.close();
+
+  if (pointToPrint > 0) {
+    ss << std::endl << latToPrint << " " << lonToPrint << std::endl;
+  }
 
   return ss.str();
 }
