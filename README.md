@@ -17,8 +17,11 @@ To run the program to start from Port Renfrew (lat=48, lon=235) to Maui (lat=21,
 ./build/bin/pathfinder_cli --navigate 48 235 21 203
 ```
 This will generate a path based on current weather conditions and will produce 2 KML files:
+
 -`build/bin/Path.kml`, a visualization of the path generated, based on the GPS coordinates of the path
+
 -`build/bin/Wind.kml`, a visualization of wind data over time (each color represents a 3 hour increment, based on the estimated speed of the boat)
+
 - TODO: Make this generate a file with the date/time in the folder name or in the filename so we don't overwrite every time.
 
 To see these files, do one of the following:
