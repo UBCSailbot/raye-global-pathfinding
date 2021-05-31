@@ -52,27 +52,15 @@ It is possible to adjust the planet size, which effectively changes the resoluti
 ```
 The `-p 12` refers to a planet size of 12. We have decided to consistently use planet size of X, which takes approximately Y to run (TODO).
 
-### Linting
-Linting helps us keep our code clean, easy to maintain, and free of bugs.
-
-You can run the cpp lint script from our friends at Google with:
-
-```bash
-./scripts/run_cpplint.sh
-```
-
-### Testing
-
-To test global pathfinding with old weather data:
-  1. Make sure the GRIB file is in your /build/ folder and named `data.grb`
-  2. Add the option -g to the pathfinder_cli command above, eg.
-  ```bash
-  ./build/bin/pathfinder_cli -g -p 10 --navigate 48 235 21 203
-  ```
-
 ### Network Table
 
 To use the network table information to get the current latlon position of the boat, add the `--table` parameter to the arguments. Note that the `--navigate <lat> <lon> <lat> <lon>` argument should still be included. Essentially, if the `--table` parameter is provided, then it will try to use the network table to get the starting latlon, but if it fails to connect, it will instead use the starting latlon value to be robust to connection issues. TODO: Finish implementing this behavior.
+
+For example, you can run:
+
+```
+./build/bin/pathfinder_cli --navigate 48 235 21 203 --table
+```
 
 ### Continuous Pathfinding
 
@@ -105,6 +93,24 @@ These files can be directly modified to change the inputs to planning. Note that
 
 Note that in options 1 and 2, the used weather data is saved into csv files in `output_csvs`, which are can be copied over to the `input_csvs` file to be used for future testing. It will overwrite files in `output_csvs`.
 
+### Linting
+Linting helps us keep our code clean, easy to maintain, and free of bugs.
+
+You can run the cpp lint script from our friends at Google with:
+
+```bash
+./scripts/run_cpplint.sh
+```
+
+### Testing
+
+To test global pathfinding with old weather data:
+  1. Make sure the GRIB file is in your /build/ folder and named `data.grb`
+  2. Add the option -g to the pathfinder_cli command above, eg.
+  ```bash
+  ./build/bin/pathfinder_cli -g -p 10 --navigate 48 235 21 203
+  ```
+  
 ### Creating & Running Tests
 Whenever you add new tests, you will need to add the required `.cpp` and `.h` files to the `TEST_FILES` parameter in `test/basic_tests/CMakelists.txt`.
 
