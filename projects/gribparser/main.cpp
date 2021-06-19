@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
         std::cout << "here";
 
         gribParse file = gribParse(file_name);
-        file.saveKML();
+        file.saveKML(false);
       /*  for (int i = 0; i < file.number_of_points_ && i < 100; ++i) {
             if (!file.missing[0][i]) {
                 cout << "Lat: " << file.lats[i] << std::setw(10) << "\t Long: " << file.lons[i] << std::setw(10) <<  "\tCape: " << file.cape[i] <<  "\tTemp: " << file.temperature[i] << "\tMag: " << file.magnitudes[i] << "\tDir: " << file.angles[i] << endl;

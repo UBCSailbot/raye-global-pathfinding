@@ -19,7 +19,7 @@ class WeatherHexMap {
    * @param time_steps How many |WeatherDatum|s to store for each vertex.
    */
   explicit WeatherHexMap(const HexPlanet &planet, const uint32_t time_steps, int start_lat, int start_lon, int end_lat,
-                         int end_lon, bool generate_new_grib = true, const std::string & file_name = "data.grb");
+                         int end_lon, bool generate_new_grib = true, const std::string & file_name = "data.grb", bool preserveKml = false);
 
   /**
    * Gets the |WeatherDatum| associated with a specific vertex at a specified

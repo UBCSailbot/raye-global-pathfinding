@@ -15,7 +15,7 @@ class gribParse {
         explicit gribParse(const std::string & filename, int time_steps = 4);
         static double calcMagnitude(const double u_comp, const double v_comp);
         static double calcAngle(const double u_comp, const double v_comp);
-        void saveKML();
+        void saveKML(bool preserveKml);
 
         int64_t number_of_points_;
         std::vector<double> lats;

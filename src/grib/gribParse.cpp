@@ -6,6 +6,9 @@
 #include <iomanip>
 #include <fstream>
 #include <string>
+#include <iostream>
+#include <chrono>
+#include <ctime>
 
 /**
  * Translates GRIB file into array of lattitudes, longitudes, and corresponding values
@@ -212,10 +215,17 @@ double gribParse::calcMagnitude(double u_comp, double v_comp) {
     return (sqrt(pow(u_comp, 2) + pow(v_comp, 2)))/0.514444;
 }
 
-void gribParse::saveKML() {
+void gribParse::saveKML(bool preserveKml) {
     std::ofstream ss;
 
-    ss.open("Wind.kml");
+    if (preserveKml) {
+      std::time_t currentTime = std::time(0);
+      std::string kmlName = std::ctime(&currentTime);
+      ss.open(kmlName.substr(0, kmlName.length()-1) + ".kml");
+    } else {
+      ss.open("Wind.kml");
+    }
+
     ss << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
           "<kml xmlns=\"http://earth.google.com/kml/2.0\">\n"
           "<Document><name>Wind</name><Folder>\n";

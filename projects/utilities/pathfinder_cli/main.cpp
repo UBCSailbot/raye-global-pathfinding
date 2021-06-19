@@ -25,6 +25,7 @@ enum class OutputFormat {
 };
 
 int start_lat, start_lon, end_lat, end_lon, pointToPrint;
+bool preserveKml = false;
 
 void find_neighbours(const HexPlanet &planet, HexVertexId id) {
   std::cout << "Finding neighbours for vertex ID: " << id << std::endl;
@@ -53,7 +54,7 @@ Pathfinder::Result run_pathfinder(HexPlanet &planet,
                                   bool silent,
                                   bool verbose) {
   HaversineHeuristic heuristic = HaversineHeuristic(planet);
-  WeatherHexMap weather_map = WeatherHexMap(planet, time_steps, start_lat, start_lon, end_lat, end_lon, generate_new_grib, file_name);
+  WeatherHexMap weather_map = WeatherHexMap(planet, time_steps, start_lat, start_lon, end_lat, end_lon, generate_new_grib, file_name, preserveKml);
   auto wmap_pointer = std::make_unique<WeatherHexMap>(weather_map);
   WeatherCostCalculator cost_calculator = WeatherCostCalculator(planet, wmap_pointer, weather_factor);
   AStarPathfinder pathfinder(planet, heuristic, cost_calculator, source, target, true);
@@ -138,7 +139,8 @@ int main(int argc, char const *argv[]) {
          boost::program_options::value<std::vector<double>>()->multitoken(),
          "<start_latitude> <start_longitude> <end_latitude> <end_longitude>")
         ("kml", "Output the a KML file for the pathfinding result")
-        ("printn", boost::program_options::value<int>(), "Output the nth coordinate pair at the end of the program, starting with 1");
+        ("printn", boost::program_options::value<int>(), "Output the nth coordinate pair at the end of the program, starting with 1")
+        ("save", "Save the current weather as a timestamped KML");
 
     boost::program_options::variables_map vm;
     store(parse_command_line(argc, argv, desc), vm);
@@ -173,6 +175,10 @@ int main(int argc, char const *argv[]) {
 
     else {
       pointToPrint = 0;
+    }
+
+    if (vm.count("save") > 0) {
+      preserveKml = true;
     }
 
     bool verbose = vm.count("v") > 0 && !silent;
@@ -221,12 +227,14 @@ int main(int argc, char const *argv[]) {
       NetworkTable::NonProtoConnection connection;
       if (vm.count("table")) {
         // Connect to the network table
+        int error_count = 0;
+
         try {
             std::cout << "Connecting to network table" <<std::endl;
             connection.Connect(100);
         } catch (NetworkTable::TimeoutException) {
             std::cout << "Failed to connect" << std::endl;
-            return 0;
+            ++error_count;
         }
 
         std::pair<double, double> gps_coords;
@@ -235,11 +243,16 @@ int main(int argc, char const *argv[]) {
         } catch (NetworkTable::NodeNotFoundException ex) {
             connection.Disconnect();
             std::cout << "Gps Coords Not Found in Network Table" << std::endl;
-            return EXIT_FAILURE;
+            ++error_count;
         }
 
-        start_lat = (int) gps_coords.first;
-        start_lon = (int) gps_coords.second;
+        if (error_count == 0) {
+          start_lat = (int) gps_coords.first;
+          start_lon = (int) gps_coords.second;
+        } else {
+          start_lat = (points[0]);
+          start_lon = (points[1]);
+        }
 
       } else {
         start_lat = (points[0]);
