@@ -16,7 +16,7 @@
 
 WeatherHexMap::WeatherHexMap(const HexPlanet &planet, const uint32_t time_steps,
                              int start_lat, int start_lon, int end_lat, int end_lon,
-                             bool generate_new_grib, const std::string & file_name)
+                             bool generate_new_grib, const std::string & file_name, bool preserveKml)
     : planet_(planet), steps_(time_steps) {
   weather_data_.resize(boost::extents[planet_.vertex_count()][time_steps]);
 
@@ -34,7 +34,7 @@ WeatherHexMap::WeatherHexMap(const HexPlanet &planet, const uint32_t time_steps,
   }
 
   gribParse file = gribParse(file_name, time_steps);
-  file.saveKML();
+  file.saveKML(preserveKml);
 
   for (WeatherMatrix::index vertex_id = 0; vertex_id < (WeatherMatrix::index)planet_.vertex_count(); ++vertex_id) {
     for (WeatherMatrix::index time_step = 0; time_step < steps_; time_step++) {
