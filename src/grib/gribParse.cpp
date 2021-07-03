@@ -221,7 +221,7 @@ void gribParse::saveKML(bool preserveKml) {
     if (preserveKml) {
       std::time_t currentTime = std::time(0);
       std::string kmlName = std::ctime(&currentTime);
-      ss.open(kmlName.substr(0, kmlName.length()-1) + ".kml");
+      ss.open("windKMLs/" + kmlName.substr(0, kmlName.length()-1) + ".kml");
     } else {
       ss.open("Wind.kml");
     }
