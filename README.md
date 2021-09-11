@@ -32,6 +32,9 @@ An example of what you would see in Google Earth is shown below:
 
 ![Sailbot](https://user-images.githubusercontent.com/26510814/120241952-a947f100-c218-11eb-93a1-e3aa7698384d.png)
 
+An example with user-specified wind values can be shown below. Note that the path avoids the high wind region.
+![image](https://user-images.githubusercontent.com/26510814/132959406-bc68fba0-12cb-4861-8d08-81ab3e85c42e.png)
+
 The program will also generate a string consisting of the [Longitude, Latitude] of each GPS waypoint. Additionally, there is an unused variable of type vector<pair<double, double>> in `./src/pathfinding/PathfinderResultPrinter.cpp` that contains the GPS data in the same format.
 
 ## Additional Details
