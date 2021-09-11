@@ -62,7 +62,8 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet,
                                               int weather_factor,
                                               const std::string & file_name,
                                               int time_steps,
-                                              int pointToPrint) {
+                                              int pointToPrint,
+                                              bool preserveKml) {
   std::ofstream handle;
   std::stringstream ss;
   int north = 49, south = 21, east = 235, west = 203;
@@ -77,7 +78,14 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet,
 
   handle.exceptions(std::ofstream::failbit | std::ofstream::badbit);
 
-  handle.open("Path.kml");
+  if (preserveKml) {
+    std::time_t currentTime = std::time(0);
+    std::string kmlName = std::ctime(&currentTime);
+    std::string fileName = "resultKMLs/" + kmlName.substr(0, kmlName.length()-9) + "-Path.kml";
+    handle.open(fileName);
+  } else {
+    handle.open("Path.kml");
+  }
 
   handle << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
       "<kml xmlns=\"http://earth.google.com/kml/2.0\"><Document><Placemark><LineString><coordinates>\n";

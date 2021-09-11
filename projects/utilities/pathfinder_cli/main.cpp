@@ -216,7 +216,7 @@ int main(int argc, char const *argv[]) {
           break;
         case OutputFormat::kKML:
           // Print KML
-          std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor, file_name, time_steps, pointToPrint);
+          std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor, file_name, time_steps, pointToPrint, preserveKml);
           break;
       }
     } else if (vm.count("navigate")) {
@@ -291,7 +291,7 @@ int main(int argc, char const *argv[]) {
           std::cout << "Could not set waypoint values" << std::endl;
         }
       } else {
-        std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor, file_name, time_steps, pointToPrint);
+        std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor, file_name, time_steps, pointToPrint, preserveKml);
       }
 
     } else {
