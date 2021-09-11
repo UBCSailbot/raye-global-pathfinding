@@ -1,6 +1,6 @@
 # Setup Instructions
 
-First, create a new SSH key and associate it with your GitHub account
+First, create a new SSH key and associate it with your GitHub account:
 [Generate a new SSH key and add to ssh-agent](https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
 
 ## Option 1 (Recommended)
