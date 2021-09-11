@@ -14,7 +14,7 @@ Instructions to setup and build this repository can be found [here](install_deps
 ## Running Program
 To run the program to start from Port Renfrew (lat=48, lon=235) to Maui (lat=21, lon=203), simply run
 ```bash
-./build/bin/pathfinder_cli --navigate 48 235 21 203
+./build/bin/pathfinder_cli -p 8 --navigate 48 235 21 203
 ```
 This will generate a path based on current weather conditions and will produce 2 KML files:
 
