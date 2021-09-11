@@ -28,12 +28,9 @@ To see these files, do one of the following:
   1. (Recommended) Follow the instructions at [this link](https://linuxconfig.org/how-to-install-google-earth-on-ubuntu-18-04-bionic-beaver-linux), then File->Open and open the files listed above.
   2. Navigate to [Google Earth](https://earth.google.com) and from the menu on the side, select `Projects>New Project>Import KML file from computer`.
 
-An example of what you would see in Google Earth is shown below:
+An example of what you would see in Google Earth is shown below. Note that the path avoids the low wind regions.
 
-![Sailbot](https://user-images.githubusercontent.com/26510814/120241952-a947f100-c218-11eb-93a1-e3aa7698384d.png)
-
-An example with user-specified wind values can be shown below. Note that the path avoids the high wind region.
-![image](https://user-images.githubusercontent.com/26510814/132959406-bc68fba0-12cb-4861-8d08-81ab3e85c42e.png)
+![image](https://user-images.githubusercontent.com/26510814/132962044-f4bec9e7-18f7-4abe-a44d-49f0ca36379e.png)
 
 The program will also generate a string consisting of the [Longitude, Latitude] of each GPS waypoint. Additionally, there is an unused variable of type vector<pair<double, double>> in `./src/pathfinding/PathfinderResultPrinter.cpp` that contains the GPS data in the same format.
 
