@@ -38,7 +38,8 @@ class PathfinderResultPrinter {
                               int weather_factor,
                               const std::string & file_name,
                               int time_steps,
-                              int pointToPrint);
+                              int pointToPrint,
+                              bool preserveKml);
 
   static std::vector<std::pair<double, double>> GetVector(HexPlanet &planet, const Pathfinder::Result &result);
 };
