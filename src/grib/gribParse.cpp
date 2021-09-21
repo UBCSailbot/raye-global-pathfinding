@@ -16,7 +16,8 @@
  * @return
  */
 
-gribParse::gribParse(const std::string & filename, int time_steps, bool use_csvs, const std::string & output_csvs_folder) {
+gribParse::gribParse(const std::string & filename, int time_steps, bool use_csvs,
+                     const std::string & output_csvs_folder) {
   if (use_csvs) {
     // Read saved csv files to get weather information
     // Need to reverse columns because lats ordering issue described below
@@ -168,8 +169,7 @@ gribParse::gribParse(const std::string & filename, int time_steps, bool use_csvs
   }
 
   // Write to output directory
-  if (output_csvs_folder.size() > 0)
-  {
+  if (output_csvs_folder.size() > 0) {
     // Write to csv files
     std::string output_csvs_directory = output_csvs_folder;
     std::cout << "Writing csvs to directory: " << output_csvs_directory << std::endl;
@@ -346,7 +346,8 @@ std::vector<std::vector<double>> gribParse::readCsv(const std::string & csvfilen
         data.push_back(line);
     }
     if (data.size() == 0) {
-        std::cout << "Warning: Tried opening the following, but got nothing. csvfilename = " << csvfilename << std::endl;
+        std::cout << "Warning: Tried opening the following, but got nothing. csvfilename = "
+                  << csvfilename << std::endl;
     }
 
     // Parse csv lines

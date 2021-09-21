@@ -16,7 +16,8 @@
 
 WeatherHexMap::WeatherHexMap(const HexPlanet &planet, const uint32_t time_steps,
                              int start_lat, int start_lon, int end_lat, int end_lon,
-                             bool generate_new_grib, const std::string & file_name, bool use_csvs, const std::string & output_csvs_folder, bool preserveKml)
+                             bool generate_new_grib, const std::string & file_name, bool use_csvs,
+                             const std::string & output_csvs_folder, bool preserveKml)
     : planet_(planet), steps_(time_steps) {
   weather_data_.resize(boost::extents[planet_.vertex_count()][time_steps]);
 
