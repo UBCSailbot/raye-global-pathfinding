@@ -13,7 +13,7 @@
 class gribParse {
  public:
         explicit gribParse(const std::string & filename, int time_steps = 4, bool use_csvs = false,
-                           const std::string & output_csvs_folder = "output_csvs");
+                           const std::string & output_csvs_folder = "");
         static double calcMagnitude(const double u_comp, const double v_comp);
         static double calcAngle(const double u_comp, const double v_comp);
         void saveKML(bool preserveKml);

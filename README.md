@@ -91,7 +91,7 @@ angles2d-0.csv  angles2d-1.csv  angles2d-2.csv  angles2d-3.csv  lats2d.csv  lons
 
 These csv files can be directly modified to change the inputs to planning. Note that the last number refers to the time-step value. We will be using 4 time steps for all global pathfinding purposes (0, 4hr, 8hr, 12hr).
 
-By adding the `--output_csvs <folder_name>` options, the used weather data is saved into csv files in <folder_name>. This is useful, as these files can then be used as inputs with `--input_csvs` to be used for future testing.
+By adding the `--output_csvs <folder_name>` options, the used weather data is saved into csv files in <folder_name> (folder must already exist). This is useful, as these files can then be used as inputs with `--input_csvs` to be used for future testing.
 
 ### Linting
 Linting helps us keep our code clean, easy to maintain, and free of bugs.
