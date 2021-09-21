@@ -72,11 +72,32 @@ void HexPlanet::Write(std::ostream &o) {
   o << "# " << vertices_.size() << " Vertices" << std::endl;
   for (std::vector<HexVertex>::const_iterator i = vertices_.begin(); i != vertices_.end(); ++i) {
     const Eigen::Vector3f normal = i->normal();
+    // Position
     o << 'v'
       << ' ' << round_epsilon(normal[0])
       << ' ' << round_epsilon(normal[1])
-      << ' ' << round_epsilon(normal[2])
-      << std::endl;
+      << ' ' << round_epsilon(normal[2]);
+    // GPS coordinate
+    o << ' ' << i->coordinate.latitude()
+      << ' ' << i->coordinate.longitude();
+    // Neighbours
+    for (const auto& x : i->neighbours)
+    {
+      o << ' ' << x;
+    }
+    // Neighbour distances
+    for (const auto& x : i->neighbour_distances)
+    {
+      o << ' ' << x;
+    }
+    // Neighbour count
+    o << ' ' << i->neighbour_count;
+    // Indirect neighbours
+    for (const auto& x : i->indirect_neighbours)
+    {
+      o << ' ' << x;
+    }
+    o  << std::endl;
   }
 
   o << "# " << triangles_.size() << " Faces" << std::endl;
@@ -104,6 +125,44 @@ void HexPlanet::Read(std::istream &is) {
       // Vertex - 3 coordinates (make a hex)
       float x, y, z;
       iss >> x >> y >> z;
+      std::cerr << "x y z = " << x << " " << y << " " << z << std::endl;
+      float lat, lon;
+      iss >> lat >> lon;
+      std::cerr << "lat lon = " << lat << " " << lon << std::endl;
+      std::array<HexVertexId, HexVertex::kMaxHexVertexNeighbourCount> neighbours;
+      for (auto& x : neighbours)
+      {
+          iss >> x;
+      }
+      for (const auto& x : neighbours)
+      {
+          std::cerr << "x = " << x;
+      }
+      std::cerr << std::endl;
+      std::array<HexVertexId, HexVertex::kMaxHexVertexNeighbourCount> neighbour_distances;
+      for (auto& y : neighbour_distances)
+      {
+          iss >> y;
+      }
+      for (const auto& y : neighbour_distances)
+      {
+          std::cerr << "y = " << y;
+      }
+      std::cerr << std::endl;
+      float neighbour_count;
+      iss >> neighbour_count;
+      std::cerr << "neighbour_count = " << neighbour_count << std::endl;
+      std::vector<HexVertexId> indirect_neighbours;
+      HexVertexId indirect_neighbour;
+      while (iss >> indirect_neighbour)
+      {
+          indirect_neighbours.push_back(indirect_neighbour);
+      }
+      for (const auto& z : indirect_neighbours)
+      {
+          std::cerr << "z = " << z;
+      }
+
       vertices_.push_back(HexVertex(Eigen::Vector3f(x, y, z)));
     } else if (firstChar == 'f') {
       // Face - 3 vert indices
