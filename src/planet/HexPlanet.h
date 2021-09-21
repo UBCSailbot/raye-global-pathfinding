@@ -36,6 +36,8 @@ class HexPlanet {
    */
   explicit HexPlanet(uint8_t subdivision_level, uint8_t indirect_neighbour_depth = kDefaultIndirectNeighbourDepth);
 
+  explicit HexPlanet();
+
   /**
    * @return The number of subdivisions used to generate the planet.
    */

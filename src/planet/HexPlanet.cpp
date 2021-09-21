@@ -9,6 +9,10 @@
 
 #include "logic/StandardCalc.h"
 
+HexPlanet::HexPlanet() {
+}
+
+
 HexPlanet::HexPlanet(uint8_t subdivision_level, uint8_t indirect_neighbour_depth) {
   // Setup for progress bar
   ProgressBar progress_bar;

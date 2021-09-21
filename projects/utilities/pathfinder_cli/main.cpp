@@ -3,6 +3,7 @@
 #include <chrono>
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 
 #include <boost/program_options.hpp>
 
@@ -94,6 +95,37 @@ HexPlanet generate_planet(uint8_t subdivision_level, uint8_t indirect_neighbour_
   HexPlanet planet = indirect_neighbour_depth != kInvalidIndirectNeighbourDepth ? HexPlanet(subdivision_level,
                                                                                             indirect_neighbour_depth)
                                                                                 : HexPlanet(subdivision_level);
+  HexPlanet planet2 = HexPlanet();
+
+  // OUTPUT
+  std::filebuf fb;
+  std::cerr << "About to write" << std::endl;
+  fb.open ("test.txt",std::ios::out);
+  std::ostream os(&fb);
+  planet.Write(os);
+  fb.close();
+  std::cerr << "Wrote" << std::endl;
+
+  // INPUT
+  std::filebuf fb2;
+  std::cerr << "About to read" << std::endl;
+  if (fb2.open ("test.txt",std::ios::in))
+  {
+    std::istream is(&fb2);
+    planet2.Read(is);
+    fb2.close();
+  }
+  std::cerr << "RRead" << std::endl;
+
+  // OUTPUT
+  std::filebuf fb3;
+  std::cerr << "About to write2 " << std::endl;
+  fb3.open ("test2.txt",std::ios::out);
+  std::ostream os2(&fb3);
+  planet2.Write(os2);
+  fb3.close();
+  std::cerr << "Wrote 2" << std::endl;
+
 
   if (!silent) {
     auto end_time = std::chrono::system_clock::now();
