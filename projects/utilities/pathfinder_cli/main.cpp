@@ -88,27 +88,18 @@ Pathfinder::Result run_pathfinder(HexPlanet &planet,
 HexPlanet generate_planet(uint8_t subdivision_level, uint8_t indirect_neighbour_depth, bool silent, bool verbose, bool store_planet, bool use_cached_planet) {
   auto start_time = std::chrono::system_clock::now();
   const std::string path_to_cached_planet = "cached_planets/size_" + std::to_string(subdivision_level) + ".txt";
-  HexPlanet *planet = nullptr;
-
-  if (use_cached_planet)
-  {
-    if (!silent) {
+  if (!silent) {
+    if (use_cached_planet) {
       std::cout << "Looking for cached planet at " << path_to_cached_planet << std::endl;
     }
-    HexPlanet cached_planet(path_to_cached_planet);
-    *planet = cached_planet;
-  }
-  else
-  {
-    if (!silent) {
-      std::cout << "Generating HexPlanet of Size: " << static_cast<int> (subdivision_level) << std::endl;
+    else {
+      std::cout << "Generating HexPlanet of Size: " << static_cast<int>(subdivision_level) << std::endl;
     }
-
-    HexPlanet new_planet = indirect_neighbour_depth != kInvalidIndirectNeighbourDepth ?
-                           HexPlanet(subdivision_level, indirect_neighbour_depth) :
-                           HexPlanet(subdivision_level);
-    *planet = new_planet;
   }
+  HexPlanet planet = (use_cached_planet) ? HexPlanet(path_to_cached_planet) : 
+                     (indirect_neighbour_depth != kInvalidIndirectNeighbourDepth) ?
+                     HexPlanet(subdivision_level, indirect_neighbour_depth) :
+                     HexPlanet(subdivision_level);
 
   if (!silent) {
     auto end_time = std::chrono::system_clock::now();
@@ -118,8 +109,8 @@ HexPlanet generate_planet(uint8_t subdivision_level, uint8_t indirect_neighbour_
 
     if (verbose) {
       std::cout << std::fixed
-                << "Vertices:  " << planet->vertex_count() << std::endl
-                << "Triangles: " << planet->triangle_count() << std::endl;
+                << "Vertices:  " << planet.vertex_count() << std::endl
+                << "Triangles: " << planet.triangle_count() << std::endl;
     }
 
     std::cout << std::endl;
@@ -130,10 +121,10 @@ HexPlanet generate_planet(uint8_t subdivision_level, uint8_t indirect_neighbour_
     if (!silent) {
       std::cout << "Storing planet at " << path_to_cached_planet << std::endl;
     }
-    planet->WriteToFile(path_to_cached_planet);
+    planet.WriteToFile(path_to_cached_planet);
   }
 
-  return *planet;
+  return planet;
 }
 
 int main(int argc, char const *argv[]) {
