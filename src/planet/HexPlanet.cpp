@@ -163,7 +163,8 @@ void HexPlanet::Read(std::istream &is) {
           std::cerr << "z = " << z;
       }
 
-      vertices_.push_back(HexVertex(Eigen::Vector3f(x, y, z)));
+      // vertices_.push_back(HexVertex(Eigen::Vector3f(x, y, z)));
+      vertices_.push_back(HexVertex(Eigen::Vector3f(x, y, z), GPSCoordinateFast(lat, lon), neighbours, neighbour_distances, neighbour_count, indirect_neighbours));
     } else if (firstChar == 'f') {
       // Face - 3 vert indices
       uint32_t x, y, z;
