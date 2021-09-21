@@ -93,6 +93,7 @@ void HexPlanet::Read(std::istream &is) {
   std::string line;
 
   for (std::getline(is, line); !is.eof(); std::getline(is, line)) {
+    std::cerr << "IN READ" << std::endl;
     std::istringstream iss(line);
     char firstChar;
     iss >> firstChar;
@@ -267,10 +268,14 @@ void HexPlanet::ProjectToSphere() {
 HexVertexId HexPlanet::HexVertexFromPoint(Eigen::Vector3f surface_position) {
   HexVertexId best_hex = 0;
   float best_dot;
+    std::cerr << "16" << std::endl;
 
   // Normalize
+    std::cerr << "17" << std::endl;
   surface_position.normalize();
+    std::cerr << "18" << std::endl;
   best_dot = acosf(vertices_[0].vertex_position.dot(surface_position));
+    std::cerr << "19" << std::endl;
 
   // Clever cheat -- just use the dot product to find the smallest angle -- and thus the containing hex
   for (HexVertexId i = 1; i < vertices_.size(); i++) {
@@ -280,6 +285,7 @@ HexVertexId HexPlanet::HexVertexFromPoint(Eigen::Vector3f surface_position) {
       best_dot = d;
     }
   }
+    std::cerr << "20" << std::endl;
 
   return best_hex;
 }

@@ -181,9 +181,13 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
     // Lats are like a y position, so larger numbers start at top
     // Don't need for lon b/c like a x position, so smaller numbers start at left, but do for consistency
     std::vector<std::vector<double>> lats2d = reverseColumns(convert1Dto2D(lats, numRows, numCols));
+    std::cout << "TEST1" << std::endl;
     std::vector<std::vector<double>> lons2d = reverseColumns(convert1Dto2D(lons, numRows, numCols));
+    std::cout << "TEST2" << std::endl;
     saveToCsv2D(lats2d, output_csvs_directory + "lats2d.csv");
+    std::cout << "TEST3" << std::endl;
     saveToCsv2D(lons2d, output_csvs_directory + "lons2d.csv");
+    std::cout << "TEST4" << std::endl;
     for (size_t i = 0; i < magnitudes.size(); i++) {
       std::vector<std::vector<double>> magnitudes2d = reverseColumns(convert1Dto2D(magnitudes.at(i), numRows, numCols));
       saveToCsv2D(magnitudes2d, output_csvs_directory + "magnitudes2d-" + std::to_string(i) + ".csv");
@@ -194,6 +198,7 @@ gribParse::gribParse(const std::string & filename, int time_steps) {
     }
 
     fclose(in);
+    std::cout << "TEST5" << std::endl;
   }
 }
 

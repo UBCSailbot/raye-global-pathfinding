@@ -92,11 +92,10 @@ HexPlanet generate_planet(uint8_t subdivision_level, uint8_t indirect_neighbour_
   }
   auto start_time = std::chrono::system_clock::now();
 
+  /*
   HexPlanet planet = indirect_neighbour_depth != kInvalidIndirectNeighbourDepth ? HexPlanet(subdivision_level,
                                                                                             indirect_neighbour_depth)
                                                                                 : HexPlanet(subdivision_level);
-  HexPlanet planet2 = HexPlanet();
-
   // OUTPUT
   std::filebuf fb;
   std::cerr << "About to write" << std::endl;
@@ -105,6 +104,12 @@ HexPlanet generate_planet(uint8_t subdivision_level, uint8_t indirect_neighbour_
   planet.Write(os);
   fb.close();
   std::cerr << "Wrote" << std::endl;
+  */
+
+
+
+
+  HexPlanet planet = HexPlanet();
 
   // INPUT
   std::filebuf fb2;
@@ -112,19 +117,24 @@ HexPlanet generate_planet(uint8_t subdivision_level, uint8_t indirect_neighbour_
   if (fb2.open ("test.txt",std::ios::in))
   {
     std::istream is(&fb2);
-    planet2.Read(is);
+    planet.Read(is);
     fb2.close();
   }
   std::cerr << "RRead" << std::endl;
 
+
+
+
+  /*
   // OUTPUT
   std::filebuf fb3;
   std::cerr << "About to write2 " << std::endl;
   fb3.open ("test2.txt",std::ios::out);
   std::ostream os2(&fb3);
-  planet2.Write(os2);
+  planet.Write(os2);
   fb3.close();
   std::cerr << "Wrote 2" << std::endl;
+  */
 
 
   if (!silent) {
@@ -219,8 +229,13 @@ int main(int argc, char const *argv[]) {
     uint8_t indirect_neighbour_depth = (vm.count("i") > 0) ? static_cast<uint8_t> (vm["i"].as<int>())
                                                            : kInvalidIndirectNeighbourDepth;
     HexPlanet planet = generate_planet(planet_size, indirect_neighbour_depth, silent, verbose);
+    std::cerr << "planet.vertices_.size() = " << planet.vertices_.size() << std::endl;
+    std::cerr << "planet.triangles_.size() = " << planet.triangles_.size() << std::endl;
+
+    std::cerr << "1" << std::endl;
 
     int time_steps = vm["t"].as<int>();
+    std::cerr << "2" << std::endl;
 
     if (vm.count("n")) {
       find_neighbours(planet, vm["n"].as<HexVertexId>());
@@ -252,9 +267,11 @@ int main(int argc, char const *argv[]) {
           break;
       }
     } else if (vm.count("navigate")) {
+    std::cerr << "3" << std::endl;
       // Find a path betweeen two GPS coordinates, print in KML format
       //TODO() Enable Inputs to be in degrees West/South
       auto points = vm["navigate"].as<std::vector<double>>();
+    std::cerr << "4" << std::endl;
 
       NetworkTable::NonProtoConnection connection;
       if (vm.count("table")) {
@@ -290,28 +307,36 @@ int main(int argc, char const *argv[]) {
         start_lat = (points[0]);
         start_lon = (points[1]);
       }
+    std::cerr << "5" << std::endl;
 
       end_lat = (points[2]);
       end_lon = (points[3]);
+    std::cerr << "6" << std::endl;
 
       auto adj_start_lon = start_lon < 0 ? start_lon : start_lon - 360;
       auto adj_end_lon = end_lon < 0 ? end_lon : end_lon - 360;
 
+    std::cerr << "7" << std::endl;
       const GPSCoordinateFast start_coord(start_lat*10000000, adj_start_lon*10000000);
       const GPSCoordinateFast end_coord(end_lat*10000000, adj_end_lon*10000000);
+    std::cerr << "8" << std::endl;
 
       Eigen::Vector3f start_point;
       Eigen::Vector3f end_point;
 
+    std::cerr << "9" << std::endl;
       standard_calc::CoordToPoint(start_coord, &start_point);
       standard_calc::CoordToPoint(end_coord, &end_point);
+    std::cerr << "10" << std::endl;
 
       HexVertexId start_vertex = planet.HexVertexFromPoint(start_point);
       HexVertexId end_vertex = planet.HexVertexFromPoint(end_point);
+    std::cerr << "11" << std::endl;
 
       auto result = run_pathfinder(planet, start_vertex, end_vertex, weather_factor, generate_new_grib, file_name,
                                    time_steps, silent, verbose);
 
+    std::cerr << "12" << std::endl;
       if (vm.count("table")) {
         std::vector<std::pair<double, double>> waypoints;
         waypoints = PathfinderResultPrinter::GetVector(planet, result);
