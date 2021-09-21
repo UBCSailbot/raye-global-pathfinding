@@ -13,8 +13,7 @@
 
 HexPlanet::HexPlanet(const std::string& stored_planet_filename) {
   std::filebuf fb;
-  if (fb.open(stored_planet_filename, std::ios::in))
-  {
+  if (fb.open(stored_planet_filename, std::ios::in)) {
     std::istream is(&fb);
     Read(is);
     fb.close();
@@ -78,9 +77,9 @@ float round_epsilon(float a) {
 }
 
 
-void WriteToFile(const std::string& output_planet_filename) {
+void HexPlanet::WriteToFile(const std::string& output_planet_filename) {
   std::filebuf fb;
-  fb.open (output_planet_filename, std::ios::out);
+  fb.open(output_planet_filename, std::ios::out);
   std::ostream os(&fb);
   Write(os);
   fb.close();
@@ -104,14 +103,12 @@ void HexPlanet::Write(std::ostream &o) {
       << ' ' << i->coordinate.longitude();
 
     // Neighbours
-    for (const auto& x : i->neighbours)
-    {
+    for (const auto& x : i->neighbours) {
       o << ' ' << x;
     }
 
     // Neighbour distances
-    for (const auto& x : i->neighbour_distances)
-    {
+    for (const auto& x : i->neighbour_distances) {
       o << ' ' << x;
     }
 
@@ -119,8 +116,7 @@ void HexPlanet::Write(std::ostream &o) {
     o << ' ' << i->neighbour_count;
 
     // Indirect neighbours
-    for (const auto& x : i->indirect_neighbours)
-    {
+    for (const auto& x : i->indirect_neighbours) {
       o << ' ' << x;
     }
 
@@ -147,11 +143,12 @@ void HexPlanet::Read(std::istream &is) {
     char firstChar;
     iss >> firstChar;
 
-    // Comment - do nothing
-    if (firstChar == '#') {}
 
-    // Vertex
-    else if (firstChar == 'v') {
+    if (firstChar == '#') {
+      // Comment - do nothing
+    } else if (firstChar == 'v') {
+      // Vertex
+
       // Position
       float x, y, z;
       iss >> x >> y >> z;
@@ -162,15 +159,13 @@ void HexPlanet::Read(std::istream &is) {
 
       // Neighbours
       std::array<HexVertexId, HexVertex::kMaxHexVertexNeighbourCount> neighbours;
-      for (auto& x : neighbours)
-      {
+      for (auto& x : neighbours) {
           iss >> x;
       }
 
       // Neighbour distances
       std::array<HexVertexId, HexVertex::kMaxHexVertexNeighbourCount> neighbour_distances;
-      for (auto& y : neighbour_distances)
-      {
+      for (auto& y : neighbour_distances) {
           iss >> y;
       }
 
@@ -181,8 +176,7 @@ void HexPlanet::Read(std::istream &is) {
       // Indirect neighbours
       std::vector<HexVertexId> indirect_neighbours;
       HexVertexId indirect_neighbour;
-      while (iss >> indirect_neighbour)
-      {
+      while (iss >> indirect_neighbour) {
           indirect_neighbours.push_back(indirect_neighbour);
       }
 
@@ -193,15 +187,12 @@ void HexPlanet::Read(std::istream &is) {
       vertex.neighbour_count = neighbour_count;
       vertex.indirect_neighbours = indirect_neighbours;
       vertices_.push_back(vertex);
-    }
-
-    // Face/Triangle
-    else if (firstChar == 'f') {
+    } else if (firstChar == 'f') {
+      // Face/Triangle
       uint32_t x, y, z;
       iss >> x >> y >> z;
       triangles_.push_back(HexTriangle(x - 1, y - 1, z - 1));
     }
-
   }
 }
 

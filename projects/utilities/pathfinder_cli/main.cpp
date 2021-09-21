@@ -87,8 +87,8 @@ Pathfinder::Result run_pathfinder(HexPlanet &planet,
 
 HexPlanet generate_planet(uint8_t subdivision_level, uint8_t indirect_neighbour_depth, bool silent, bool verbose, bool store_planet, bool use_cached_planet) {
   auto start_time = std::chrono::system_clock::now();
-  const std::string path_to_cached_planet = "cached_planets/size_" + subdivision_level + ".txt";
-  HexPlanet *planet;
+  const std::string path_to_cached_planet = "cached_planets/size_" + std::to_string(subdivision_level) + ".txt";
+  HexPlanet *planet = nullptr;
 
   if (use_cached_planet)
   {
