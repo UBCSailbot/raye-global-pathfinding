@@ -92,35 +92,50 @@ HexPlanet generate_planet(uint8_t subdivision_level, uint8_t indirect_neighbour_
   }
   auto start_time = std::chrono::system_clock::now();
 
-  /*
-  HexPlanet planet = indirect_neighbour_depth != kInvalidIndirectNeighbourDepth ? HexPlanet(subdivision_level,
-                                                                                            indirect_neighbour_depth)
-                                                                                : HexPlanet(subdivision_level);
-  // OUTPUT
-  std::filebuf fb;
-  std::cerr << "About to write" << std::endl;
-  fb.open ("test.txt",std::ios::out);
-  std::ostream os(&fb);
-  planet.Write(os);
-  fb.close();
-  std::cerr << "Wrote" << std::endl;
-  */
-
-
-
-
-  HexPlanet planet = HexPlanet();
-
-  // INPUT
-  std::filebuf fb2;
-  std::cerr << "About to read" << std::endl;
-  if (fb2.open ("test.txt",std::ios::in))
+  bool create = true;
+  HexPlanet planet;
+  if (create)
   {
-    std::istream is(&fb2);
-    planet.Read(is);
-    fb2.close();
+    planet = indirect_neighbour_depth != kInvalidIndirectNeighbourDepth ? HexPlanet(subdivision_level,
+                                                                                              indirect_neighbour_depth)
+                                                                                  : HexPlanet(subdivision_level);
+    // OUTPUT
+    std::filebuf fb;
+    std::cerr << "About to write" << std::endl;
+    fb.open ("test.txt",std::ios::out);
+    std::ostream os(&fb);
+    planet.Write(os);
+    fb.close();
+    std::cerr << "Wrote" << std::endl;
   }
-  std::cerr << "RRead" << std::endl;
+  else
+  {
+    planet = HexPlanet();
+
+    // INPUT
+    std::filebuf fb2;
+    std::cerr << "About to read" << std::endl;
+    if (fb2.open ("test.txt",std::ios::in))
+    {
+      std::istream is(&fb2);
+      planet.Read(is);
+      fb2.close();
+    }
+    std::cerr << "RRead" << std::endl;
+
+    // OUTPUT
+    std::filebuf fb;
+    std::cerr << "About to write" << std::endl;
+    fb.open ("test2.txt",std::ios::out);
+    std::ostream os(&fb);
+    planet.Write(os);
+    fb.close();
+    std::cerr << "Wrote" << std::endl;
+  }
+
+
+
+
 
 
 

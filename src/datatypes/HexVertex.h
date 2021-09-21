@@ -20,7 +20,7 @@ class HexVertex {
   static constexpr HexVertexId kMaxHexVertexNeighbourCount = 6;
 
   explicit HexVertex(Eigen::Vector3f p);
-  explicit HexVertex(Eigen::Vector3f vertex_position__, GPSCoordinateFast gps__, std::array<HexVertexId, kMaxHexVertexNeighbourCount> neighbours__, std::array<HexVertexId, kMaxHexVertexNeighbourCount> neighbour_distances__, HexVertexId neighbour_count__, std::vector<HexVertexId> indirect_neighbours__);
+  explicit HexVertex(Eigen::Vector3f vertex_position__, GPSCoordinateFast coordinate__, std::array<HexVertexId, kMaxHexVertexNeighbourCount> neighbours__, std::array<HexVertexId, kMaxHexVertexNeighbourCount> neighbour_distances__, HexVertexId neighbour_count__, std::vector<HexVertexId> indirect_neighbours__);
 
   Eigen::Vector3f normal() const { return vertex_position.normalized(); }
 
