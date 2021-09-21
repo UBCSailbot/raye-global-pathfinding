@@ -12,34 +12,34 @@
 
 /**
  * Translates GRIB file into array of lattitudes, longitudes, and corresponding values
- * @param filename of target GRIB file
+ * @param filename of target GRIB file or target csvs folder
  * @return
  */
 
-gribParse::gribParse(const std::string & filename, int time_steps) {
-  if (filename == "csv") {
+gribParse::gribParse(const std::string & filename, int time_steps, bool use_csvs) {
+  if (use_csvs) {
     // Read saved csv files to get weather information
     // Need to reverse columns because lats ordering issue described below
     // Refer to issue https://github.com/UBCSailbot/global-pathfinding/pull/40 for detailed example
-    std::string input_csvs_directory = "input_csvs/";
+    std::string input_csvs_directory = filename;
     std::cout << "Reading in csvs from the following directory: " << input_csvs_directory << std::endl;
     std::cout << "Will segfault if csvs are missing" << std::endl;
 
     // lats and lons should have shape (number_of_points_)
-    lats = convert2Dto1D(reverseColumns(readCsv(input_csvs_directory + "lats2d.csv")));
-    lons = convert2Dto1D(reverseColumns(readCsv(input_csvs_directory + "lons2d.csv")));
+    lats = convert2Dto1D(reverseColumns(readCsv(input_csvs_directory + "/lats2d.csv")));
+    lons = convert2Dto1D(reverseColumns(readCsv(input_csvs_directory + "/lons2d.csv")));
     number_of_points_ = lats.size();
 
     // angles and magnitudes should have shape (time_steps, number_of_points_)
     angles.resize(time_steps);
     magnitudes.resize(time_steps);
     for (int i = 0; i < time_steps; i++) {
-      std::string angle_filename = input_csvs_directory + "angles2d-" + std::to_string(i) + ".csv";
+      std::string angle_filename = input_csvs_directory + "/angles2d-" + std::to_string(i) + ".csv";
       std::vector<double> angles_at_time = convert2Dto1D(reverseColumns(readCsv(angle_filename)));
       angles[i] = angles_at_time;
     }
     for (int i = 0; i < time_steps; i++) {
-      std::string magnitude_filename = input_csvs_directory + "magnitudes2d-" + std::to_string(i) + ".csv";
+      std::string magnitude_filename = input_csvs_directory + "/magnitudes2d-" + std::to_string(i) + ".csv";
       std::vector<double> magnitudes_at_time = convert2Dto1D(reverseColumns(readCsv(magnitude_filename)));
       magnitudes[i] = magnitudes_at_time;
     }
@@ -339,6 +339,9 @@ std::vector<std::vector<double>> gribParse::readCsv(const std::string & csvfilen
     std::vector<std::string> data;
     while (std::getline(infile, line)) {
         data.push_back(line);
+    }
+    if (data.size() == 0) {
+        std::cout << "Warning: Tried opening the following, but got nothing. csvfilename = " << csvfilename << std::endl;
     }
 
     // Parse csv lines

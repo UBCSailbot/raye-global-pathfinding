@@ -62,6 +62,7 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet,
                                               int weather_factor,
                                               const std::string & file_name,
                                               int time_steps,
+                                              bool use_csvs,
                                               int pointToPrint,
                                               bool preserveKml) {
   std::ofstream handle;
@@ -72,7 +73,7 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet,
 
   std::vector<std::pair<double, double>> pathResult;
 
-  gribParse file = gribParse(file_name, time_steps);
+  gribParse file = gribParse(file_name, time_steps, use_csvs);
 
   HexVertexId old_id;
 

@@ -51,10 +51,11 @@ Pathfinder::Result run_pathfinder(HexPlanet &planet,
                                   bool generate_new_grib,
                                   const std::string & file_name,
                                   int time_steps,
+                                  bool use_csvs,
                                   bool silent,
                                   bool verbose) {
   HaversineHeuristic heuristic = HaversineHeuristic(planet);
-  WeatherHexMap weather_map = WeatherHexMap(planet, time_steps, start_lat, start_lon, end_lat, end_lon, generate_new_grib, file_name, preserveKml);
+  WeatherHexMap weather_map = WeatherHexMap(planet, time_steps, start_lat, start_lon, end_lat, end_lon, generate_new_grib, file_name, use_csvs, preserveKml);
   auto wmap_pointer = std::make_unique<WeatherHexMap>(weather_map);
   WeatherCostCalculator cost_calculator = WeatherCostCalculator(planet, wmap_pointer, weather_factor);
   AStarPathfinder pathfinder(planet, heuristic, cost_calculator, source, target, true);
@@ -120,9 +121,12 @@ int main(int argc, char const *argv[]) {
         ("help,h", "Help screen")
         ("v,verbose", "Verbose output")
         ("s,silent", "Silence useful output")
-        ("g,grib_toggle", boost::program_options::value<std::string>(),
-         "Relative path to grb file for weather info OR the string 'csv' to read from default csv files. "
-         "If not given, uses new weather data download.")
+        ("grib", boost::program_options::value<std::string>(),
+         "Relative path to grb file for weather info. If not given, uses new weather data download.")
+        ("input_csvs", boost::program_options::value<std::string>(),
+         "Relative path to folder from which to read in csvs as weather data.")
+        ("output_csvs", boost::program_options::value<std::string>(),
+         "Relative path to existing folder in which weather data csvs will be created")
         ("p,planet_size", boost::program_options::value<int>()->default_value(1), "Planet Size")
         ("w,weather_factor", boost::program_options::value<int>()->default_value(3000), "Weather Factor")
         ("n,neighbour", boost::program_options::value<HexVertexId>(), "Vertex to find neighbours")
@@ -153,10 +157,16 @@ int main(int argc, char const *argv[]) {
     }
 
     bool generate_new_grib = true;
+    bool use_csvs = false;
     std::string file_name = "data.grb";
-    if (vm.count("g")) {
+    if (vm.count("grib")) {
       generate_new_grib = false;
-      file_name = vm["g"].as<std::string>();
+      file_name = vm["grib"].as<std::string>();
+      use_csvs = false;
+    } else if (vm.count("input_csvs")) {
+      generate_new_grib = false;
+      file_name = vm["input_csvs"].as<std::string>();
+      use_csvs = true;
     }
 
     int weather_factor = vm["w"].as<int>();
@@ -202,7 +212,7 @@ int main(int argc, char const *argv[]) {
       }
 
       auto result = run_pathfinder(planet, points[0], points[1], weather_factor, generate_new_grib, file_name,
-                                   time_steps, silent, verbose);
+                                   time_steps, use_csvs, silent, verbose);
 
       switch (format) {
         case OutputFormat::kDefault:
@@ -216,7 +226,7 @@ int main(int argc, char const *argv[]) {
           break;
         case OutputFormat::kKML:
           // Print KML
-          std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor, file_name, time_steps, pointToPrint, preserveKml);
+          std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor, file_name, time_steps, use_csvs, pointToPrint, preserveKml);
           break;
       }
     } else if (vm.count("navigate")) {
@@ -278,7 +288,7 @@ int main(int argc, char const *argv[]) {
       HexVertexId end_vertex = planet.HexVertexFromPoint(end_point);
 
       auto result = run_pathfinder(planet, start_vertex, end_vertex, weather_factor, generate_new_grib, file_name,
-                                   time_steps, silent, verbose);
+                                   time_steps, use_csvs, silent, verbose);
 
       if (vm.count("table")) {
         std::vector<std::pair<double, double>> waypoints;
@@ -291,7 +301,7 @@ int main(int argc, char const *argv[]) {
           std::cout << "Could not set waypoint values" << std::endl;
         }
       } else {
-        std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor, file_name, time_steps, pointToPrint, preserveKml);
+        std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor, file_name, time_steps, use_csvs, pointToPrint, preserveKml);
       }
 
     } else {

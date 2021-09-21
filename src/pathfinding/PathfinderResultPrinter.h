@@ -38,6 +38,7 @@ class PathfinderResultPrinter {
                               int weather_factor,
                               const std::string & file_name,
                               int time_steps,
+                              bool use_csvs,
                               int pointToPrint,
                               bool preserveKml);
 
