@@ -3,7 +3,6 @@
 #include <chrono>
 #include <iostream>
 #include <iomanip>
-#include <fstream>
 
 #include <boost/program_options.hpp>
 
@@ -86,71 +85,30 @@ Pathfinder::Result run_pathfinder(HexPlanet &planet,
   return result;
 }
 
-HexPlanet generate_planet(uint8_t subdivision_level, uint8_t indirect_neighbour_depth, bool silent, bool verbose) {
-  if (!silent) {
-    std::cout << "Generating HexPlanet of Size: " << static_cast<int> (subdivision_level) << std::endl;
-  }
+HexPlanet generate_planet(uint8_t subdivision_level, uint8_t indirect_neighbour_depth, bool silent, bool verbose, bool store_planet, bool use_cached_planet) {
   auto start_time = std::chrono::system_clock::now();
+  const std::string path_to_cached_planet = "cached_planets/size_" + subdivision_level + ".txt";
+  HexPlanet *planet;
 
-  bool create = true;
-  HexPlanet planet;
-  if (create)
+  if (use_cached_planet)
   {
-    planet = indirect_neighbour_depth != kInvalidIndirectNeighbourDepth ? HexPlanet(subdivision_level,
-                                                                                              indirect_neighbour_depth)
-                                                                                  : HexPlanet(subdivision_level);
-    // OUTPUT
-    std::filebuf fb;
-    std::cerr << "About to write" << std::endl;
-    fb.open ("test.txt",std::ios::out);
-    std::ostream os(&fb);
-    planet.Write(os);
-    fb.close();
-    std::cerr << "Wrote" << std::endl;
+    if (!silent) {
+      std::cout << "Looking for cached planet at " << path_to_cached_planet << std::endl;
+    }
+    HexPlanet cached_planet(path_to_cached_planet);
+    *planet = cached_planet;
   }
   else
   {
-    planet = HexPlanet();
-
-    // INPUT
-    std::filebuf fb2;
-    std::cerr << "About to read" << std::endl;
-    if (fb2.open ("test.txt",std::ios::in))
-    {
-      std::istream is(&fb2);
-      planet.Read(is);
-      fb2.close();
+    if (!silent) {
+      std::cout << "Generating HexPlanet of Size: " << static_cast<int> (subdivision_level) << std::endl;
     }
-    std::cerr << "RRead" << std::endl;
 
-    // OUTPUT
-    std::filebuf fb;
-    std::cerr << "About to write" << std::endl;
-    fb.open ("test2.txt",std::ios::out);
-    std::ostream os(&fb);
-    planet.Write(os);
-    fb.close();
-    std::cerr << "Wrote" << std::endl;
+    HexPlanet new_planet = indirect_neighbour_depth != kInvalidIndirectNeighbourDepth ?
+                           HexPlanet(subdivision_level, indirect_neighbour_depth) :
+                           HexPlanet(subdivision_level);
+    *planet = new_planet;
   }
-
-
-
-
-
-
-
-
-  /*
-  // OUTPUT
-  std::filebuf fb3;
-  std::cerr << "About to write2 " << std::endl;
-  fb3.open ("test2.txt",std::ios::out);
-  std::ostream os2(&fb3);
-  planet.Write(os2);
-  fb3.close();
-  std::cerr << "Wrote 2" << std::endl;
-  */
-
 
   if (!silent) {
     auto end_time = std::chrono::system_clock::now();
@@ -160,14 +118,22 @@ HexPlanet generate_planet(uint8_t subdivision_level, uint8_t indirect_neighbour_
 
     if (verbose) {
       std::cout << std::fixed
-                << "Vertices:  " << planet.vertex_count() << std::endl
-                << "Triangles: " << planet.triangle_count() << std::endl;
+                << "Vertices:  " << planet->vertex_count() << std::endl
+                << "Triangles: " << planet->triangle_count() << std::endl;
     }
 
     std::cout << std::endl;
   }
 
-  return planet;
+  if (store_planet)
+  {
+    if (!silent) {
+      std::cout << "Storing planet at " << path_to_cached_planet << std::endl;
+    }
+    planet->WriteToFile(path_to_cached_planet);
+  }
+
+  return *planet;
 }
 
 int main(int argc, char const *argv[]) {
@@ -196,6 +162,8 @@ int main(int argc, char const *argv[]) {
          boost::program_options::value<std::vector<double>>()->multitoken(),
          "<start_latitude> <start_longitude> <end_latitude> <end_longitude>")
         ("kml", "Output the a KML file for the pathfinding result")
+        ("store_planet", "Output the a file to store the planet as a cache")
+        ("use_cached_planet", "Use cached_planet in cached_planets/size_<size>.txt")
         ("printn", boost::program_options::value<int>(), "Output the nth coordinate pair at the end of the program, starting with 1")
         ("save", "Save the current weather as a timestamped KML");
 
@@ -243,14 +211,11 @@ int main(int argc, char const *argv[]) {
     uint8_t planet_size = static_cast<uint8_t> (vm["p"].as<int>());
     uint8_t indirect_neighbour_depth = (vm.count("i") > 0) ? static_cast<uint8_t> (vm["i"].as<int>())
                                                            : kInvalidIndirectNeighbourDepth;
-    HexPlanet planet = generate_planet(planet_size, indirect_neighbour_depth, silent, verbose);
-    std::cerr << "planet.vertices_.size() = " << planet.vertices_.size() << std::endl;
-    std::cerr << "planet.triangles_.size() = " << planet.triangles_.size() << std::endl;
-
-    std::cerr << "1" << std::endl;
+    const bool store_planet = vm.count("store_planet") > 0;
+    const bool use_cached_planet = vm.count("use_cached_planet") > 0;
+    HexPlanet planet = generate_planet(planet_size, indirect_neighbour_depth, silent, verbose, store_planet, use_cached_planet);
 
     int time_steps = vm["t"].as<int>();
-    std::cerr << "2" << std::endl;
 
     if (vm.count("n")) {
       find_neighbours(planet, vm["n"].as<HexVertexId>());
@@ -282,11 +247,9 @@ int main(int argc, char const *argv[]) {
           break;
       }
     } else if (vm.count("navigate")) {
-    std::cerr << "3" << std::endl;
       // Find a path betweeen two GPS coordinates, print in KML format
       //TODO() Enable Inputs to be in degrees West/South
       auto points = vm["navigate"].as<std::vector<double>>();
-    std::cerr << "4" << std::endl;
 
       NetworkTable::NonProtoConnection connection;
       if (vm.count("table")) {
@@ -322,36 +285,28 @@ int main(int argc, char const *argv[]) {
         start_lat = (points[0]);
         start_lon = (points[1]);
       }
-    std::cerr << "5" << std::endl;
 
       end_lat = (points[2]);
       end_lon = (points[3]);
-    std::cerr << "6" << std::endl;
 
       auto adj_start_lon = start_lon < 0 ? start_lon : start_lon - 360;
       auto adj_end_lon = end_lon < 0 ? end_lon : end_lon - 360;
 
-    std::cerr << "7" << std::endl;
       const GPSCoordinateFast start_coord(start_lat*10000000, adj_start_lon*10000000);
       const GPSCoordinateFast end_coord(end_lat*10000000, adj_end_lon*10000000);
-    std::cerr << "8" << std::endl;
 
       Eigen::Vector3f start_point;
       Eigen::Vector3f end_point;
 
-    std::cerr << "9" << std::endl;
       standard_calc::CoordToPoint(start_coord, &start_point);
       standard_calc::CoordToPoint(end_coord, &end_point);
-    std::cerr << "10" << std::endl;
 
       HexVertexId start_vertex = planet.HexVertexFromPoint(start_point);
       HexVertexId end_vertex = planet.HexVertexFromPoint(end_point);
-    std::cerr << "11" << std::endl;
 
       auto result = run_pathfinder(planet, start_vertex, end_vertex, weather_factor, generate_new_grib, file_name,
                                    time_steps, silent, verbose);
 
-    std::cerr << "12" << std::endl;
       if (vm.count("table")) {
         std::vector<std::pair<double, double>> waypoints;
         waypoints = PathfinderResultPrinter::GetVector(planet, result);

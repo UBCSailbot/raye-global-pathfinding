@@ -7,10 +7,18 @@
 #include <algorithm>
 #include <iostream>
 #include <sstream>
+#include <fstream>
 
 #include "logic/StandardCalc.h"
 
-HexPlanet::HexPlanet() {
+HexPlanet::HexPlanet(const std::string& stored_planet_filename) {
+  std::filebuf fb;
+  if (fb.open(stored_planet_filename, std::ios::in))
+  {
+    std::istream is(&fb);
+    Read(is);
+    fb.close();
+  }
 }
 
 
@@ -69,7 +77,19 @@ float round_epsilon(float a) {
   return (fabs(a) < 1e-7) ? 0 : a;
 }
 
+
+void WriteToFile(const std::string& output_planet_filename) {
+  std::filebuf fb;
+  fb.open (output_planet_filename, std::ios::out);
+  std::ostream os(&fb);
+  Write(os);
+  fb.close();
+}
+
 void HexPlanet::Write(std::ostream &o) {
+  // WARNING: Brittle code, must have exact alignment between Write and Read
+
+  // Vertices
   o << "# " << vertices_.size() << " Vertices" << std::endl;
   for (std::vector<HexVertex>::const_iterator i = vertices_.begin(); i != vertices_.end(); ++i) {
     const Eigen::Vector3f normal = i->normal();
@@ -78,29 +98,36 @@ void HexPlanet::Write(std::ostream &o) {
       << ' ' << normal[0]
       << ' ' << normal[1]
       << ' ' << normal[2];
+
     // GPS coordinate
     o << ' ' << i->coordinate.latitude()
       << ' ' << i->coordinate.longitude();
+
     // Neighbours
     for (const auto& x : i->neighbours)
     {
       o << ' ' << x;
     }
+
     // Neighbour distances
     for (const auto& x : i->neighbour_distances)
     {
       o << ' ' << x;
     }
+
     // Neighbour count
     o << ' ' << i->neighbour_count;
+
     // Indirect neighbours
     for (const auto& x : i->indirect_neighbours)
     {
       o << ' ' << x;
     }
+
     o  << std::endl;
   }
 
+  // Triangles
   o << "# " << triangles_.size() << " Faces" << std::endl;
   for (std::vector<HexTriangle>::const_iterator i = triangles_.begin(); i != triangles_.end(); ++i) {
     o << 'f'
@@ -112,66 +139,69 @@ void HexPlanet::Write(std::ostream &o) {
 }
 
 void HexPlanet::Read(std::istream &is) {
+  // WARNING: Brittle code, must have exact alignment between Write and Read
   std::string line;
 
   for (std::getline(is, line); !is.eof(); std::getline(is, line)) {
-    // std::cerr << "IN READ" << std::endl;
     std::istringstream iss(line);
     char firstChar;
     iss >> firstChar;
 
-    if (firstChar == '#') {
-      // Comment - do nothing
-    } else if (firstChar == 'v') {
-      // Vertex - 3 coordinates (make a hex)
+    // Comment - do nothing
+    if (firstChar == '#') {}
+
+    // Vertex
+    else if (firstChar == 'v') {
+      // Position
       float x, y, z;
       iss >> x >> y >> z;
-      // std::cerr << "x y z = " << x << " " << y << " " << z << std::endl;
+
+      // GPS coordinate
       float lat, lon;
       iss >> lat >> lon;
-      // std::cerr << "lat lon = " << lat << " " << lon << std::endl;
+
+      // Neighbours
       std::array<HexVertexId, HexVertex::kMaxHexVertexNeighbourCount> neighbours;
       for (auto& x : neighbours)
       {
           iss >> x;
       }
-      for (const auto& x : neighbours)
-      {
-          // std::cerr << "x = " << x;
-      }
-      // std::cerr << std::endl;
+
+      // Neighbour distances
       std::array<HexVertexId, HexVertex::kMaxHexVertexNeighbourCount> neighbour_distances;
       for (auto& y : neighbour_distances)
       {
           iss >> y;
       }
-      for (const auto& y : neighbour_distances)
-      {
-          // std::cerr << "y = " << y;
-      }
-      // std::cerr << std::endl;
+
+      // Neighbour count
       float neighbour_count;
       iss >> neighbour_count;
-      // std::cerr << "neighbour_count = " << neighbour_count << std::endl;
+
+      // Indirect neighbours
       std::vector<HexVertexId> indirect_neighbours;
       HexVertexId indirect_neighbour;
       while (iss >> indirect_neighbour)
       {
           indirect_neighbours.push_back(indirect_neighbour);
       }
-      for (const auto& z : indirect_neighbours)
-      {
-          // std::cerr << "z = " << z;
-      }
 
-      // vertices_.push_back(HexVertex(Eigen::Vector3f(x, y, z)));
-      vertices_.push_back(HexVertex(Eigen::Vector3f(x, y, z), GPSCoordinateFast(lat, lon), neighbours, neighbour_distances, neighbour_count, indirect_neighbours));
-    } else if (firstChar == 'f') {
-      // Face - 3 vert indices
+      HexVertex vertex(Eigen::Vector3f(x, y, z));
+      vertex.coordinate = GPSCoordinateFast(lat, lon);
+      vertex.neighbours = neighbours;
+      vertex.neighbour_distances = neighbour_distances;
+      vertex.neighbour_count = neighbour_count;
+      vertex.indirect_neighbours = indirect_neighbours;
+      vertices_.push_back(vertex);
+    }
+
+    // Face/Triangle
+    else if (firstChar == 'f') {
       uint32_t x, y, z;
       iss >> x >> y >> z;
       triangles_.push_back(HexTriangle(x - 1, y - 1, z - 1));
     }
+
   }
 }
 
@@ -329,39 +359,24 @@ void HexPlanet::ProjectToSphere() {
 HexVertexId HexPlanet::HexVertexFromPoint(Eigen::Vector3f surface_position) {
   HexVertexId best_hex = 0;
   float best_dot;
-    std::cerr << "16" << std::endl;
 
   // Normalize
-    std::cerr << "17" << std::endl;
   surface_position.normalize();
-    std::cerr << "18" << std::endl;
   best_dot = acosf(vertices_[0].vertex_position.dot(surface_position));
-    std::cerr << "19" << std::endl;
 
   // Clever cheat -- just use the dot product to find the smallest angle -- and thus the containing hex
   for (HexVertexId i = 1; i < vertices_.size(); i++) {
-    float dot = std::max(std::min(vertices_[i].vertex_position.dot(surface_position), 1.0f), -1.0f);
-    float d = acosf(dot);
-    // std::cerr << "i = " << i << ", d = " << d << std::endl;
+    // Ensure that this stays between [-1, 1]
+    // Slight numerical error to get out of this range makes this d = nan
+    float dot = vertices_[i].vertex_position.dot(surface_position);
+    float clamped_dot = std::max(std::min(dot, 1.0f), -1.0f);
+    float d = acosf(clamped_dot);
 
-      if (i > 9970 && i < 9980)
-      {
-      std::cerr << "i = " << i << ", d = " << d << std::endl;
-      std::cerr << "vertices_[i].vertex_position.dot(surface_position) = " << vertices_[i].vertex_position.dot(surface_position) << std::endl;
-      std::cerr << "dot = " << dot << std::endl;
-      std::cerr << "acosf(vertices_[i].vertex_position.dot(surface_position)) = " << acosf(vertices_[i].vertex_position.dot(surface_position)) << std::endl;
-      std::cerr << "acosf(dot) = " << acosf(dot) << std::endl;
-      std::cerr << "surface_position.x() = " << surface_position.x() << ", surface_position.y() = " << surface_position.y() << "surface_position.z() = " << surface_position.z() << std::endl;
-      std::cerr << "vertices_[i].vertex_position.x() = " << vertices_[i].vertex_position.x() << ", vertices_[i].vertex_position.y() = " << vertices_[i].vertex_position.y() << "vertices_[i].vertex_position.z() = " << vertices_[i].vertex_position.z() << std::endl;
-      std::cerr << "-----------------" << std::endl;
-      }
     if (d < best_dot) {
-      // std::cerr << "if (d < best_dot) {" << std::endl;
       best_hex = i;
       best_dot = d;
     }
   }
-    std::cerr << "20" << std::endl;
 
   return best_hex;
 }
