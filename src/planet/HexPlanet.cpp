@@ -4,6 +4,7 @@
 #include "common/ProgressBar.h"
 
 #include <cmath>
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 
@@ -74,9 +75,9 @@ void HexPlanet::Write(std::ostream &o) {
     const Eigen::Vector3f normal = i->normal();
     // Position
     o << 'v'
-      << ' ' << round_epsilon(normal[0])
-      << ' ' << round_epsilon(normal[1])
-      << ' ' << round_epsilon(normal[2]);
+      << ' ' << normal[0]
+      << ' ' << normal[1]
+      << ' ' << normal[2];
     // GPS coordinate
     o << ' ' << i->coordinate.latitude()
       << ' ' << i->coordinate.longitude();
@@ -114,7 +115,7 @@ void HexPlanet::Read(std::istream &is) {
   std::string line;
 
   for (std::getline(is, line); !is.eof(); std::getline(is, line)) {
-    std::cerr << "IN READ" << std::endl;
+    // std::cerr << "IN READ" << std::endl;
     std::istringstream iss(line);
     char firstChar;
     iss >> firstChar;
@@ -125,10 +126,10 @@ void HexPlanet::Read(std::istream &is) {
       // Vertex - 3 coordinates (make a hex)
       float x, y, z;
       iss >> x >> y >> z;
-      std::cerr << "x y z = " << x << " " << y << " " << z << std::endl;
+      // std::cerr << "x y z = " << x << " " << y << " " << z << std::endl;
       float lat, lon;
       iss >> lat >> lon;
-      std::cerr << "lat lon = " << lat << " " << lon << std::endl;
+      // std::cerr << "lat lon = " << lat << " " << lon << std::endl;
       std::array<HexVertexId, HexVertex::kMaxHexVertexNeighbourCount> neighbours;
       for (auto& x : neighbours)
       {
@@ -136,9 +137,9 @@ void HexPlanet::Read(std::istream &is) {
       }
       for (const auto& x : neighbours)
       {
-          std::cerr << "x = " << x;
+          // std::cerr << "x = " << x;
       }
-      std::cerr << std::endl;
+      // std::cerr << std::endl;
       std::array<HexVertexId, HexVertex::kMaxHexVertexNeighbourCount> neighbour_distances;
       for (auto& y : neighbour_distances)
       {
@@ -146,12 +147,12 @@ void HexPlanet::Read(std::istream &is) {
       }
       for (const auto& y : neighbour_distances)
       {
-          std::cerr << "y = " << y;
+          // std::cerr << "y = " << y;
       }
-      std::cerr << std::endl;
+      // std::cerr << std::endl;
       float neighbour_count;
       iss >> neighbour_count;
-      std::cerr << "neighbour_count = " << neighbour_count << std::endl;
+      // std::cerr << "neighbour_count = " << neighbour_count << std::endl;
       std::vector<HexVertexId> indirect_neighbours;
       HexVertexId indirect_neighbour;
       while (iss >> indirect_neighbour)
@@ -160,7 +161,7 @@ void HexPlanet::Read(std::istream &is) {
       }
       for (const auto& z : indirect_neighbours)
       {
-          std::cerr << "z = " << z;
+          // std::cerr << "z = " << z;
       }
 
       // vertices_.push_back(HexVertex(Eigen::Vector3f(x, y, z)));
@@ -339,8 +340,23 @@ HexVertexId HexPlanet::HexVertexFromPoint(Eigen::Vector3f surface_position) {
 
   // Clever cheat -- just use the dot product to find the smallest angle -- and thus the containing hex
   for (HexVertexId i = 1; i < vertices_.size(); i++) {
-    float d = acosf(vertices_[i].vertex_position.dot(surface_position));
+    float dot = std::max(std::min(vertices_[i].vertex_position.dot(surface_position), 1.0f), -1.0f);
+    float d = acosf(dot);
+    // std::cerr << "i = " << i << ", d = " << d << std::endl;
+
+      if (i > 9970 && i < 9980)
+      {
+      std::cerr << "i = " << i << ", d = " << d << std::endl;
+      std::cerr << "vertices_[i].vertex_position.dot(surface_position) = " << vertices_[i].vertex_position.dot(surface_position) << std::endl;
+      std::cerr << "dot = " << dot << std::endl;
+      std::cerr << "acosf(vertices_[i].vertex_position.dot(surface_position)) = " << acosf(vertices_[i].vertex_position.dot(surface_position)) << std::endl;
+      std::cerr << "acosf(dot) = " << acosf(dot) << std::endl;
+      std::cerr << "surface_position.x() = " << surface_position.x() << ", surface_position.y() = " << surface_position.y() << "surface_position.z() = " << surface_position.z() << std::endl;
+      std::cerr << "vertices_[i].vertex_position.x() = " << vertices_[i].vertex_position.x() << ", vertices_[i].vertex_position.y() = " << vertices_[i].vertex_position.y() << "vertices_[i].vertex_position.z() = " << vertices_[i].vertex_position.z() << std::endl;
+      std::cerr << "-----------------" << std::endl;
+      }
     if (d < best_dot) {
+      // std::cerr << "if (d < best_dot) {" << std::endl;
       best_hex = i;
       best_dot = d;
     }
