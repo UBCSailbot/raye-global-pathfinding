@@ -39,6 +39,7 @@ class PathfinderResultPrinter {
                               const std::string & file_name,
                               int time_steps,
                               bool use_csvs,
+                              const std::string & output_csvs_folder,
                               int pointToPrint,
                               bool preserveKml);
 
