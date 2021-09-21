@@ -36,6 +36,9 @@ class HexPlanet {
    */
   explicit HexPlanet(uint8_t subdivision_level, uint8_t indirect_neighbour_depth = kDefaultIndirectNeighbourDepth);
 
+  /**
+   * Create an empty HexPlanet. Should use the Read() function to populate it.
+   */
   explicit HexPlanet();
 
   /**

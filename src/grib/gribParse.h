@@ -8,11 +8,11 @@
 #include <vector>
 #include "logic/StandardCalc.h"
 
-#define PI 3.14159265   
+#define PI 3.14159265
 
 class gribParse {
  public:
-            explicit gribParse(const std::string & filename, int time_steps = 4);
+        explicit gribParse(const std::string & filename, int time_steps = 4);
         static double calcMagnitude(const double u_comp, const double v_comp);
         static double calcAngle(const double u_comp, const double v_comp);
         void saveKML(bool preserveKml);

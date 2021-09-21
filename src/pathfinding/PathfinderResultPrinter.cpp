@@ -75,10 +75,8 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet,
   gribParse file = gribParse(file_name, time_steps);
 
   HexVertexId old_id;
-    std::cout << "TEST8" << std::endl;
 
   handle.exceptions(std::ofstream::failbit | std::ofstream::badbit);
-    std::cout << "TEST7" << std::endl;
 
   if (preserveKml) {
     std::time_t currentTime = std::time(0);
@@ -88,21 +86,17 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet,
   } else {
     handle.open("Path.kml");
   }
-    std::cout << "TEST9" << std::endl;
 
   handle << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
       "<kml xmlns=\"http://earth.google.com/kml/2.0\"><Document><Placemark><LineString><coordinates>\n";
 
   ss << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
       "<kml xmlns=\"http://earth.google.com/kml/2.0\"><Document><Placemark><LineString><coordinates>\n";
-    std::cout << "TEST10" << std::endl;
 
   int count = 0;
   double sum = 0, max = 0, totalWeatherCost = 0;
   uint32_t totalDist = 0.0;
-    std::cout << "TEST11" << std::endl;
   for (HexVertexId id : result.path) {
-    std::cout << "LOOP1" << std::endl;
     const auto &coord = planet.vertex(id).coordinate;
 
     auto lon_str = coord.to_string_longitude();
@@ -160,50 +154,35 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet,
 
     old_id = id;
   }
-    std::cout << "TEST12" << std::endl;
 
   handle << "</coordinates></LineString></Placemark></Document></kml>\n";
-    std::cout << "TEST16" << std::endl;
 
   ss << "</coordinates></LineString></Placemark></Document></kml>\n" << std::endl;
-    std::cout << "TEST17" << std::endl;
 
   ss << "Weather factor: " << std::to_string(weather_factor) << std::endl;
-    std::cout << "TEST18" << std::endl;
 
   ss << "Avg wind speed is: " << std::to_string(sum/count) << std::endl;
-    std::cout << "TEST19" << std::endl;
 
   ss << "Max wind speed is: " << std::to_string(max) << std::endl;
-    std::cout << "TEST20" << std::endl;
 
   ss << "Raw weather cost is: " << std::to_string(totalWeatherCost) << std::endl;
-    std::cout << "TEST21" << std::endl;
 
-    std::cout << "totalDist = " << totalDist << std::endl;
-    std::cout << "count = " << count << std::endl;
   ss << "Avg distance is: " << std::to_string(totalDist/(count*1000))
      << "." << std::to_string((totalDist/count) % 1000) << std::endl;
-    std::cout << "TEST23" << std::endl;
 
   ss << "Total distance is: " << std::to_string(totalDist/(1000))
      << "." << std::to_string((totalDist) % 1000) << std::endl;
-    std::cout << "TEST24" << std::endl;
 
   ss << "Total weather cost is: " << std::to_string(totalWeatherCost*weather_factor) << std::endl;
 
-    std::cout << "TEST25" << std::endl;
   ss << "Total distance cost is: " << std::to_string(totalDist) << std::endl;
-    std::cout << "TEST26" << std::endl;
 
 
   handle.close();
-    std::cout << "TEST13" << std::endl;
 
   if (pointToPrint > 0) {
     ss << std::endl << latToPrint << " " << lonToPrint << std::endl;
   }
-    std::cout << "TEST14" << std::endl;
 
   return ss.str();
 }
