@@ -92,7 +92,7 @@ HexPlanet generate_planet(uint8_t subdivision_level, uint8_t indirect_neighbour_
   }
   auto start_time = std::chrono::system_clock::now();
 
-  bool create = false;
+  bool create = true;
   HexPlanet planet;
   if (create)
   {
