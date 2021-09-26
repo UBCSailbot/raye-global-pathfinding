@@ -20,7 +20,8 @@ class WeatherHexMap {
    */
   explicit WeatherHexMap(const HexPlanet &planet, const uint32_t time_steps, int start_lat,
                          int start_lon, int end_lat, int end_lon, bool generate_new_grib = true,
-                         const std::string & file_name = "data.grb", bool preserveKml = false);
+                         const std::string & file_name = "data.grb", bool use_csvs = false,
+                         const std::string & output_csvs_folder = "", bool preserveKml = false);
 
   /**
    * Gets the |WeatherDatum| associated with a specific vertex at a specified

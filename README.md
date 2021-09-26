@@ -99,21 +99,21 @@ TODO: Describe how that works
 
 ### Custom wind scenarios
 
-To control how global pathfinding gets its weather data, we use the `-g` parameter. There are 3 possible ways to control the wind input:
+To control how global pathfinding gets its weather data, we use either the `--grib` or the `--input_csvs` parameter. There are 3 possible ways to control the wind input:
 
-1. By not including the `-g` parameter at all, global pathfinding will by default grab the most recent, up-to-date weather data and use that for planning.
+1. By not using the `--grib` or the `--input_csvs` parameter at all, global pathfinding will by default grab the most recent, up-to-date weather data and use that for planning. It will be stored in `data.grb`.
 
-2. By including a path to a stored `.grb` file like `-g <my_path>/data.grb`, global pathfinding will read in the weather data from that stored `.grb` file for planning.
+2. By using `--grib` with a path to a stored `.grb` file like `--grib`, global pathfinding will read in the weather data from that stored `.grb` file for planning.
 
-3. By including the specific text `-g csv` (not a path, but the exact text here), global pathfinding will read from the following files for planning (in the `input_csvs` directory):
+3. By using `--input_csvs` with a path to a stored folder `--grib`, global pathfinding will read from the following files to get weather data (look at examples in the `input_csvs` directory):
 
 ```
 angles2d-0.csv  angles2d-1.csv  angles2d-2.csv  angles2d-3.csv  lats2d.csv  lons2d.csv  magnitudes2d-0.csv  magnitudes2d-1.csv  magnitudes2d-2.csv  magnitudes2d-3.csv
 ```
 
-These files can be directly modified to change the inputs to planning. Note that the last number refers to the time-step value. We will be using 4 time steps for all global pathfinding purposes.
+These csv files can be directly modified to change the inputs to planning. Note that the last number refers to the time-step value. We will be using 4 time steps for all global pathfinding purposes (0, 4hr, 8hr, 12hr).
 
-Note that in options 1 and 2, the used weather data is saved into csv files in `output_csvs`, which are can be copied over to the `input_csvs` file to be used for future testing. It will overwrite files in `output_csvs`.
+By adding the `--output_csvs <folder_name>` options, the used weather data is saved into csv files in <folder_name> (folder must already exist). This is useful, as these files can then be used as inputs with `--input_csvs` to be used for future testing.
 
 ### Linting
 Linting helps us keep our code clean, easy to maintain, and free of bugs.
@@ -124,15 +124,6 @@ You can run the cpp lint script from our friends at Google with:
 ./scripts/run_cpplint.sh
 ```
 
-### Testing
-
-To test global pathfinding with old weather data:
-  1. Make sure the GRIB file is in your /build/ folder and named `data.grb`
-  2. Add the option -g to the pathfinder_cli command above, eg.
-  ```bash
-  ./build/bin/pathfinder_cli -g -p 10 --navigate 48 235 21 203
-  ```
-  
 ### Creating & Running Tests
 Whenever you add new tests, you will need to add the required `.cpp` and `.h` files to the `TEST_FILES` parameter in `test/basic_tests/CMakelists.txt`.
 
