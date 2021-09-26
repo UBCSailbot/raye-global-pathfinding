@@ -4,10 +4,22 @@
 #include "common/ProgressBar.h"
 
 #include <cmath>
+#include <algorithm>
 #include <iostream>
 #include <sstream>
+#include <fstream>
 
 #include "logic/StandardCalc.h"
+
+HexPlanet::HexPlanet(const std::string& stored_planet_filename) {
+  std::filebuf fb;
+  if (fb.open(stored_planet_filename, std::ios::in)) {
+    std::istream is(&fb);
+    Read(is);
+    fb.close();
+  }
+}
+
 
 HexPlanet::HexPlanet(uint8_t subdivision_level, uint8_t indirect_neighbour_depth) {
   // Setup for progress bar
@@ -64,17 +76,54 @@ float round_epsilon(float a) {
   return (fabs(a) < 1e-7) ? 0 : a;
 }
 
+
+void HexPlanet::WriteToFile(const std::string& output_planet_filename) {
+  std::filebuf fb;
+  fb.open(output_planet_filename, std::ios::out);
+  std::ostream os(&fb);
+  Write(os);
+  fb.close();
+}
+
 void HexPlanet::Write(std::ostream &o) {
+  // WARNING: Brittle code, must have exact alignment between Write and Read
+
+  // Vertices
   o << "# " << vertices_.size() << " Vertices" << std::endl;
   for (std::vector<HexVertex>::const_iterator i = vertices_.begin(); i != vertices_.end(); ++i) {
     const Eigen::Vector3f normal = i->normal();
+    // Position
     o << 'v'
-      << ' ' << round_epsilon(normal[0])
-      << ' ' << round_epsilon(normal[1])
-      << ' ' << round_epsilon(normal[2])
-      << std::endl;
+      << ' ' << normal[0]
+      << ' ' << normal[1]
+      << ' ' << normal[2];
+
+    // GPS coordinate
+    o << ' ' << i->coordinate.latitude()
+      << ' ' << i->coordinate.longitude();
+
+    // Neighbours
+    for (const auto& x : i->neighbours) {
+      o << ' ' << x;
+    }
+
+    // Neighbour distances
+    for (const auto& x : i->neighbour_distances) {
+      o << ' ' << x;
+    }
+
+    // Neighbour count
+    o << ' ' << i->neighbour_count;
+
+    // Indirect neighbours
+    for (const auto& x : i->indirect_neighbours) {
+      o << ' ' << x;
+    }
+
+    o  << std::endl;
   }
 
+  // Triangles
   o << "# " << triangles_.size() << " Faces" << std::endl;
   for (std::vector<HexTriangle>::const_iterator i = triangles_.begin(); i != triangles_.end(); ++i) {
     o << 'f'
@@ -86,6 +135,7 @@ void HexPlanet::Write(std::ostream &o) {
 }
 
 void HexPlanet::Read(std::istream &is) {
+  // WARNING: Brittle code, must have exact alignment between Write and Read
   std::string line;
 
   for (std::getline(is, line); !is.eof(); std::getline(is, line)) {
@@ -93,15 +143,52 @@ void HexPlanet::Read(std::istream &is) {
     char firstChar;
     iss >> firstChar;
 
+
     if (firstChar == '#') {
       // Comment - do nothing
     } else if (firstChar == 'v') {
-      // Vertex - 3 coordinates (make a hex)
+      // Vertex
+
+      // Position
       float x, y, z;
       iss >> x >> y >> z;
-      vertices_.push_back(HexVertex(Eigen::Vector3f(x, y, z)));
+
+      // GPS coordinate
+      float lat, lon;
+      iss >> lat >> lon;
+
+      // Neighbours
+      std::array<HexVertexId, HexVertex::kMaxHexVertexNeighbourCount> neighbours;
+      for (auto& x : neighbours) {
+          iss >> x;
+      }
+
+      // Neighbour distances
+      std::array<HexVertexId, HexVertex::kMaxHexVertexNeighbourCount> neighbour_distances;
+      for (auto& y : neighbour_distances) {
+          iss >> y;
+      }
+
+      // Neighbour count
+      float neighbour_count;
+      iss >> neighbour_count;
+
+      // Indirect neighbours
+      std::vector<HexVertexId> indirect_neighbours;
+      HexVertexId indirect_neighbour;
+      while (iss >> indirect_neighbour) {
+          indirect_neighbours.push_back(indirect_neighbour);
+      }
+
+      HexVertex vertex(Eigen::Vector3f(x, y, z));
+      vertex.coordinate = GPSCoordinateFast(lat, lon);
+      vertex.neighbours = neighbours;
+      vertex.neighbour_distances = neighbour_distances;
+      vertex.neighbour_count = neighbour_count;
+      vertex.indirect_neighbours = indirect_neighbours;
+      vertices_.push_back(vertex);
     } else if (firstChar == 'f') {
-      // Face - 3 vert indices
+      // Face/Triangle
       uint32_t x, y, z;
       iss >> x >> y >> z;
       triangles_.push_back(HexTriangle(x - 1, y - 1, z - 1));
@@ -270,7 +357,12 @@ HexVertexId HexPlanet::HexVertexFromPoint(Eigen::Vector3f surface_position) {
 
   // Clever cheat -- just use the dot product to find the smallest angle -- and thus the containing hex
   for (HexVertexId i = 1; i < vertices_.size(); i++) {
-    float d = acosf(vertices_[i].vertex_position.dot(surface_position));
+    // Ensure that this stays between [-1, 1]
+    // Slight numerical error to get out of this range makes this d = nan
+    float dot = vertices_[i].vertex_position.dot(surface_position);
+    float clamped_dot = std::max(std::min(dot, 1.0f), -1.0f);
+    float d = acosf(clamped_dot);
+
     if (d < best_dot) {
       best_hex = i;
       best_dot = d;

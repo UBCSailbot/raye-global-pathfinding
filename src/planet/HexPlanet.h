@@ -37,6 +37,11 @@ class HexPlanet {
   explicit HexPlanet(uint8_t subdivision_level, uint8_t indirect_neighbour_depth = kDefaultIndirectNeighbourDepth);
 
   /**
+   * Create a HexPlanet from a stored file.
+   */
+  explicit HexPlanet(const std::string& stored_planet_filename);
+
+  /**
    * @return The number of subdivisions used to generate the planet.
    */
   int subdivision_level() const { return subdivision_level_; }
@@ -89,6 +94,12 @@ class HexPlanet {
    * @return Distance in meters between source and target.
    */
   uint32_t DistanceBetweenVertices(HexVertexId source, HexVertexId target);
+
+  /**
+   * Write the planet mesh to an output file.
+   * @param output_planet_filename name of output file
+   */
+  void WriteToFile(const std::string& output_planet_filename);
 
   /**
    * Write the planet mesh to an output stream.

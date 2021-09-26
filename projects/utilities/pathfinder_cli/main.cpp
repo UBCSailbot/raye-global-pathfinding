@@ -85,15 +85,21 @@ Pathfinder::Result run_pathfinder(HexPlanet &planet,
   return result;
 }
 
-HexPlanet generate_planet(uint8_t subdivision_level, uint8_t indirect_neighbour_depth, bool silent, bool verbose) {
-  if (!silent) {
-    std::cout << "Generating HexPlanet of Size: " << static_cast<int> (subdivision_level) << std::endl;
-  }
+HexPlanet generate_planet(uint8_t subdivision_level, uint8_t indirect_neighbour_depth, bool silent, bool verbose, bool store_planet, bool use_cached_planet) {
   auto start_time = std::chrono::system_clock::now();
-
-  HexPlanet planet = indirect_neighbour_depth != kInvalidIndirectNeighbourDepth ? HexPlanet(subdivision_level,
-                                                                                            indirect_neighbour_depth)
-                                                                                : HexPlanet(subdivision_level);
+  const std::string path_to_cached_planet = "cached_planets/size_" + std::to_string(subdivision_level) + ".txt";
+  if (!silent) {
+    if (use_cached_planet) {
+      std::cout << "Looking for cached planet at " << path_to_cached_planet << std::endl;
+    }
+    else {
+      std::cout << "Generating HexPlanet of Size: " << static_cast<int>(subdivision_level) << std::endl;
+    }
+  }
+  HexPlanet planet = (use_cached_planet) ? HexPlanet(path_to_cached_planet) : 
+                     (indirect_neighbour_depth != kInvalidIndirectNeighbourDepth) ?
+                     HexPlanet(subdivision_level, indirect_neighbour_depth) :
+                     HexPlanet(subdivision_level);
 
   if (!silent) {
     auto end_time = std::chrono::system_clock::now();
@@ -108,6 +114,14 @@ HexPlanet generate_planet(uint8_t subdivision_level, uint8_t indirect_neighbour_
     }
 
     std::cout << std::endl;
+  }
+
+  if (store_planet)
+  {
+    if (!silent) {
+      std::cout << "Storing planet at " << path_to_cached_planet << std::endl;
+    }
+    planet.WriteToFile(path_to_cached_planet);
   }
 
   return planet;
@@ -139,6 +153,8 @@ int main(int argc, char const *argv[]) {
          boost::program_options::value<std::vector<double>>()->multitoken(),
          "<start_latitude> <start_longitude> <end_latitude> <end_longitude>")
         ("kml", "Output the a KML file for the pathfinding result")
+        ("store_planet", "Output the a file to store the planet as a cache")
+        ("use_cached_planet", "Use cached_planet in cached_planets/size_<size>.txt")
         ("printn", boost::program_options::value<int>(), "Output the nth coordinate pair at the end of the program, starting with 1")
         ("save", "Save the current weather as a timestamped KML");
 
@@ -186,7 +202,9 @@ int main(int argc, char const *argv[]) {
     uint8_t planet_size = static_cast<uint8_t> (vm["p"].as<int>());
     uint8_t indirect_neighbour_depth = (vm.count("i") > 0) ? static_cast<uint8_t> (vm["i"].as<int>())
                                                            : kInvalidIndirectNeighbourDepth;
-    HexPlanet planet = generate_planet(planet_size, indirect_neighbour_depth, silent, verbose);
+    const bool store_planet = vm.count("store_planet") > 0;
+    const bool use_cached_planet = vm.count("use_cached_planet") > 0;
+    HexPlanet planet = generate_planet(planet_size, indirect_neighbour_depth, silent, verbose, store_planet, use_cached_planet);
 
     int time_steps = vm["t"].as<int>();
 

@@ -18,11 +18,9 @@ To run the program to start from Port Renfrew (lat=48, lon=235) to Maui (lat=21,
 ```
 This will generate a path based on current weather conditions and will produce 2 KML files:
 
-- `build/bin/Path.kml`, a visualization of the path generated, based on the GPS coordinates of the path
+- `Path.kml`, a visualization of the path generated, based on the GPS coordinates of the path
 
-- `build/bin/Wind.kml`, a visualization of wind data over time (each color represents a 3 hour increment, based on the estimated speed of the boat)
-
-- TODO: Make this generate a file with the date/time in the folder name or in the filename so we don't overwrite every time.
+- `Wind.kml`, a visualization of wind data over time, based on wind data in 4 hour increments (now, 4hrs, 8hrs, 12hrs)
 
 To see these files, do one of the following:
   1. (Recommended) Follow the instructions at [this link](https://linuxconfig.org/how-to-install-google-earth-on-ubuntu-18-04-bionic-beaver-linux), then File->Open and open the files listed above.
@@ -36,6 +34,12 @@ The program will also generate a string consisting of the [Longitude, Latitude] 
 
 ## Additional Details
 
+### Saving kml files uniquely
+By default, `Path.kml` and `Wind.kml` are saved into the current directory. However, this means that consecutive calls will overwrite each other's files. We can add the `--save` parameter to save the files into `resultKMLs` with date and timestamps.
+```bash
+./build/bin/pathfinder_cli -p 8 --navigate 48 235 21 203 --save
+```
+
 ### Adjusting Cost Function
 
 It is possible to adjust the weight given to wind measurements (with respect to weight given to path length) in the pathfinding cost function by adding the argument `-w <int>` to the pathfinder_cli command. For example:
@@ -44,13 +48,31 @@ It is possible to adjust the weight given to wind measurements (with respect to 
 ```
 The default value for the weather factor is 3000.
 
-### Adjusting planet size (resoution)
+### Adjusting planet size (resolution)
 
 It is possible to adjust the planet size, which effectively changes the resolution of the generated path. For example:
 ```bash
 ./build/bin/pathfinder_cli -p 12 --navigate 48 235 21 203
 ```
 The `-p 12` refers to a planet size of 12. We have decided to consistently use planet size of X, which takes approximately Y to run (TODO).
+
+### Storing and Using Cached Planets
+
+Generating planets can be very time consuming, especially for higher resolution. However, for a given planet size, the planet should be the same every time. Thus, we are able to cache the planet to reduce runtime.
+
+To store a planet, run
+```bash
+./build/bin/pathfinder_cli -p 12 --navigate 48 235 21 203 --store_planet
+```
+This creates a planet with size 12, and then stores it at cached_planets/size_12.txt.
+
+To use a stored a planet, run
+```bash
+./build/bin/pathfinder_cli -p 12 --navigate 48 235 21 203 --use_cached_planet
+```
+This reads from cached_planets/size_12.txt to create the planet. It should be nearly identical, except for small rounding errors.
+
+TODO: Investigate if we can store more planet sizes using Git LFS or could just have a link here to a file.
 
 ### Network Table
 
