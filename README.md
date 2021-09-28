@@ -7,6 +7,13 @@ A pathfinding solution that will find the fastest and safest way for a sailboat 
 
 It will then create a path consisting of a list of (latitude, longitude) pairs that will be sent to the boat.
 
+Useful info:
+
+* Main code [here](https://github.com/UBCSailbot/global-pathfinding/blob/master/projects/utilities/pathfinder_cli/main.cpp)
+
+* Pathfinding Logic [here](https://github.com/UBCSailbot/global-pathfinding/blob/master/src/pathfinding/AStarPathfinder.cpp)
+
+
 ## Setup
 
 Instructions to setup and build this repository can be found [here](install_deps/README.md). Make sure to rebuild the code every time you make a code change to see the change make a difference.
