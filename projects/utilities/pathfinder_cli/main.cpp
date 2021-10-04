@@ -98,7 +98,7 @@ HexPlanet generate_planet(uint8_t subdivision_level, uint8_t indirect_neighbour_
       std::cout << "Generating HexPlanet of Size: " << static_cast<int>(subdivision_level) << std::endl;
     }
   }
-  HexPlanet planet = (use_cached_planet) ? HexPlanet(path_to_cached_planet) : 
+  HexPlanet planet = (use_cached_planet) ? HexPlanet(path_to_cached_planet) :
                      (indirect_neighbour_depth != kInvalidIndirectNeighbourDepth) ?
                      HexPlanet(subdivision_level, indirect_neighbour_depth) :
                      HexPlanet(subdivision_level);
@@ -143,7 +143,7 @@ int main(int argc, char const *argv[]) {
         ("output_csvs", boost::program_options::value<std::string>(),
          "Relative path to existing folder in which weather data csvs will be created")
         ("p,planet_size", boost::program_options::value<int>()->default_value(1), "Planet Size")
-        ("w,weather_factor", boost::program_options::value<int>()->default_value(3000), "Weather Factor")
+        ("w,weather_factor", boost::program_options::value<int>()->default_value(1500), "Weather Factor")
         ("n,neighbour", boost::program_options::value<HexVertexId>(), "Vertex to find neighbours")
         ("i,indirect", boost::program_options::value<int>(), "Indirect neighbour depth")
         ("t,time_steps", boost::program_options::value<int>()->default_value(4), "Max time steps for wind speed")
@@ -187,8 +187,6 @@ int main(int argc, char const *argv[]) {
       use_csvs = true;
     }
 
-    int weather_factor = vm["w"].as<int>();
-
     bool silent = vm.count("s") > 0;
     OutputFormat format = OutputFormat::kDefault;
 
@@ -219,6 +217,8 @@ int main(int argc, char const *argv[]) {
     HexPlanet planet = generate_planet(planet_size, indirect_neighbour_depth, silent, verbose, store_planet, use_cached_planet);
 
     int time_steps = vm["t"].as<int>();
+
+    int weather_factor = vm["w"].as<int>() * std::pow(2,10-planet_size);
 
     if (vm.count("n")) {
       find_neighbours(planet, vm["n"].as<HexVertexId>());
