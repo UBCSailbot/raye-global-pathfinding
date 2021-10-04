@@ -138,7 +138,7 @@ int main(int argc, char const *argv[]) {
          "Relative path to grb file for weather info OR the string 'csv' to read from default csv files. "
          "If not given, uses new weather data download.")
         ("p,planet_size", boost::program_options::value<int>()->default_value(1), "Planet Size")
-        ("w,weather_factor", boost::program_options::value<int>()->default_value(3000), "Weather Factor")
+        ("w,weather_factor", boost::program_options::value<int>()->default_value(1500), "Weather Factor")
         ("n,neighbour", boost::program_options::value<HexVertexId>(), "Vertex to find neighbours")
         ("i,indirect", boost::program_options::value<int>(), "Indirect neighbour depth")
         ("t,time_steps", boost::program_options::value<int>()->default_value(4), "Max time steps for wind speed")
@@ -175,8 +175,6 @@ int main(int argc, char const *argv[]) {
       file_name = vm["g"].as<std::string>();
     }
 
-    int weather_factor = vm["w"].as<int>();
-
     bool silent = vm.count("s") > 0;
     OutputFormat format = OutputFormat::kDefault;
 
@@ -207,6 +205,8 @@ int main(int argc, char const *argv[]) {
     HexPlanet planet = generate_planet(planet_size, indirect_neighbour_depth, silent, verbose, store_planet, use_cached_planet);
 
     int time_steps = vm["t"].as<int>();
+
+    int weather_factor = vm["w"].as<int>() * std::pow(2,10-planet_size);
 
     if (vm.count("n")) {
       find_neighbours(planet, vm["n"].as<HexVertexId>());
