@@ -161,7 +161,8 @@ int main(int argc, char const *argv[]) {
         ("store_planet", "Output the a file to store the planet as a cache")
         ("use_cached_planet", "Use cached_planet in cached_planets/size_<size>.txt")
         ("printn", boost::program_options::value<int>(), "Output the nth coordinate pair at the end of the program, starting with 1")
-        ("save", "Save the current weather as a timestamped KML");
+        ("save", "Save the current weather as a timestamped KML")
+        ("hardcoded", boost::program_options::value<std::string>(), "Default use: --hardcoded {Month}, {Month} = Oct, Nov, Dec etc.");
 
     boost::program_options::variables_map vm;
     store(parse_command_line(argc, argv, desc), vm);
@@ -310,9 +311,21 @@ int main(int argc, char const *argv[]) {
       auto result = run_pathfinder(planet, start_vertex, end_vertex, weather_factor, generate_new_grib, file_name,
                                    time_steps, use_csvs, output_csvs_folder, silent, verbose);
 
-      if (vm.count("table")) {
-        std::vector<std::pair<double, double>> waypoints;
+      std::vector<std::pair<double, double>> waypoints;
+
+      if (vm.count("hardcoded")) {
+       try{
+         waypoints = PathfinderResultPrinter::GetHardcoded(vm["hardcoded"].as<std::string>());
+         std::cout << PathfinderResultPrinter::PrintHardcoded(waypoints);
+       }
+       catch(std::string test_name){
+         std::cout << "Error: " << test_name << " is not a valid hardcoded test" << std::endl;
+       }
+      } else {
         waypoints = PathfinderResultPrinter::GetVector(planet, result);
+      }
+
+      if (vm.count("table")) {
         try {
           connection.SetWaypointValues(waypoints);
           connection.Disconnect();
@@ -320,7 +333,7 @@ int main(int argc, char const *argv[]) {
         catch(NetworkTable::TimeoutException){
           std::cout << "Could not set waypoint values" << std::endl;
         }
-      } else {
+      } else if (!vm.count("hardcoded")) {
         std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor, file_name, time_steps, use_csvs, output_csvs_folder, pointToPrint, preserveKml);
       }
 

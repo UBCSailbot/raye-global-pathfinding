@@ -57,6 +57,46 @@ std::vector<std::pair<double, double>> PathfinderResultPrinter::GetVector(HexPla
   return pathResult;
 }
 
+std::vector<std::pair<double, double>> PathfinderResultPrinter::GetHardcoded(std::string test_name) {
+  std::vector<std::pair<double, double>> pathResult;
+
+  if (!test_name.compare("Oct")) {
+      pathResult.push_back(std::make_pair(-123.160124, 49.275202));
+      pathResult.push_back(std::make_pair(-123.307560, 49.212129));
+      pathResult.push_back(std::make_pair(-123.494778, 49.059004));
+  } else {
+    throw test_name;
+  }
+
+  return pathResult;
+}
+
+std::string PathfinderResultPrinter::PrintHardcoded(std::vector<std::pair<double, double>> pathResult) {
+  std::ofstream handle;
+  std::stringstream ss;
+
+  handle.open("Path.kml");
+
+  handle << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+      "<kml xmlns=\"http://earth.google.com/kml/2.0\"><Document><Placemark><LineString><coordinates>\n";
+
+  ss << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+      "<kml xmlns=\"http://earth.google.com/kml/2.0\"><Document><Placemark><LineString><coordinates>\n";
+
+  for (std::pair<double, double> point : pathResult) {
+    ss << point.first << "," << point.second << std::endl;
+    handle << point.first << "," << point.second << std::endl;
+  }
+
+  handle << "</coordinates></LineString></Placemark></Document></kml>\n";
+
+  ss << "</coordinates></LineString></Placemark></Document></kml>\n" << std::endl;
+
+  handle.close();
+
+  return ss.str();
+}
+
 std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet,
                                               const Pathfinder::Result &result,
                                               int weather_factor,

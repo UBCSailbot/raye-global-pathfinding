@@ -44,6 +44,10 @@ class PathfinderResultPrinter {
                               bool preserveKml);
 
   static std::vector<std::pair<double, double>> GetVector(HexPlanet &planet, const Pathfinder::Result &result);
+
+  static std::vector<std::pair<double, double>> GetHardcoded(std::string test_name);
+
+  static std::string PrintHardcoded(std::vector<std::pair<double, double>> pathResult);
 };
 
 #endif  // PATHFINDING_PATHFINDERRESULTPRINTER_H_

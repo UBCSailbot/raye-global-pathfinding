@@ -91,6 +91,21 @@ For example, you can run:
 ./build/bin/pathfinder_cli --navigate 48 235 21 203 --table
 ```
 
+### Hardcoded Global Waypoints
+
+To use the network table with hardcoded global waypoints for small scale tests (such as October 24), run:
+
+```
+./build/bin/pathfinder_cli -p 8 --navigate 48 235 21 203 --hardcoded {Month}
+```
+
+where {Month} is the first three letters of the month in which the test is taking place. For the October 24 test, use:
+
+
+```
+./build/bin/pathfinder_cli -p 8 --navigate 48 235 21 203 --hardcoded Oct
+```
+
 ### Continuous Pathfinding
 
 To create a more realistic pathfinding route, open runpathfinder.sh in the root folder and adjust the values as indicated by the comments. Then run in the root folder:
