@@ -58,20 +58,20 @@ std::vector<std::pair<double, double>> PathfinderResultPrinter::GetVector(HexPla
 }
 
 std::vector<std::pair<double, double>> PathfinderResultPrinter::GetHardcoded(std::string test_name) {
-
   std::vector<std::pair<double, double>> pathResult;
 
   if (!test_name.compare("Oct")) {
       pathResult.push_back(std::make_pair(-123.160124, 49.275202));
       pathResult.push_back(std::make_pair(-123.307560, 49.212129));
       pathResult.push_back(std::make_pair(-123.494778, 49.059004));
+  } else {
+    throw test_name;
   }
 
   return pathResult;
 }
 
 std::string PathfinderResultPrinter::PrintHardcoded(std::vector<std::pair<double, double>> pathResult) {
-
   std::ofstream handle;
   std::stringstream ss;
 
@@ -95,7 +95,6 @@ std::string PathfinderResultPrinter::PrintHardcoded(std::vector<std::pair<double
   handle.close();
 
   return ss.str();
-
 }
 
 std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet,

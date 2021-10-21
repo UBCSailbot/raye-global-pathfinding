@@ -314,10 +314,14 @@ int main(int argc, char const *argv[]) {
       std::vector<std::pair<double, double>> waypoints;
 
       if (vm.count("hardcoded")) {
-       waypoints = PathfinderResultPrinter::GetHardcoded(vm["hardcoded"].as<std::string>());
-       std::cout << PathfinderResultPrinter::PrintHardcoded(waypoints);
-      }
-      else {
+       try{
+         waypoints = PathfinderResultPrinter::GetHardcoded(vm["hardcoded"].as<std::string>());
+         std::cout << PathfinderResultPrinter::PrintHardcoded(waypoints);
+       }
+       catch(std::string test_name){
+         std::cout << "Error: " << test_name << " is not a valid hardcoded test" << std::endl;
+       }
+      } else {
         waypoints = PathfinderResultPrinter::GetVector(planet, result);
       }
 
