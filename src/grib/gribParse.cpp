@@ -9,6 +9,7 @@
 #include <iostream>
 #include <chrono>
 #include <ctime>
+#include <stdexcept>
 
 /**
  * Translates GRIB file into array of lattitudes, longitudes, and corresponding values
@@ -167,6 +168,14 @@ gribParse::gribParse(const std::string & filename, int time_steps, bool use_csvs
 
     fclose(in);
   }
+
+  // Check if output directory exists
+    std::ofstream outfile;
+    outfile.open(output_csvs_folder + "/testing123456");
+    outfile << "!";
+    if (!outfile) {
+      throw std::runtime_error("Output directory, " + output_csvs_folder + " does not exist.");
+    } 
 
   // Write to output directory
   if (output_csvs_folder.size() > 0) {
