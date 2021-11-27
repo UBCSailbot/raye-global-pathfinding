@@ -38,6 +38,7 @@ class gribParse {
         std::vector<double> convert2Dto1D(const std::vector<std::vector<double>> & array2D);
         std::vector<std::vector<double>> readCsv(const std::string & csvfilename);
         std::vector<std::vector<double>> reverseColumns(const std::vector<std::vector<double>> & array2D);
+        double windSigmoid(double windMagnitude);
 
         int err;
         FILE *in;

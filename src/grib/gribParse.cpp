@@ -56,7 +56,7 @@ gribParse::gribParse(const std::string & filename, int time_steps, bool use_csvs
     std::vector<std::vector<double>> v_values;
     err = 0;
     for (int code_handle_iteration = 1;
-          ((lib_handle = codes_handle_new_from_file(0, in, PRODUCT_GRIB, &err)) != NULL) && code_handle_iteration <= 31;
+          ((lib_handle = codes_handle_new_from_file(0, in, PRODUCT_GRIB, &err)) != NULL) && code_handle_iteration <= 32;
           code_handle_iteration++) {
         CODES_CHECK(err, 0);
         CODES_CHECK(codes_get_long(lib_handle, "numberOfPoints", &number_of_points_), 0);
@@ -143,7 +143,7 @@ gribParse::gribParse(const std::string & filename, int time_steps, bool use_csvs
     u_values.resize(time_steps);
     v_values.resize(time_steps);
 
-    CODES_CHECK(codes_set_double(lib_handle, "missingValue", kMissing), 0);
+  //  CODES_CHECK(codes_set_double(lib_handle, "missingValue", kMissing), 0);
 
     // adjust latitude and longitude, and generate resultant angles and magnitudes
     for (int i = 0; i < time_steps; i++) {
@@ -274,6 +274,9 @@ void gribParse::saveKML(bool preserveKml) {
         color = redArrow;
       }
 
+      //See https://www.desmos.com/calculator/q8j19sq6ay
+      double windAdjusted = windSigmoid(magnitudes[time_step][i]);
+
       ss << "<GroundOverlay>"
             "<color>ffffffff</color>"
             "<drawOrder>1</drawOrder>"
@@ -284,11 +287,11 @@ void gribParse::saveKML(bool preserveKml) {
             "<viewBoundScale>0.75</viewBoundScale>"
             "</Icon>"
             "<LatLonBox>"
-            "<north>" << lats[i] + magnitudes[time_step][i]/80 << "</north>"
-            "<south>" << lats[i] - magnitudes[time_step][i]/80 << "</south>"
-            "<east>" << lons[i] + magnitudes[time_step][i]/80 << "</east>"
-            "<west>" << lons[i] - magnitudes[time_step][i]/80 << "</west>"
-            "<rotation>" << 360-angles[time_step][i] << "</rotation>"
+            "<north>" << lats[i] + windAdjusted << "</north>"
+            "<south>" << lats[i] - windAdjusted << "</south>"
+            "<east>" << lons[i] + windAdjusted << "</east>"
+            "<west>" << lons[i] - windAdjusted << "</west>"
+            "<rotation>" << 360-angles[time_step][i] << "</rotation>"// 360-angles[time_step][i] << "</rotation>"
             "</LatLonBox>"
             "</GroundOverlay>" << std::endl;
     }
@@ -297,6 +300,11 @@ void gribParse::saveKML(bool preserveKml) {
     ss.close();
 }
 
+double gribParse::windSigmoid(double windMagnitude) {
+  double exponent = std::exp(-0.15*(windMagnitude-23));
+
+  return 0.375 / (1 + exponent) + 0.1;
+}
 
 void gribParse::saveToCsv2D(const std::vector<std::vector<double>> & array2D, const std::string & csvfilename) {
     std::ofstream outfile;
