@@ -274,7 +274,7 @@ void gribParse::saveKML(bool preserveKml) {
         color = redArrow;
       }
 
-      //See https://www.desmos.com/calculator/q8j19sq6ay
+      // See https://www.desmos.com/calculator/q8j19sq6ay
       double windAdjusted = windSigmoid(magnitudes[time_step][i]);
 
       ss << "<GroundOverlay>"
@@ -291,7 +291,7 @@ void gribParse::saveKML(bool preserveKml) {
             "<south>" << lats[i] - windAdjusted << "</south>"
             "<east>" << lons[i] + windAdjusted << "</east>"
             "<west>" << lons[i] - windAdjusted << "</west>"
-            "<rotation>" << 360-angles[time_step][i] << "</rotation>"// 360-angles[time_step][i] << "</rotation>"
+            "<rotation>" << 360-angles[time_step][i] << "</rotation>"
             "</LatLonBox>"
             "</GroundOverlay>" << std::endl;
     }
