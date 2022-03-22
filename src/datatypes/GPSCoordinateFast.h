@@ -29,12 +29,16 @@ class GPSCoordinateFast: public GPSCoordinate {
    * @param longitude Longitude in radians
    */
   GPSCoordinateFast(double latitude, double longitude);
+  GPSCoordinateFast(double latitude, double longitude, bool inputCoord);
+
 
   void set_lat_exact(int32_t latitude_exact);
   void set_lng_exact(int32_t longitude_exact);
   void set_lat_lng_exact(int32_t latitude_exact, int32_t longitude_exact);
 
   void set_lat_lng(double lat, double lng);
+
+  void set_input_lat_lng(double lat, double lng);
 
   /**
    * Checks if other coordinate is (within tolerance) equal to the coordinate object

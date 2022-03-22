@@ -24,7 +24,7 @@ enum class OutputFormat {
   kKML
 };
 
-int start_lat, start_lon, end_lat, end_lon;
+double start_lat, start_lon, end_lat, end_lon;
 int pointToPrint;
 bool preserveKml = false;
 
@@ -298,8 +298,8 @@ int main(int argc, char const *argv[]) {
       auto adj_start_lon = start_lon < 0 ? start_lon : start_lon - 360;
       auto adj_end_lon = end_lon < 0 ? end_lon : end_lon - 360;
 
-      const GPSCoordinateFast start_coord(start_lat*10000000, adj_start_lon*10000000);
-      const GPSCoordinateFast end_coord(end_lat*10000000, adj_end_lon*10000000);
+      const GPSCoordinateFast start_coord(start_lat, adj_start_lon, true);
+      const GPSCoordinateFast end_coord(end_lat, adj_end_lon, true);
 
       Eigen::Vector3f start_point;
       Eigen::Vector3f end_point;
