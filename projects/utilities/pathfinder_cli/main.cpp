@@ -280,8 +280,8 @@ int main(int argc, char const *argv[]) {
         }
 
         if (error_count == 0) {
-          start_lat = (int) gps_lat;
-          start_lon = (int) gps_lon;
+          start_lat = gps_lat;
+          start_lon = gps_lon;
         } else {
           start_lat = (points[0]);
           start_lon = (points[1]);
