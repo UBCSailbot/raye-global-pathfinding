@@ -16,7 +16,7 @@ class WeatherCostCalculator : public HaversineCostCalculator {
    * @param map The risk map for the planet.
    * @param weather_factor The weather_factor used to weight weather cost
    */
-  explicit WeatherCostCalculator(HexPlanet &planet, std::unique_ptr<WeatherHexMap> &map, int weather_factor);
+  explicit WeatherCostCalculator(HexPlanet &planet, std::unique_ptr<WeatherHexMap> &map, int weather_factor, int cost_func_num);
 
   /**
    * Calculate the cost to an immediate neighbour of |source| using the
@@ -57,6 +57,7 @@ class WeatherCostCalculator : public HaversineCostCalculator {
   // WeatherCostCalculator &operator=(WeatherCostCalculator &&) = delete;
 
   const int weather_factor_;
+  const int cost_func_num_;
 
  private:
   double calculate_map_cost(HexVertexId target, HexVertexId source, uint32_t start_time) const;

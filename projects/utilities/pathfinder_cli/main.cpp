@@ -25,7 +25,7 @@ enum class OutputFormat {
 };
 
 double start_lat, start_lon, end_lat, end_lon;
-int pointToPrint;
+int pointToPrint, cost_func_num = 0;
 bool preserveKml = false;
 
 void find_neighbours(const HexPlanet &planet, HexVertexId id) {
@@ -59,7 +59,7 @@ Pathfinder::Result run_pathfinder(HexPlanet &planet,
   HaversineHeuristic heuristic = HaversineHeuristic(planet);
   WeatherHexMap weather_map = WeatherHexMap(planet, time_steps, start_lat, start_lon, end_lat, end_lon, generate_new_grib, file_name, use_csvs, output_csvs_folder, preserveKml);
   auto wmap_pointer = std::make_unique<WeatherHexMap>(weather_map);
-  WeatherCostCalculator cost_calculator = WeatherCostCalculator(planet, wmap_pointer, weather_factor);
+  WeatherCostCalculator cost_calculator = WeatherCostCalculator(planet, wmap_pointer, weather_factor, cost_func_num);
   AStarPathfinder pathfinder(planet, heuristic, cost_calculator, source, target, true);
 
   if (!silent) {
@@ -158,6 +158,7 @@ int main(int argc, char const *argv[]) {
         ("navigate",
          boost::program_options::value<std::vector<double>>()->multitoken(),
          "<start_latitude> <start_longitude> <end_latitude> <end_longitude>")
+        ("costfunc", boost::program_options::value<int>()->default_value(0), "Choose the cost function to use; 0 = old, 1 = new")
         ("kml", "Output the a KML file for the pathfinding result")
         ("store_planet", "Output the a file to store the planet as a cache")
         ("use_cached_planet", "Use cached_planet in cached_planets/size_<size>.txt")
@@ -207,6 +208,10 @@ int main(int argc, char const *argv[]) {
 
     if (vm.count("save") > 0) {
       preserveKml = true;
+    }
+
+    if (vm.count("costfunc")) {
+      cost_func_num = (vm["costfunc"].as<int>());
     }
 
     bool verbose = vm.count("v") > 0 && !silent;
