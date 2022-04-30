@@ -11,6 +11,9 @@ GPSCoordinateFast::GPSCoordinateFast(int32_t latitude_exact, int32_t longitude_e
 GPSCoordinateFast::GPSCoordinateFast(double latitude, double longitude) {
   set_lat_lng(latitude, longitude);
 }
+GPSCoordinateFast::GPSCoordinateFast(double latitude, double longitude, bool inputCoord) {
+  set_input_lat_lng(latitude, longitude);
+}
 
 void GPSCoordinateFast::set_lat_exact(int32_t latitude_exact) {
   latitude_exact_ = latitude_exact;
@@ -30,6 +33,15 @@ void GPSCoordinateFast::set_lat_lng_exact(int32_t latitude_exact, int32_t longit
 void GPSCoordinateFast::set_lat_lng(double lat, double lng) {
   latitude_ = lat;
   longitude_ = lng;
+  longitude_exact_ =
+      static_cast<uint32_t >(standard_calc::rad_to_deg(longitude_) * (kExactCoordinateScaleFactor));
+  latitude_exact_ =
+      static_cast<uint32_t >(standard_calc::rad_to_deg(latitude_) * (kExactCoordinateScaleFactor));
+}
+
+void GPSCoordinateFast::set_input_lat_lng(double lat, double lng) {
+  latitude_ = standard_calc::deg_to_rad(lat);
+  longitude_ = standard_calc::deg_to_rad(lng);
   longitude_exact_ =
       static_cast<uint32_t >(standard_calc::rad_to_deg(longitude_) * (kExactCoordinateScaleFactor));
   latitude_exact_ =

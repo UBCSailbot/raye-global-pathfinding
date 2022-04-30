@@ -24,7 +24,8 @@ enum class OutputFormat {
   kKML
 };
 
-int start_lat, start_lon, end_lat, end_lon, pointToPrint;
+double start_lat, start_lon, end_lat, end_lon;
+int pointToPrint;
 bool preserveKml = false;
 
 void find_neighbours(const HexPlanet &planet, HexVertexId id) {
@@ -268,9 +269,10 @@ int main(int argc, char const *argv[]) {
             ++error_count;
         }
 
-        std::pair<double, double> gps_coords;
+        double gps_lat, gps_lon;
         try {
-            gps_coords = connection.GetCurrentGpsCoords();
+            gps_lat = (double) connection.GetNode("/gps_can/gprmc/latitude").value().float_data();
+            gps_lon = (double) connection.GetNode("/gps_can/gprmc/longitude").value().float_data();
         } catch (NetworkTable::NodeNotFoundException ex) {
             connection.Disconnect();
             std::cout << "Gps Coords Not Found in Network Table" << std::endl;
@@ -278,8 +280,8 @@ int main(int argc, char const *argv[]) {
         }
 
         if (error_count == 0) {
-          start_lat = (int) gps_coords.first;
-          start_lon = (int) gps_coords.second;
+          start_lat = gps_lat;
+          start_lon = gps_lon;
         } else {
           start_lat = (points[0]);
           start_lon = (points[1]);
@@ -296,8 +298,8 @@ int main(int argc, char const *argv[]) {
       auto adj_start_lon = start_lon < 0 ? start_lon : start_lon - 360;
       auto adj_end_lon = end_lon < 0 ? end_lon : end_lon - 360;
 
-      const GPSCoordinateFast start_coord(start_lat*10000000, adj_start_lon*10000000);
-      const GPSCoordinateFast end_coord(end_lat*10000000, adj_end_lon*10000000);
+      const GPSCoordinateFast start_coord(start_lat, adj_start_lon, true);
+      const GPSCoordinateFast end_coord(end_lat, adj_end_lon, true);
 
       Eigen::Vector3f start_point;
       Eigen::Vector3f end_point;
@@ -333,7 +335,7 @@ int main(int argc, char const *argv[]) {
         catch(NetworkTable::TimeoutException){
           std::cout << "Could not set waypoint values" << std::endl;
         }
-      } else if (!vm.count("hardcoded")) {
+      } if (!vm.count("hardcoded")) {
         std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor, file_name, time_steps, use_csvs, output_csvs_folder, pointToPrint, preserveKml);
       }
 
