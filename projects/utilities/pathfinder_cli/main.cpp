@@ -273,9 +273,12 @@ int main(int argc, char const *argv[]) {
         try {
             gps_lat = (double) connection.GetNode("/gps_can/gprmc/latitude").value().float_data();
             gps_lon = (double) connection.GetNode("/gps_can/gprmc/longitude").value().float_data();
+            if (gps_lat == 0.0 || gps_lon == 0.0) {
+              throw (std::runtime_error("GPS Coords cannot be zero"));
+            }
         } catch (NetworkTable::NodeNotFoundException ex) {
             connection.Disconnect();
-            std::cout << "Gps Coords Not Found in Network Table" << std::endl;
+            throw (std::runtime_error("Gps Coords Not Found in Network Table"));
             ++error_count;
         }
 
