@@ -3,6 +3,7 @@
 #include <chrono>
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 
 #include <boost/program_options.hpp>
 
@@ -260,6 +261,18 @@ int main(int argc, char const *argv[]) {
       if (vm.count("table")) {
         // Connect to the network table
         int error_count = 0;
+        double last_lat = 0.0, last_lon = 0.0;
+        std::ifstream read_handle ("LastCoords.txt");
+        std::string last_coords;
+        std::string error_msg;
+
+        if (read_handle.is_open()) {
+          getline(read_handle, last_coords);
+          int space_index = last_coords.find(" ");
+          last_lon = std::stod(last_coords.substr(0, space_index));
+          last_lat = std::stod(last_coords.substr(space_index + 1, last_coords.length()));
+          read_handle.close();
+        }
 
         try {
             std::cout << "Connecting to network table" <<std::endl;
@@ -274,20 +287,31 @@ int main(int argc, char const *argv[]) {
             gps_lat = (double) connection.GetNode("/gps_can/gprmc/latitude").value().float_data();
             gps_lon = (double) connection.GetNode("/gps_can/gprmc/longitude").value().float_data();
             if (gps_lat == 0.0 || gps_lon == 0.0) {
-              throw (std::runtime_error("GPS Coords cannot be zero"));
+              error_msg = "GPS Coords cannot be zero";
+              ++error_count;
+            }
+            else if (gps_lon == last_lon || gps_lat == last_lat) {
+              error_msg = "GPS Coords have not updated";
+              ++error_count;
             }
         } catch (NetworkTable::NodeNotFoundException ex) {
             connection.Disconnect();
-            throw (std::runtime_error("Gps Coords Not Found in Network Table"));
+            error_msg = "Gps Coords Not Found in Network Table";
             ++error_count;
         }
 
         if (error_count == 0) {
           start_lat = gps_lat;
           start_lon = gps_lon;
+
+          std::ofstream write_handle ("LastCoords.txt");
+          if (write_handle.is_open()) {
+            write_handle << gps_lon << " " << gps_lat << std::endl;
+            write_handle.close();
+          }
+
         } else {
-          start_lat = (points[0]);
-          start_lon = (points[1]);
+          throw (std::runtime_error(error_msg));
         }
 
       } else {
