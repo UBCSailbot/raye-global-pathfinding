@@ -44,14 +44,16 @@ double WeatherCostCalculator::calculate_map_cost(HexVertexId target,
          source_mag = map_->get_weather(source, time).wind_speed,
          mag = (source_mag + target_mag)/2;  // Average of this node and the next
 
-  if (mag <= 5) {  // See https://www.desmos.com/calculator/md1byjfsl2
-    return 17 - mag;
-  } else if (mag < 11) {
-    return 22 - mag * 2;
-  } else if (mag < 16) {
-    return 0;
-  } else if (mag < 30) {
-    return mag * 2 - 32;
+  if (mag <= 4) {   // https://www.desmos.com/calculator/s83nzwulue
+    return 15;
+  } else if (mag <= 7) {
+      return 35 - 5 * mag;
+  } else if (mag <= 12) {
+      return 0;
+  } else if (mag <= 15) {
+      return (5 / 3) * mag - 20;
+  } else if (mag <= 22) {
+      return 5 * mag - 70;
   }
   return 1000;  // Really big cost value if wind speed is greater than 30 kts
 }
