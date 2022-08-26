@@ -1,15 +1,20 @@
 #!/bin/bash
-PSIZE=7   #Planet Size
-NCOORD=2  #nth coordinate on which to iteratively run pathfinding
+LOW_RES_SIZE=10   #Planet Size
+HIGH_RES_SIZE=12
+LASTCOORDS="48.553 235.579"
 
-LASTCOORDS=$(./build/bin/pathfinder_cli -p ${PSIZE} --navigate 48 235 21 203 --printn ${NCOORD} | tail -n 1)  #Initial run with predefined start
+#NCOORD=1  #nth coordinate on which to iteratively run pathfinding
 
-echo ${LASTCOORDS}
+#LASTCOORDS=$(./build/bin/pathfinder_cli -p ${LOW_RES_SIZE} --navigate 48.553 235.579 20.876 203.319 --use_cached_planet --printn ${NCOORD} | tail -n 1)  #Initial run with predefined start
 
-for i in {1..3} #Number of times to run program
-do
-  LASTCOORDS=$(./build/bin/pathfinder_cli -p ${PSIZE} --navigate ${LASTCOORDS} 21 203 --printn ${NCOORD} | tail -n 1)
-  echo ${LASTCOORDS}
-done
+#echo ${LASTCOORDS}
+
+./build/bin/pathfinder_cli -p ${HIGH_RES_SIZE} --navigate ${LASTCOORDS} 20.876 203.319 --use_cached_planet --table
+
+#for i in {1..3} #Number of times to run program
+#do
+#  LASTCOORDS=$(./build/bin/pathfinder_cli -p ${PSIZE} --navigate ${LASTCOORDS} 21 203 --printn ${NCOORD} | tail -n 1)
+#  echo ${LASTCOORDS}
+#done
 
 #Todo : pathfinder currently truncates input coordinate, should round
