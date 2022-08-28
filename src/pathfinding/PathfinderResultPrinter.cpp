@@ -60,10 +60,12 @@ std::vector<std::pair<double, double>> PathfinderResultPrinter::GetVector(HexPla
 std::vector<std::pair<double, double>> PathfinderResultPrinter::GetHardcoded(std::string test_name) {
   std::vector<std::pair<double, double>> pathResult;
 
-  if (!test_name.compare("Oct")) {
-      pathResult.push_back(std::make_pair(-123.160124, 49.275202));
-      pathResult.push_back(std::make_pair(-123.307560, 49.212129));
-      pathResult.push_back(std::make_pair(-123.494778, 49.059004));
+  if (!test_name.compare("Final")) {
+      pathResult.push_back(std::make_pair(-123.74434302621864, 48.25089201050763));
+      pathResult.push_back(std::make_pair(-124.00653017771326, 48.29678015491547));
+      pathResult.push_back(std::make_pair(-124.25900669396731, 48.36585768428797));
+      pathResult.push_back(std::make_pair(-124.51148321022137, 48.43162018405094));
+      pathResult.push_back(std::make_pair(-124.82707885553896, 48.50308867708674));
   } else {
     throw test_name;
   }
