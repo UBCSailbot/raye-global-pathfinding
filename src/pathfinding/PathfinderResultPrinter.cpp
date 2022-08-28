@@ -43,8 +43,17 @@ std::string PathfinderResultPrinter::PrintCoordinates(HexPlanet &planet, const P
 
 
 std::vector<std::pair<double, double>> PathfinderResultPrinter::GetVector(HexPlanet &planet,
-                                                                          const Pathfinder::Result &result) {
+                                                                          const Pathfinder::Result &result,
+                                                                          bool prefixHardcoded) {
   std::vector<std::pair<double, double>> pathResult;
+
+  if (prefixHardcoded) {
+    pathResult.push_back(std::make_pair(-123.74434302621864, 48.25089201050763));
+    pathResult.push_back(std::make_pair(-124.00653017771326, 48.29678015491547));
+    pathResult.push_back(std::make_pair(-124.25900669396731, 48.36585768428797));
+    pathResult.push_back(std::make_pair(-124.51148321022137, 48.43162018405094));
+    //pathResult.push_back(std::make_pair(-124.82707885553896, 48.50308867708674));
+  }
 
   for (HexVertexId id : result.path) {
     const auto &coord = planet.vertex(id).coordinate;
@@ -65,7 +74,7 @@ std::vector<std::pair<double, double>> PathfinderResultPrinter::GetHardcoded(std
       pathResult.push_back(std::make_pair(-124.00653017771326, 48.29678015491547));
       pathResult.push_back(std::make_pair(-124.25900669396731, 48.36585768428797));
       pathResult.push_back(std::make_pair(-124.51148321022137, 48.43162018405094));
-      pathResult.push_back(std::make_pair(-124.82707885553896, 48.50308867708674));
+    //  pathResult.push_back(std::make_pair(-124.82707885553896, 48.50308867708674));
   } else {
     throw test_name;
   }
@@ -107,7 +116,8 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet,
                                               bool use_csvs,
                                               const std::string & output_csvs_folder,
                                               int pointToPrint,
-                                              bool preserveKml) {
+                                              bool preserveKml,
+                                              bool prefixHardcoded) {
   std::ofstream handle;
   std::stringstream ss;
   int north = 49, south = 21, east = 235, west = 203;
@@ -136,6 +146,24 @@ std::string PathfinderResultPrinter::PrintKML(HexPlanet &planet,
 
   ss << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
       "<kml xmlns=\"http://earth.google.com/kml/2.0\"><Document><Placemark><LineString><coordinates>\n";
+
+  if (prefixHardcoded) {
+    pathResult.push_back(std::make_pair(-123.74434302621864, 48.25089201050763));
+    handle << "-123.74434302621864" << "," << "48.25089201050763" << std::endl;
+    ss << pathResult.back().first << "," << pathResult.back().second << std::endl;
+    pathResult.push_back(std::make_pair(-124.00653017771326, 48.29678015491547));
+    handle << "-124.00653017771326" << "," << "48.29678015491547" << std::endl;
+    ss << pathResult.back().first << "," << pathResult.back().second << std::endl;
+    pathResult.push_back(std::make_pair(-124.25900669396731, 48.36585768428797));
+    handle << "-124.25900669396731" << "," << "48.36585768428797" << std::endl;
+    ss << pathResult.back().first << "," << pathResult.back().second << std::endl;
+    pathResult.push_back(std::make_pair(-124.51148321022137, 48.43162018405094));
+    handle << "-124.51148321022137" << "," << "48.43162018405094" << std::endl;
+    ss << pathResult.back().first << "," << pathResult.back().second << std::endl;
+  //  pathResult.push_back(std::make_pair(-124.82707885553896, 48.50308867708674));
+  //  handle << "-124.82707885553896" << "," << "48.50308867708674" << std::endl;
+  //  ss << pathResult.back().first << "," << pathResult.back().second << std::endl;
+  }
 
   int count = 0;
   double sum = 0, max = 0, totalWeatherCost = 0;

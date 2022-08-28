@@ -1,0 +1,3 @@
+#!/bin/bash
+
+./build/bin/pathfinder_cli -p 12 --navigate 48.5005149839192 235.1816607162 20.876 203.319 --use_cached_planet --hardcoded Final

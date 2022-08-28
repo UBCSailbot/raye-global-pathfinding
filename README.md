@@ -13,6 +13,10 @@ Useful info:
 
 * Pathfinding Logic [here](https://github.com/UBCSailbot/global-pathfinding/blob/master/src/pathfinding/AStarPathfinder.cpp)
 
+##IMPORTANT INSTRUCTIONS FOR FINAL LAUNCH
+1) run ./finallaunch once for launch
+2) IMPORTANT: do not run anything until after raye makes it out of the straight of juan de fuca
+3) run ./runpathfinder regularly until raye reaches hawaii
 
 ## Setup
 

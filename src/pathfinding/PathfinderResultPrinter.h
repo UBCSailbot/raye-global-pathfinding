@@ -41,9 +41,10 @@ class PathfinderResultPrinter {
                               bool use_csvs,
                               const std::string & output_csvs_folder,
                               int pointToPrint,
-                              bool preserveKml);
+                              bool preserveKml,
+                              bool prefixHardcoded);
 
-  static std::vector<std::pair<double, double>> GetVector(HexPlanet &planet, const Pathfinder::Result &result);
+  static std::vector<std::pair<double, double>> GetVector(HexPlanet &planet, const Pathfinder::Result &result, bool prefixHardcoded);
 
   static std::vector<std::pair<double, double>> GetHardcoded(std::string test_name);
 

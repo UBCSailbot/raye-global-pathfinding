@@ -249,7 +249,7 @@ int main(int argc, char const *argv[]) {
           break;
         case OutputFormat::kKML:
           // Print KML
-          std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor, file_name, time_steps, use_csvs, output_csvs_folder, pointToPrint, preserveKml);
+          std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor, file_name, time_steps, use_csvs, output_csvs_folder, pointToPrint, preserveKml, false);
           break;
       }
     } else if (vm.count("navigate")) {
@@ -343,15 +343,17 @@ int main(int argc, char const *argv[]) {
       std::vector<std::pair<double, double>> waypoints;
 
       if (vm.count("hardcoded")) {
+        /*
        try{
          waypoints = PathfinderResultPrinter::GetHardcoded(vm["hardcoded"].as<std::string>());
          std::cout << PathfinderResultPrinter::PrintHardcoded(waypoints);
        }
        catch(std::string test_name){
          std::cout << "Error: " << test_name << " is not a valid hardcoded test" << std::endl;
-       }
+       }*/
+        waypoints = PathfinderResultPrinter::GetVector(planet, result, true);
       } else {
-        waypoints = PathfinderResultPrinter::GetVector(planet, result);
+        waypoints = PathfinderResultPrinter::GetVector(planet, result, false);
       }
 
       if (vm.count("table")) {
@@ -362,8 +364,10 @@ int main(int argc, char const *argv[]) {
         catch(NetworkTable::TimeoutException){
           std::cout << "Could not set waypoint values" << std::endl;
         }
-      } if (!vm.count("hardcoded")) {
-        std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor, file_name, time_steps, use_csvs, output_csvs_folder, pointToPrint, preserveKml);
+      } if (vm.count("hardcoded")) {
+        std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor, file_name, time_steps, use_csvs, output_csvs_folder, pointToPrint, preserveKml, true);
+      } else {
+        std::cout << PathfinderResultPrinter::PrintKML(planet, result, weather_factor, file_name, time_steps, use_csvs, output_csvs_folder, pointToPrint, preserveKml, false);
       }
 
     } else {
