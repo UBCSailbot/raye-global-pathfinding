@@ -1,5 +1,6 @@
 #!/bin/bash
 HIGH_RES_SIZE=12
 PLACEHOLDER_COORDS="48.553 235.579"
+DESTINATION_COORDS="21.925 202.234"
 
-./build/bin/pathfinder_cli -p ${HIGH_RES_SIZE} --navigate ${PLACEHOLDER_COORDS} 20.876 203.319 --use_cached_planet --table
+./build/bin/pathfinder_cli -p ${HIGH_RES_SIZE} --navigate ${PLACEHOLDER_COORDS} ${DESTINATION_COORDS} --use_cached_planet --table
